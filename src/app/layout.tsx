@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Domainer — AI Domain Name Finder',
+  title: 'Domain Gazer — AI Domain Name Finder',
   description: 'Find available domain names for your project using AI',
 }
 

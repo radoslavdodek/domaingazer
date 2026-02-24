@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
       <div className="mb-8 text-center sm:mb-10">
-        <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">Domain Finder</h1>
+        <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">Domain Gazer</h1>
         <p className="mx-auto max-w-2xl text-sm text-gray-500">
           Describe your project, pick TLDs, and get AI-generated domain names checked for availability.
         </p>
