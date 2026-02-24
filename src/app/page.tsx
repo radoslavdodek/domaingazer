@@ -33,15 +33,15 @@ export default function Home() {
   }
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-12">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Domain Finder</h1>
-        <p className="text-gray-500 text-sm">
+    <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mb-8 text-center sm:mb-10">
+        <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">Domain Finder</h1>
+        <p className="mx-auto max-w-2xl text-sm text-gray-500">
           Describe your project, pick TLDs, and get AI-generated domain names checked for availability.
         </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mb-6">
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <SearchForm
           isSearching={status === 'searching'}
           onSearch={handleSearch}

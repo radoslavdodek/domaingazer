@@ -43,6 +43,10 @@ export function ResultsPanel({
   const [hint, setHint] = useState('')
   const hintRef = useRef<HTMLInputElement>(null)
   const refocusHint = useRef(false)
+  const newRowsAnchorRef = useRef<HTMLDivElement>(null)
+  const prevStatusRef = useRef(status)
+  const prevBaseNameCountRef = useRef(0)
+  const autoScrollNewRowsRef = useRef(false)
 
   useEffect(() => {
     if (refocusHint.current && status !== 'searching') {
@@ -50,6 +54,31 @@ export function ResultsPanel({
       hintRef.current?.focus()
     }
   }, [status])
+
+  // Collect unique base names in order of first appearance
+  const allBaseNames = Array.from(new Set(results.map((r) => r.baseName)))
+  const baseNameCount = allBaseNames.length
+
+  useEffect(() => {
+    const prevStatus = prevStatusRef.current
+    const prevBaseNameCount = prevBaseNameCountRef.current
+
+    if (status === 'searching' && prevStatus !== 'searching') {
+      // Generate more keeps previous results while switching to searching.
+      autoScrollNewRowsRef.current = results.length > 0
+    } else if (status !== 'searching') {
+      autoScrollNewRowsRef.current = false
+    }
+
+    if (autoScrollNewRowsRef.current && status === 'searching' && baseNameCount > prevBaseNameCount) {
+      requestAnimationFrame(() => {
+        newRowsAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      })
+    }
+
+    prevStatusRef.current = status
+    prevBaseNameCountRef.current = baseNameCount
+  }, [status, results.length, baseNameCount])
 
   const handleCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,9 +89,6 @@ export function ResultsPanel({
   }
 
   if (status === 'idle' && results.length === 0) return null
-
-  // Collect unique base names in order of first appearance
-  const allBaseNames = Array.from(new Set(results.map((r) => r.baseName)))
 
   // Index results by baseName+tld
   const resultMap = new Map(results.map((r) => [`${r.baseName}${r.tld}`, r]))
@@ -84,8 +110,8 @@ export function ResultsPanel({
   return (
     <div className="space-y-4">
       {/* Status bar + Filter */}
-      <div className="flex items-center justify-between text-sm text-gray-600">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-3 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
           {status === 'searching' && (
             <>
               <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
@@ -114,7 +140,7 @@ export function ResultsPanel({
             <span className="text-red-600">Error: {errorMessage}</span>
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {results.length > 0 && (
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
@@ -139,62 +165,65 @@ export function ResultsPanel({
 
       {/* Table */}
       {(baseNames.length > 0 || showWorkingRow) && tlds.length > 0 && (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
-          <table className="w-full text-sm border-collapse">
-            <thead className="sticky top-0 z-10 bg-white">
-              <tr className="border-b border-gray-100">
-                {tlds.map((tld) => (
-                  <th key={tld} className="text-left px-4 py-3 font-medium text-gray-500">
-                    {tld}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {baseNames.map((baseName, i) => (
-                <tr
-                  key={baseName}
-                  className={`border-b border-gray-50 last:border-0 ${i % 2 === 0 ? '' : 'bg-gray-50/40'}`}
-                >
-                  {tlds.map((tld) => {
-                    const result = resultMap.get(`${baseName}${tld}`)
-                    if (!result) {
+        <div>
+          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+            <table className="w-full text-sm border-collapse">
+              <thead className="sticky top-0 z-10 bg-white">
+                <tr className="border-b border-gray-100">
+                  {tlds.map((tld) => (
+                    <th key={tld} className="px-3 py-3 text-left font-medium text-gray-500 sm:px-4">
+                      {tld}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {baseNames.map((baseName, i) => (
+                  <tr
+                    key={baseName}
+                    className={`border-b border-gray-50 last:border-0 ${i % 2 === 0 ? '' : 'bg-gray-50/40'}`}
+                  >
+                    {tlds.map((tld) => {
+                      const result = resultMap.get(`${baseName}${tld}`)
+                      if (!result) {
+                        return (
+                          <td key={tld} className="px-3 py-2.5 text-xs text-gray-200 sm:px-4">—</td>
+                        )
+                      }
+                      const { label, cellClass } = statusConfig[result.status]
                       return (
-                        <td key={tld} className="px-4 py-2.5 text-gray-200 text-xs">—</td>
+                        <td key={tld} className="px-3 py-2.5 sm:px-4">
+                          <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-2">
+                            <span className="break-all font-mono font-medium text-gray-800">{result.fullDomain}</span>
+                            <span className={`inline-block text-xs px-2 py-0.5 rounded-full ${cellClass}`}>
+                              {label}
+                            </span>
+                          </div>
+                        </td>
                       )
-                    }
-                    const { label, cellClass } = statusConfig[result.status]
-                    return (
-                      <td key={tld} className="px-4 py-2.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-gray-800 font-medium">{result.fullDomain}</span>
-                          <span className={`inline-block text-xs px-2 py-0.5 rounded-full ${cellClass}`}>
-                            {label}
-                          </span>
-                        </div>
-                      </td>
-                    )
-                  })}
-                </tr>
-              ))}
-              {showWorkingRow && (
-                <tr className="border-b border-gray-50 last:border-0 bg-blue-50/40">
-                  <td colSpan={tlds.length} className="px-4 py-3 text-sm text-blue-700">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                      <span>Working on more names. New rows should appear shortly.</span>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    })}
+                  </tr>
+                ))}
+                {showWorkingRow && (
+                  <tr className="border-b border-gray-50 last:border-0 bg-blue-50/40">
+                    <td colSpan={tlds.length} className="px-3 py-3 text-sm text-blue-700 sm:px-4">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                        <span>Working on more names. New rows should appear shortly.</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div ref={newRowsAnchorRef} />
         </div>
       )}
 
       {/* Add your own idea */}
       {onCheckCustom && tlds.length > 0 && (
-        <form onSubmit={handleCustomSubmit} className="flex items-center gap-2">
+        <form onSubmit={handleCustomSubmit} className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <input
             type="text"
             value={customInput}
@@ -206,7 +235,7 @@ export function ResultsPanel({
           <button
             type="submit"
             disabled={!customInput.trim() || isCheckingCustom}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+            className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-blue-600 sm:w-auto"
           >
             {isCheckingCustom ? 'Checking…' : 'Check availability'}
           </button>
@@ -215,7 +244,7 @@ export function ResultsPanel({
 
       {/* Generate more */}
       {(status === 'done' || status === 'cancelled' || status === 'searching') && onGenerateMore && (
-        <div className="flex items-center gap-2 pt-2">
+        <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center">
           <input
             ref={hintRef}
             type="text"
@@ -229,7 +258,7 @@ export function ResultsPanel({
           <button
             onClick={() => { onGenerateMore(hint) }}
             disabled={status === 'searching'}
-            className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent whitespace-nowrap"
+            className="w-full whitespace-normal rounded-lg border border-blue-200 px-4 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent sm:w-auto sm:whitespace-nowrap"
           >
             {status === 'searching' ? 'Generating and verifying names…' : 'Generate more names'}
           </button>
