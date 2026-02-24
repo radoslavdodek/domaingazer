@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DOMAIN_STATUS_LABELS } from '@/lib/domainStatus'
 import type { DomainResult, TLD } from '@/lib/types'
 import { BaseNameGroupList } from './results/BaseNameGroupList'
@@ -47,12 +47,34 @@ export function ResultsPanel({
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
   const hintRef = useRef<HTMLInputElement>(null)
   const newRowsAnchorRef = useRef<HTMLDivElement>(null)
+  const batchElementsRef = useRef<Map<string, HTMLDivElement>>(new Map())
+  const baseNameRowElementsRef = useRef<Map<string, HTMLDivElement>>(new Map())
   const prevStatusRef = useRef(status)
   const prevBaseNameCountRef = useRef(0)
   const autoScrollNewRowsRef = useRef(false)
+  const lastAutoScrolledBatchStartRef = useRef<string | null>(null)
 
   const allBaseNames = Array.from(new Set(results.map((result) => result.baseName)))
   const baseNameCount = allBaseNames.length
+  const latestBatchStartBaseName = [...nameBatches]
+    .reverse()
+    .find((batch) => batch.length > 0)?.[0]
+
+  const setBaseNameRowElement = useCallback((baseName: string, element: HTMLDivElement | null) => {
+    if (element) {
+      baseNameRowElementsRef.current.set(baseName, element)
+      return
+    }
+    baseNameRowElementsRef.current.delete(baseName)
+  }, [])
+
+  const setBatchElement = useCallback((batchStartBaseName: string, element: HTMLDivElement | null) => {
+    if (element) {
+      batchElementsRef.current.set(batchStartBaseName, element)
+      return
+    }
+    batchElementsRef.current.delete(batchStartBaseName)
+  }, [])
 
   useEffect(() => {
     const prevStatus = prevStatusRef.current
@@ -60,6 +82,7 @@ export function ResultsPanel({
 
     if (status === 'searching' && prevStatus !== 'searching') {
       autoScrollNewRowsRef.current = results.length > 0
+      lastAutoScrolledBatchStartRef.current = null
     } else if (status !== 'searching') {
       autoScrollNewRowsRef.current = false
     }
@@ -76,15 +99,32 @@ export function ResultsPanel({
       })
     }
 
-    if (autoScrollNewRowsRef.current && status === 'searching' && baseNameCount > prevBaseNameCount) {
+    if (
+      autoScrollNewRowsRef.current
+      && status === 'searching'
+      && baseNameCount > prevBaseNameCount
+      && latestBatchStartBaseName
+      && latestBatchStartBaseName !== lastAutoScrolledBatchStartRef.current
+    ) {
+      lastAutoScrolledBatchStartRef.current = latestBatchStartBaseName
       requestAnimationFrame(() => {
+        const batchElement = batchElementsRef.current.get(latestBatchStartBaseName)
+        if (batchElement) {
+          batchElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          return
+        }
+        const rowElement = baseNameRowElementsRef.current.get(latestBatchStartBaseName)
+        if (rowElement) {
+          rowElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          return
+        }
         newRowsAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
       })
     }
 
     prevStatusRef.current = status
     prevBaseNameCountRef.current = baseNameCount
-  }, [status, results.length, baseNameCount])
+  }, [status, results.length, baseNameCount, latestBatchStartBaseName])
 
   useEffect(() => {
     if (!isClearConfirmOpen) return
@@ -217,6 +257,8 @@ export function ResultsPanel({
         showWorkingRow={showWorkingRow}
         resultMap={resultMap}
         onTryVariation={onGenerateMore ? runVariationSearch : undefined}
+        onBatchStartRef={setBatchElement}
+        onBaseNameRowRef={setBaseNameRowElement}
       />
 
       <div ref={newRowsAnchorRef} />

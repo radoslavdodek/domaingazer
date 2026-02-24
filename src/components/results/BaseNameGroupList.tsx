@@ -12,6 +12,8 @@ interface BaseNameGroupListProps {
   showWorkingRow: boolean
   resultMap: Map<string, DomainResult>
   onTryVariation?: (baseName: string) => void
+  onBatchStartRef?: (batchStartBaseName: string, element: HTMLDivElement | null) => void
+  onBaseNameRowRef?: (baseName: string, element: HTMLDivElement | null) => void
 }
 
 export function BaseNameGroupList({
@@ -24,6 +26,8 @@ export function BaseNameGroupList({
   showWorkingRow,
   resultMap,
   onTryVariation,
+  onBatchStartRef,
+  onBaseNameRowRef,
 }: BaseNameGroupListProps) {
   return (
     <div className="space-y-2 p-3 sm:p-4">
@@ -37,50 +41,60 @@ export function BaseNameGroupList({
 
       {tlds.length > 0 && visibleBaseNameCount > 0 && (
         <div className="space-y-3">
-          {groupedVisibleBaseNames.map((batch, batchIndex) => (
-            <div key={`batch-${batchIndex}`} className="space-y-1.5">
-              {batchIndex > 0 && (
-                <div className="flex items-center gap-3 py-1">
-                  <div className="h-px flex-1 bg-gray-200" />
-                  <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">Next batch</span>
-                  <div className="h-px flex-1 bg-gray-200" />
-                </div>
-              )}
-              {batch.map((baseName) => (
-                <div
-                  key={baseName}
-                  className="rounded-lg border border-gray-200 bg-white px-3 py-2 sm:px-3.5"
-                >
-                  <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
-                    <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">{baseName}</span>
-                    {onTryVariation && (
-                      <button
-                        type="button"
-                        onClick={() => onTryVariation(baseName)}
-                        disabled={status === 'searching'}
-                        className="rounded-md border border-gray-300 px-2 py-0.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        Try variations
-                      </button>
-                    )}
+          {groupedVisibleBaseNames.map((batch, batchIndex) => {
+            const batchStartBaseName = batch[0]
+
+            return (
+              <div
+                key={`batch-${batchIndex}`}
+                ref={(element) => onBatchStartRef?.(batchStartBaseName, element)}
+                className="scroll-mt-24 space-y-1.5"
+              >
+                {batchIndex > 0 && (
+                  <div className="flex items-center gap-3 py-1">
+                    <div className="h-px flex-1 bg-gray-200" />
+                    <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">Next batch</span>
+                    <div className="h-px flex-1 bg-gray-200" />
                   </div>
-                  <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-                    {tlds.map((tld) => {
-                      const row = resultMap.get(`${baseName}${tld}`)
-                      return (
-                        <DomainRow
-                          key={`${baseName}${tld}`}
-                          domain={row?.fullDomain ?? `${baseName}${tld}`}
-                          status={row?.status ?? 'PENDING'}
-                          compact
-                        />
-                      )
-                    })}
+                )}
+
+                {batch.map((baseName) => (
+                  <div
+                    key={baseName}
+                    ref={(element) => onBaseNameRowRef?.(baseName, element)}
+                    className="scroll-mt-24 rounded-lg border border-gray-200 bg-white px-3 py-2 sm:px-3.5"
+                  >
+                    <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">{baseName}</span>
+                      {onTryVariation && (
+                        <button
+                          type="button"
+                          onClick={() => onTryVariation(baseName)}
+                          disabled={status === 'searching'}
+                          className="rounded-md border border-gray-300 px-2 py-0.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          Try variations
+                        </button>
+                      )}
+                    </div>
+                    <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
+                      {tlds.map((tld) => {
+                        const row = resultMap.get(`${baseName}${tld}`)
+                        return (
+                          <DomainRow
+                            key={`${baseName}${tld}`}
+                            domain={row?.fullDomain ?? `${baseName}${tld}`}
+                            status={row?.status ?? 'PENDING'}
+                            compact
+                          />
+                        )
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ))}
+                ))}
+              </div>
+            )
+          })}
         </div>
       )}
 
