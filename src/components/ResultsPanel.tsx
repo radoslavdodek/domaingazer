@@ -48,18 +48,11 @@ export function ResultsPanel({
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
   const [customInput, setCustomInput] = useState('')
   const [hint, setHint] = useState('')
-  const [activeTld, setActiveTld] = useState<TLD | null>(null)
   const hintRef = useRef<HTMLInputElement>(null)
   const newRowsAnchorRef = useRef<HTMLDivElement>(null)
   const prevStatusRef = useRef(status)
   const prevBaseNameCountRef = useRef(0)
   const autoScrollNewRowsRef = useRef(false)
-
-  useEffect(() => {
-    if (!activeTld || !tlds.includes(activeTld)) {
-      setActiveTld(tlds[0] ?? null)
-    }
-  }, [tlds, activeTld])
 
   const allBaseNames = Array.from(new Set(results.map((r) => r.baseName)))
   const baseNameCount = allBaseNames.length
@@ -114,22 +107,16 @@ export function ResultsPanel({
       )
     : allBaseNames
 
+  const visibleBaseNames = exportBaseNames
+
   const tldCounts = tlds.reduce<Record<TLD, number>>((acc, tld) => {
-    acc[tld] = allBaseNames.reduce((count, baseName) => {
+    acc[tld] = visibleBaseNames.reduce((count, baseName) => {
       const row = resultMap.get(`${baseName}${tld}`)
       if (!row) return count
-      if (showAvailableOnly && row.status !== 'AVAILABLE' && row.status !== 'CHECKING') return count
       return count + 1
     }, 0)
     return acc
   }, {} as Record<TLD, number>)
-
-  const visibleRows = activeTld
-    ? allBaseNames
-        .map((baseName) => resultMap.get(`${baseName}${activeTld}`))
-        .filter((row): row is DomainResult => Boolean(row))
-        .filter((row) => !showAvailableOnly || row.status === 'AVAILABLE' || row.status === 'CHECKING')
-    : []
 
   const showWorkingRow = status === 'searching' && Boolean(isWaitingForNewRows)
   const canExport =
@@ -190,7 +177,7 @@ export function ResultsPanel({
           )}
           {(status === 'searching' || status === 'done') && (
             <span>
-              {totalCount > 0 ? `${checkedCount} domains checked` : 'Generating and checking domains...'}
+              {totalCount > 0 ? `${checkedCount} / ${totalCount} domains checked` : 'Generating and checking domains...'}
               {availableCount > 0 && (
                 <span className="font-semibold text-green-700"> {' '}· {availableCount} available</span>
               )}
@@ -209,18 +196,12 @@ export function ResultsPanel({
         {tlds.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {tlds.map((tld) => (
-              <button
+              <span
                 key={tld}
-                type="button"
-                onClick={() => setActiveTld(tld)}
-                className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
-                  activeTld === tld
-                    ? 'border-blue-600 bg-blue-600 text-white'
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-100'
-                }`}
+                className="rounded-full border border-gray-300 bg-gray-50 px-3 py-1 text-sm font-medium text-gray-700"
               >
                 {tld} ({tldCounts[tld] ?? 0})
-              </button>
+              </span>
             ))}
           </div>
         )}
@@ -268,26 +249,20 @@ export function ResultsPanel({
           </div>
         )}
 
-        {activeTld && visibleRows.length > 0 && (
+        {tlds.length > 0 && visibleBaseNames.length > 0 && (
           <div className="space-y-2">
-            {visibleRows.map((row) => {
-              const { label, badgeClass } = statusConfig[row.status]
+            {visibleBaseNames.map((baseName) => {
               return (
                 <div
-                  key={row.fullDomain}
+                  key={baseName}
                   className="rounded-lg border border-gray-200 bg-white px-3 py-3 sm:px-4"
                 >
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
-                      <span className="break-all font-mono font-medium text-gray-900">{row.fullDomain}</span>
-                      <span className={`inline-block w-fit rounded-full px-2 py-0.5 text-xs ${badgeClass}`}>
-                        {label}
-                      </span>
-                    </div>
+                    <span className="break-all font-mono font-medium text-gray-900">{baseName}</span>
                     {onGenerateMore && (
                       <button
                         type="button"
-                        onClick={() => runVariationSearch(row.baseName)}
+                        onClick={() => runVariationSearch(baseName)}
                         disabled={status === 'searching'}
                         className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
                       >
@@ -295,21 +270,44 @@ export function ResultsPanel({
                       </button>
                     )}
                   </div>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {tlds.map((tld) => {
+                      const row = resultMap.get(`${baseName}${tld}`)
+                      const { label, badgeClass } = row
+                        ? statusConfig[row.status]
+                        : {
+                            label: 'Pending',
+                            badgeClass: 'border border-gray-200 bg-gray-100 text-gray-500 font-medium',
+                          }
+                      const domain = row?.fullDomain ?? `${baseName}${tld}`
+                      return (
+                        <div
+                          key={`${baseName}${tld}`}
+                          className="flex flex-col gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <span className="break-all font-mono text-sm text-gray-700">{domain}</span>
+                          <span className={`inline-block w-fit rounded-full px-2 py-0.5 text-xs ${badgeClass}`}>
+                            {label}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               )
             })}
           </div>
         )}
 
-        {activeTld && visibleRows.length === 0 && status !== 'searching' && (
+        {tlds.length > 0 && visibleBaseNames.length === 0 && status !== 'searching' && (
           <div className="rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500">
             {showAvailableOnly
-              ? `No available names in ${activeTld} yet. Try turning off the filter or generating more names.`
-              : `No results in ${activeTld} yet.`}
+              ? 'No names with availability yet. Try turning off the filter or generating more names.'
+              : 'No results yet.'}
           </div>
         )}
 
-        {!activeTld && (
+        {tlds.length === 0 && (
           <div className="rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500">
             Select at least one TLD to view or check results.
           </div>
