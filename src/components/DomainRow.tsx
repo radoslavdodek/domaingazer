@@ -11,6 +11,10 @@ const statusConfig: Record<DomainStatus, { label: string; className: string }> =
     label: 'Checking…',
     className: 'bg-gray-100 text-gray-500',
   },
+  STOPPED: {
+    label: 'Stopped',
+    className: 'bg-gray-100 text-gray-600',
+  },
   AVAILABLE: {
     label: 'Available',
     className: 'bg-green-100 text-green-700',

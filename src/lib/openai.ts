@@ -9,7 +9,9 @@ function getOpenAI() {
 
 export async function generateDomainNames(
     description: string,
-    alreadySeen: string[]
+    alreadySeen: string[],
+    signal?: AbortSignal,
+    hint?: string
 ): Promise<string[]> {
     const seenList =
         alreadySeen.length > 0
@@ -28,17 +30,18 @@ export async function generateDomainNames(
         Rules:
         - Shorter names are preferred, but that's not the condition.
         - No hyphens or numbers.
-        - Must be easy to read, pronounce, and spell.${alreadySeen}
+        - Be creative and original.
+        - Must be easy to read, pronounce, and spell.${seenList}
         
         Respond ONLY with a raw JSON object matching this structure. No markdown, no explanations.
         {"names": ["name1", "name2", ...]}`,
             },
             {
                 role: 'user',
-                content: `Generate 10 domain base names for: ${description}`,
+                content: `Generate 10 domain base names for: ${description}${hint ? `\n\nAdditional guidance: ${hint}` : ''}`,
             },
         ],
-    })
+    }, { signal })
 
     try {
         const content = response.choices[0]?.message?.content ?? '{}'

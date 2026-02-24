@@ -7,7 +7,7 @@ import { useDomainSearch } from '@/hooks/useDomainSearch'
 import type { TLD } from '@/lib/types'
 
 export default function Home() {
-  const { results, status, currentRound, errorMessage, isCheckingCustom, search, generateMore, cancel, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
+  const { results, status, currentRound, errorMessage, isCheckingCustom, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
 
   const handleSearch = (description: string, tlds: TLD[]) => {
@@ -27,9 +27,9 @@ export default function Home() {
     }
   }
 
-  const handleGenerateMore = () => {
+  const handleGenerateMore = (hint: string) => {
     const baseNames = Array.from(new Set(results.map((r) => r.baseName)))
-    generateMore(baseNames)
+    generateMore(baseNames, hint || undefined)
   }
 
   return (
@@ -59,6 +59,7 @@ export default function Home() {
         isCheckingCustom={isCheckingCustom}
         onGenerateMore={handleGenerateMore}
         onCheckCustom={checkCustom}
+        onClear={clearResults}
       />
     </main>
   )

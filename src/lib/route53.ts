@@ -20,14 +20,15 @@ function isThrottling(err: unknown): boolean {
   )
 }
 
-export async function checkDomain(fullDomain: string): Promise<DomainStatus> {
+export async function checkDomain(fullDomain: string, signal?: AbortSignal): Promise<DomainStatus> {
   const maxRetries = 4
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    if (signal?.aborted) return 'ERROR'
     try {
       const command = new CheckDomainAvailabilityCommand({
         DomainName: fullDomain,
       })
-      const response = await getClient().send(command)
+      const response = await getClient().send(command, { abortSignal: signal })
 
       switch (response.Availability) {
         case DomainAvailability.AVAILABLE:
@@ -46,11 +47,12 @@ export async function checkDomain(fullDomain: string): Promise<DomainStatus> {
       ) {
         return 'UNSUPPORTED'
       }
-      if (isThrottling(err) && attempt < maxRetries) {
+      if (isThrottling(err) && attempt < maxRetries && !signal?.aborted) {
         const delay = 500 * 2 ** attempt + Math.random() * 200
         await new Promise((r) => setTimeout(r, delay))
         continue
       }
+      if (signal?.aborted) return 'ERROR'
       console.error(`Error checking ${fullDomain}:`, err)
       return 'ERROR'
     }

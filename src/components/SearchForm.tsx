@@ -6,7 +6,7 @@ import { TldSelector } from './TldSelector'
 
 const LS_DESCRIPTION = 'domainerio_description'
 const LS_TLDS = 'domainerio_tlds'
-const DEFAULT_TLDS: TLD[] = ['.com', '.io']
+const DEFAULT_TLDS: TLD[] = ['.com']
 
 interface SearchFormProps {
   isSearching: boolean
@@ -45,6 +45,13 @@ export function SearchForm({ isSearching, onSearch, onCancel, onTldsChange }: Se
     }
   }
 
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevent any form-submit default action if this click causes immediate re-render.
+    e.preventDefault()
+    e.stopPropagation()
+    onCancel()
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
@@ -81,7 +88,7 @@ export function SearchForm({ isSearching, onSearch, onCancel, onTldsChange }: Se
         {isSearching ? (
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
             className="px-6 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
           >
             Cancel

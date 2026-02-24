@@ -11,6 +11,7 @@ export type TLD =
 
 export type DomainStatus =
   | 'CHECKING'
+  | 'STOPPED'
   | 'AVAILABLE'
   | 'UNAVAILABLE'
   | 'RESERVED'

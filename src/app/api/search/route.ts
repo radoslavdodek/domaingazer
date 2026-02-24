@@ -35,10 +35,11 @@ function encodeEvent(event: SseEvent): string {
 }
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as { description?: string; tlds?: TLD[]; exclude?: string[] }
+  const body = (await request.json()) as { description?: string; tlds?: TLD[]; exclude?: string[]; hint?: string }
   const description = body.description?.trim() ?? ''
   const tlds: TLD[] = Array.isArray(body.tlds) ? body.tlds : ['.com', '.io']
   const exclude: string[] = Array.isArray(body.exclude) ? body.exclude : []
+  const hint = body.hint?.trim() || undefined
 
   if (!description || description.length < 5) {
     return new Response(
@@ -47,10 +48,14 @@ export async function POST(request: Request) {
     )
   }
 
+  const abortController = new AbortController()
+  const { signal } = abortController
+
   const stream = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder()
       const emit = (event: SseEvent) => {
+        if (signal.aborted) return
         controller.enqueue(encoder.encode(encodeEvent(event)))
       }
 
@@ -60,9 +65,12 @@ export async function POST(request: Request) {
 
       try {
         for (let round = 1; round <= MAX_ROUNDS; round++) {
+          if (signal.aborted) break
           emit({ type: 'round_start', round })
 
-          const names = await generateDomainNames(description, seenNames)
+          const rawNames = await generateDomainNames(description, seenNames, signal, hint)
+          if (signal.aborted) break
+          const names = rawNames.filter((n) => !seenNames.includes(n))
           seenNames.push(...names)
 
           // Build all (name, tld) pairs
@@ -87,7 +95,9 @@ export async function POST(request: Request) {
           await Promise.all(
             pairs.map((pair) =>
               limit(async () => {
-                const status = await checkDomain(pair.fullDomain)
+                if (signal.aborted) return
+                const status = await checkDomain(pair.fullDomain, signal)
+                if (signal.aborted) return
                 const result: DomainResult = { ...pair, status }
                 emit({ type: 'domain_result', data: result })
                 if (status === 'AVAILABLE') {
@@ -97,16 +107,20 @@ export async function POST(request: Request) {
             )
           )
 
-          if (foundAvailable) break
+          if (signal.aborted || foundAvailable) break
         }
 
-        emit({ type: 'done' })
+        if (!signal.aborted) emit({ type: 'done' })
       } catch (err) {
+        if (signal.aborted) return
         const message = err instanceof Error ? err.message : 'Unknown error'
         emit({ type: 'error', message })
       } finally {
         controller.close()
       }
+    },
+    cancel() {
+      abortController.abort()
     },
   })
 
