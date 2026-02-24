@@ -1,12 +1,18 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import type { DomainResult, DomainStatus, TLD } from '@/lib/types'
+import { DOMAIN_STATUS_LABELS } from '@/lib/domainStatus'
+import type { DomainResult, TLD } from '@/lib/types'
+import { BaseNameGroupList } from './results/BaseNameGroupList'
+import { ClearResultsModal } from './results/ClearResultsModal'
+import { RefinementCard } from './results/RefinementCard'
+import { ResultsHeader } from './results/ResultsHeader'
+import type { SearchStatus } from './results/types'
 
 interface ResultsPanelProps {
   results: DomainResult[]
   nameBatches?: string[][]
-  status: 'idle' | 'searching' | 'done' | 'cancelled' | 'error'
+  status: SearchStatus
   errorMessage: string | null
   tlds: TLD[]
   isCheckingCustom?: boolean
@@ -15,18 +21,6 @@ interface ResultsPanelProps {
   onCheckCustom?: (baseName: string) => void
   onClear?: () => void
 }
-
-const statusConfig: Record<DomainStatus, { label: string; badgeClass: string }> = {
-  CHECKING: { label: 'Checking', badgeClass: 'border border-gray-200 bg-gray-100 text-gray-600 font-medium animate-pulse' },
-  STOPPED: { label: 'Stopped', badgeClass: 'border border-gray-200 bg-gray-100 text-gray-600 font-medium' },
-  AVAILABLE: { label: 'AVAILABLE', badgeClass: 'border border-green-200 bg-green-100 text-green-800 font-bold' },
-  UNAVAILABLE: { label: 'TAKEN', badgeClass: 'border border-red-200 bg-red-50 text-red-700 font-semibold' },
-  RESERVED: { label: 'Reserved', badgeClass: 'border border-yellow-200 bg-yellow-50 text-yellow-700 font-medium' },
-  UNSUPPORTED: { label: 'N/A', badgeClass: 'border border-gray-200 bg-gray-100 text-gray-500 font-medium' },
-  ERROR: { label: 'Error', badgeClass: 'border border-orange-200 bg-orange-50 text-orange-700 font-medium' },
-}
-
-const secondaryButtonClass = 'w-full rounded-lg border border-blue-300 bg-white px-4 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white sm:w-auto'
 
 function escapeCsvValue(value: string): string {
   if (/["\n,]/.test(value)) {
@@ -48,8 +42,8 @@ export function ResultsPanel({
   onClear,
 }: ResultsPanelProps) {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
-  const [customInput, setCustomInput] = useState('')
   const [hint, setHint] = useState('')
+  const [customInput, setCustomInput] = useState('')
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
   const hintRef = useRef<HTMLInputElement>(null)
   const newRowsAnchorRef = useRef<HTMLDivElement>(null)
@@ -57,7 +51,7 @@ export function ResultsPanel({
   const prevBaseNameCountRef = useRef(0)
   const autoScrollNewRowsRef = useRef(false)
 
-  const allBaseNames = Array.from(new Set(results.map((r) => r.baseName)))
+  const allBaseNames = Array.from(new Set(results.map((result) => result.baseName)))
   const baseNameCount = allBaseNames.length
 
   useEffect(() => {
@@ -111,19 +105,11 @@ export function ResultsPanel({
     }
   }, [isClearConfirmOpen])
 
-  const handleCustomSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const name = customInput.trim().toLowerCase().replace(/\s+/g, '').replace(/\.$/, '')
-    if (!name || !onCheckCustom) return
-    onCheckCustom(name)
-    setCustomInput('')
-  }
-
   if (status === 'idle' && results.length === 0) return null
 
-  const resultMap = new Map(results.map((r) => [`${r.baseName}${r.tld}`, r]))
-  const availableCount = results.filter((r) => r.status === 'AVAILABLE').length
-  const checkedCount = results.filter((r) => r.status !== 'CHECKING').length
+  const resultMap = new Map(results.map((result) => [`${result.baseName}${result.tld}`, result]))
+  const availableCount = results.filter((result) => result.status === 'AVAILABLE').length
+  const checkedCount = results.filter((result) => result.status !== 'CHECKING').length
   const totalCount = results.length
 
   const exportBaseNames = showAvailableOnly
@@ -172,7 +158,7 @@ export function ResultsPanel({
       tlds.map((tld) => {
         const result = resultMap.get(`${baseName}${tld}`)
         if (!result) return '—'
-        const { label } = statusConfig[result.status]
+        const label = DOMAIN_STATUS_LABELS[result.status]
         return `${result.fullDomain} (${label})`
       })
     )
@@ -194,21 +180,6 @@ export function ResultsPanel({
     URL.revokeObjectURL(url)
   }
 
-  const handleClearResults = () => {
-    if (!onClear) return
-    setIsClearConfirmOpen(true)
-  }
-
-  const handleCancelClear = () => {
-    setIsClearConfirmOpen(false)
-  }
-
-  const handleConfirmClear = () => {
-    if (!onClear) return
-    setIsClearConfirmOpen(false)
-    onClear()
-  }
-
   const runVariationSearch = (baseName: string) => {
     if (!onGenerateMore || status === 'searching') return
     const variationPrompt = `Similar to "${baseName}"`
@@ -220,267 +191,60 @@ export function ResultsPanel({
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="sticky top-0 z-30 border-b border-gray-100 bg-white/95 p-4 text-sm text-gray-600 backdrop-blur supports-[backdrop-filter]:bg-white/85 sm:p-5">
-        <div className="flex min-w-0 items-center gap-3">
-          {status === 'searching' && (
-            <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-blue-500" />
-          )}
-          {(status === 'searching' || status === 'done') && (
-            <span>
-              {totalCount > 0 ? `${checkedCount} / ${totalCount} domains checked` : 'Generating and checking domains...'}
-              {availableCount > 0 && (
-                <span className="font-semibold text-green-700"> {' '}· {availableCount} available</span>
-              )}
-            </span>
-          )}
-          {status === 'cancelled' && (
-            <span className="text-gray-500">
-              Search cancelled. {availableCount} available out of {results.length} checked.
-            </span>
-          )}
-          {status === 'error' && (
-            <span className="text-red-600">Error: {errorMessage}</span>
-          )}
-        </div>
+      <ResultsHeader
+        status={status}
+        errorMessage={errorMessage}
+        totalCount={totalCount}
+        checkedCount={checkedCount}
+        availableCount={availableCount}
+        resultsCount={results.length}
+        tlds={tlds}
+        tldCounts={tldCounts}
+        showAvailableOnly={showAvailableOnly}
+        onShowAvailableOnlyChange={setShowAvailableOnly}
+        onClear={onClear ? () => setIsClearConfirmOpen(true) : undefined}
+        onExport={handleExportCsv}
+        canExport={canExport}
+      />
 
-        {tlds.length > 0 && (
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            {tlds.map((tld) => (
-              <span
-                key={tld}
-                className="rounded-full border border-gray-300 bg-gray-50 px-3 py-1 text-sm font-medium text-gray-700"
-              >
-                {tld} ({tldCounts[tld] ?? 0})
-              </span>
-            ))}
-          </div>
-        )}
+      <BaseNameGroupList
+        status={status}
+        totalCount={totalCount}
+        tlds={tlds}
+        groupedVisibleBaseNames={groupedVisibleBaseNames}
+        visibleBaseNameCount={visibleBaseNames.length}
+        showAvailableOnly={showAvailableOnly}
+        showWorkingRow={showWorkingRow}
+        resultMap={resultMap}
+        onTryVariation={onGenerateMore ? runVariationSearch : undefined}
+      />
 
-        <div className="mt-3 flex flex-wrap items-center gap-4">
-          {results.length > 0 && (
-            <label className="flex cursor-pointer select-none items-center gap-2">
-              <input
-                type="checkbox"
-                checked={showAvailableOnly}
-                onChange={(e) => setShowAvailableOnly(e.target.checked)}
-                className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-blue-600"
-              />
-              Show available only
-            </label>
-          )}
-          {onClear && (
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleClearResults}
-                className="text-sm text-gray-600 transition-colors hover:text-gray-900"
-              >
-                Clear results
-              </button>
-              <button
-                type="button"
-                onClick={handleExportCsv}
-                disabled={!canExport}
-                className="text-sm text-gray-600 transition-colors hover:text-gray-900 disabled:cursor-not-allowed disabled:text-gray-400"
-              >
-                Export
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="space-y-2 p-3 sm:p-4">
-        {status === 'searching' && totalCount === 0 && (
-          <div className="space-y-2">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="h-10 animate-pulse rounded-lg border border-gray-200 bg-gray-50" />
-            ))}
-          </div>
-        )}
-
-        {tlds.length > 0 && visibleBaseNames.length > 0 && (
-          <div className="space-y-3">
-            {groupedVisibleBaseNames.map((batch, batchIndex) => (
-              <div key={`batch-${batchIndex}`} className="space-y-1.5">
-                {batchIndex > 0 && (
-                  <div className="flex items-center gap-3 py-1">
-                    <div className="h-px flex-1 bg-gray-200" />
-                    <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">Next batch</span>
-                    <div className="h-px flex-1 bg-gray-200" />
-                  </div>
-                )}
-                {batch.map((baseName) => (
-                  <div
-                    key={baseName}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-2 sm:px-3.5"
-                  >
-                    <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
-                      <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">{baseName}</span>
-                      {onGenerateMore && (
-                        <button
-                          type="button"
-                          onClick={() => runVariationSearch(baseName)}
-                          disabled={status === 'searching'}
-                          className="rounded-md border border-gray-300 px-2 py-0.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          Try variations
-                        </button>
-                      )}
-                    </div>
-                    <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-                      {tlds.map((tld) => {
-                        const row = resultMap.get(`${baseName}${tld}`)
-                        const { label, badgeClass } = row
-                          ? statusConfig[row.status]
-                          : {
-                              label: 'Pending',
-                              badgeClass: 'border border-gray-200 bg-gray-100 text-gray-500 font-medium',
-                            }
-                        const domain = row?.fullDomain ?? `${baseName}${tld}`
-                        return (
-                          <div
-                            key={`${baseName}${tld}`}
-                            className="flex flex-col gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 sm:flex-row sm:items-center sm:justify-between"
-                          >
-                            <span className="break-all font-mono text-[13px] leading-tight text-gray-700">{domain}</span>
-                            <span className={`inline-block w-fit rounded-full px-2 py-0.5 text-xs ${badgeClass}`}>
-                              {label}
-                            </span>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {tlds.length > 0 && visibleBaseNames.length === 0 && status !== 'searching' && (
-          <div className="rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500">
-            {showAvailableOnly
-              ? 'No names with availability yet. Try turning off the filter or generating more names.'
-              : 'No results yet.'}
-          </div>
-        )}
-
-        {tlds.length === 0 && (
-          <div className="rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500">
-            Select at least one TLD to view or check results.
-          </div>
-        )}
-
-        {showWorkingRow && (
-          <div className="rounded-lg border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-blue-700">
-            <div className="flex items-center gap-2">
-              <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-blue-500" />
-              <span>Working on more names. New rows should appear shortly.</span>
-            </div>
-          </div>
-        )}
-
-        <div ref={newRowsAnchorRef} />
-      </div>
+      <div ref={newRowsAnchorRef} />
 
       {showRefinementCard && (
-        <div className="space-y-4 border-t border-gray-100 bg-gray-50/80 p-4 sm:p-5">
-          {(status === 'done' || status === 'cancelled' || status === 'searching') && onGenerateMore && (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Not quite right? Steer the AI:</label>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <input
-                  ref={hintRef}
-                  type="text"
-                  value={hint}
-                  onChange={(e) => setHint(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && status !== 'searching') {
-                      onGenerateMore(hint)
-                    }
-                  }}
-                  placeholder="e.g. shorter, more playful, finance-focused"
-                  disabled={status === 'searching'}
-                  className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    onGenerateMore(hint)
-                  }}
-                  disabled={status === 'searching'}
-                  className={secondaryButtonClass}
-                >
-                  {status === 'searching' ? 'Generating and verifying names...' : 'Generate more names'}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {onCheckCustom && tlds.length > 0 && (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Add your own idea:</label>
-              <form onSubmit={handleCustomSubmit} className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <input
-                  type="text"
-                  value={customInput}
-                  onChange={(e) => setCustomInput(e.target.value)}
-                  placeholder="e.g. myapp"
-                  disabled={isCheckingCustom}
-                  className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"
-                />
-                <button
-                  type="submit"
-                  disabled={!customInput.trim() || isCheckingCustom}
-                  className={secondaryButtonClass}
-                >
-                  {isCheckingCustom ? 'Checking...' : 'Check availability'}
-                </button>
-              </form>
-            </div>
-          )}
-        </div>
+        <RefinementCard
+          status={status}
+          tlds={tlds}
+          hint={hint}
+          customInput={customInput}
+          isCheckingCustom={isCheckingCustom}
+          onHintChange={setHint}
+          onCustomInputChange={setCustomInput}
+          onGenerateMore={onGenerateMore}
+          onCheckCustom={onCheckCustom}
+          hintRef={hintRef}
+        />
       )}
 
-      {isClearConfirmOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/45 p-4 backdrop-blur-[1px]"
-          onClick={handleCancelClear}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="clear-results-title"
-            aria-describedby="clear-results-description"
-            className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h3 id="clear-results-title" className="text-base font-semibold text-gray-900">
-              Clear all results?
-            </h3>
-            <p id="clear-results-description" className="mt-2 text-sm leading-relaxed text-gray-600">
-              This will remove all generated and checked domains from the current session.
-            </p>
-            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                onClick={handleCancelClear}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmClear}
-                className="rounded-lg border border-red-300 bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700"
-              >
-                Clear results
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ClearResultsModal
+        isOpen={isClearConfirmOpen}
+        onCancel={() => setIsClearConfirmOpen(false)}
+        onConfirm={() => {
+          if (!onClear) return
+          setIsClearConfirmOpen(false)
+          onClear()
+        }}
+      />
     </div>
   )
 }

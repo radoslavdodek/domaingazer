@@ -1,13 +1,6 @@
-export type TLD =
-  | '.com'
-  | '.io'
-  | '.ai'
-  | '.app'
-  | '.dev'
-  | '.co'
-  | '.net'
-  | '.shop'
-  | '.store'
+export const ALL_TLDS = ['.com', '.io', '.ai', '.app', '.dev', '.co', '.net', '.shop', '.store'] as const
+
+export type TLD = (typeof ALL_TLDS)[number]
 
 export type DomainStatus =
   | 'CHECKING'

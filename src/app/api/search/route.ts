@@ -4,6 +4,8 @@ import { generateDomainNames } from '@/lib/openai'
 import { checkDomain } from '@/lib/route53'
 import type { DomainResult, SseEvent, TLD } from '@/lib/types'
 
+const DEFAULT_SEARCH_TLDS: TLD[] = ['.com', '.io']
+
 function createLimiter(concurrency: number) {
   let running = 0
   const queue: (() => void)[] = []
@@ -37,7 +39,7 @@ function encodeEvent(event: SseEvent): string {
 export async function POST(request: Request) {
   const body = (await request.json()) as { description?: string; tlds?: TLD[]; exclude?: string[]; hint?: string }
   const description = body.description?.trim() ?? ''
-  const tlds: TLD[] = Array.isArray(body.tlds) ? body.tlds : ['.com', '.io']
+  const tlds: TLD[] = Array.isArray(body.tlds) ? body.tlds : DEFAULT_SEARCH_TLDS
   const exclude: string[] = Array.isArray(body.exclude) ? body.exclude : []
   const hint = body.hint?.trim() || undefined
 
