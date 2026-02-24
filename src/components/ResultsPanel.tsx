@@ -46,8 +46,10 @@ export function ResultsPanel({
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
   const [customInput, setCustomInput] = useState('')
   const [hint, setHint] = useState('')
+  const [statusRowHeight, setStatusRowHeight] = useState(0)
   const hintRef = useRef<HTMLInputElement>(null)
   const newRowsAnchorRef = useRef<HTMLDivElement>(null)
+  const statusRowRef = useRef<HTMLDivElement>(null)
   const prevStatusRef = useRef(status)
   const prevBaseNameCountRef = useRef(0)
   const autoScrollNewRowsRef = useRef(false)
@@ -83,6 +85,35 @@ export function ResultsPanel({
     prevStatusRef.current = status
     prevBaseNameCountRef.current = baseNameCount
   }, [status, results.length, baseNameCount])
+
+  useEffect(() => {
+    const statusRow = statusRowRef.current
+    if (!statusRow) return
+
+    const updateHeight = () => {
+      const nextHeight = Math.ceil(statusRow.getBoundingClientRect().height)
+      setStatusRowHeight((prevHeight) => (prevHeight === nextHeight ? prevHeight : nextHeight))
+    }
+
+    updateHeight()
+
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', updateHeight)
+      return () => {
+        window.removeEventListener('resize', updateHeight)
+      }
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateHeight()
+    })
+
+    resizeObserver.observe(statusRow)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [])
 
   const handleCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -152,11 +183,16 @@ export function ResultsPanel({
   return (
     <div className="space-y-4">
       {/* Status bar + Filter */}
-      <div className="flex flex-col gap-3 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        ref={statusRowRef}
+        className="sticky top-0 z-30 flex flex-col gap-3 bg-white/95 py-2 text-sm text-gray-600 backdrop-blur supports-[backdrop-filter]:bg-white/80 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div className="flex min-w-0 items-center gap-3">
           {status === 'searching' && (
+          <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          )}
+          {(status === 'searching' || status === 'done') && (
             <>
-              <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               <span>
                 {totalCount > 0 ? `${checkedCount} / ${totalCount} checked` : 'Generating and checking names'}
                 {availableCount > 0 && (
@@ -164,11 +200,6 @@ export function ResultsPanel({
                 )}
               </span>
             </>
-          )}
-          {status === 'done' && (
-            <span className="text-gray-500">
-              Done — {availableCount} available out of {results.length} checked
-            </span>
           )}
           {status === 'cancelled' && (
             <span className="text-gray-500">
@@ -216,10 +247,14 @@ export function ResultsPanel({
         <div>
           <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
             <table className="w-full text-sm border-collapse">
-              <thead className="sticky top-0 z-10 bg-white">
+              <thead className="bg-white">
                 <tr className="border-b border-gray-100">
                   {tlds.map((tld) => (
-                    <th key={tld} className="px-3 py-3 text-left font-medium text-gray-500 sm:px-4">
+                    <th
+                      key={tld}
+                      className="sticky z-20 border-b border-gray-100 bg-white px-3 py-3 text-left font-medium text-gray-500 sm:px-4"
+                      style={{ top: `${statusRowHeight}px` }}
+                    >
                       {tld}
                     </th>
                   ))}
