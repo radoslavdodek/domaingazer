@@ -16,7 +16,7 @@ interface ResultsPanelProps {
 }
 
 const statusConfig: Record<DomainStatus, { label: string; badgeClass: string }> = {
-  CHECKING: { label: 'Checking', badgeClass: 'border border-gray-200 bg-gray-100 text-gray-600 font-medium' },
+  CHECKING: { label: 'Checking', badgeClass: 'border border-gray-200 bg-gray-100 text-gray-600 font-medium animate-pulse' },
   STOPPED: { label: 'Stopped', badgeClass: 'border border-gray-200 bg-gray-100 text-gray-600 font-medium' },
   AVAILABLE: { label: 'AVAILABLE', badgeClass: 'border border-green-200 bg-green-100 text-green-800 font-bold' },
   UNAVAILABLE: { label: 'TAKEN', badgeClass: 'border border-red-200 bg-red-50 text-red-700 font-semibold' },

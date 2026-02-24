@@ -9,7 +9,7 @@ interface DomainRowProps {
 const statusConfig: Record<DomainStatus, { label: string; className: string }> = {
   CHECKING: {
     label: 'Checking…',
-    className: 'bg-gray-100 text-gray-500',
+    className: 'bg-gray-100 text-gray-500 animate-pulse',
   },
   STOPPED: {
     label: 'Stopped',
