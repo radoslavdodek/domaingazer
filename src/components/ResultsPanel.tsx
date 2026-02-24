@@ -69,7 +69,13 @@ export function ResultsPanel({
 
     if (prevStatus === 'searching' && status !== 'searching') {
       requestAnimationFrame(() => {
-        hintRef.current?.focus()
+        const hintInput = hintRef.current
+        if (!hintInput) return
+        try {
+          hintInput.focus({ preventScroll: true })
+        } catch {
+          hintInput.focus()
+        }
       })
     }
 
@@ -240,37 +246,37 @@ export function ResultsPanel({
         </div>
       </div>
 
-      <div className="space-y-3 p-4 sm:p-5">
+      <div className="space-y-2 p-3 sm:p-4">
         {status === 'searching' && totalCount === 0 && (
           <div className="space-y-2">
             {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="h-12 animate-pulse rounded-lg border border-gray-200 bg-gray-50" />
+              <div key={index} className="h-10 animate-pulse rounded-lg border border-gray-200 bg-gray-50" />
             ))}
           </div>
         )}
 
         {tlds.length > 0 && visibleBaseNames.length > 0 && (
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {visibleBaseNames.map((baseName) => {
               return (
                 <div
                   key={baseName}
-                  className="rounded-lg border border-gray-200 bg-white px-3 py-3 sm:px-4"
+                  className="rounded-lg border border-gray-200 bg-white px-3 py-2 sm:px-3.5"
                 >
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <span className="break-all font-mono font-medium text-gray-900">{baseName}</span>
+                  <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+                    <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">{baseName}</span>
                     {onGenerateMore && (
                       <button
                         type="button"
                         onClick={() => runVariationSearch(baseName)}
                         disabled={status === 'searching'}
-                        className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="rounded-md border border-gray-300 px-2 py-0.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         Try variations
                       </button>
                     )}
                   </div>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
                     {tlds.map((tld) => {
                       const row = resultMap.get(`${baseName}${tld}`)
                       const { label, badgeClass } = row
@@ -283,9 +289,9 @@ export function ResultsPanel({
                       return (
                         <div
                           key={`${baseName}${tld}`}
-                          className="flex flex-col gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                          className="flex flex-col gap-1.5 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1.5 sm:flex-row sm:items-center sm:justify-between"
                         >
-                          <span className="break-all font-mono text-sm text-gray-700">{domain}</span>
+                          <span className="break-all font-mono text-[13px] leading-tight text-gray-700">{domain}</span>
                           <span className={`inline-block w-fit rounded-full px-2 py-0.5 text-xs ${badgeClass}`}>
                             {label}
                           </span>

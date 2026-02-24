@@ -76,7 +76,7 @@ export function SearchForm({ isSearching, onSearch, onCancel, onTldsChange }: Se
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Select TLDs
+          Select top level domains to check:
         </label>
         <TldSelector
           selected={tlds}
