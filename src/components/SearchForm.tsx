@@ -36,7 +36,7 @@ export function SearchForm({ isSearching, onSearch, onCancel, onTldsChange }: Se
     try { localStorage.setItem(LS_TLDS, JSON.stringify(tlds)) } catch { /* ignore */ }
   }, [tlds])
 
-  const canSubmit = description.trim().length >= 5
+  const canSubmit = description.trim().length >= 5 && tlds.length > 0
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -61,13 +61,16 @@ export function SearchForm({ isSearching, onSearch, onCancel, onTldsChange }: Se
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="e.g. An AI-powered coding assistant for developers"
-          rows={3}
+          placeholder="e.g. Web and mobile app for helping early-stage teams generate, evaluate, and buy brandable startup domains"
+          rows={4}
           disabled={isSearching}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500 resize-none"
+          className="w-full min-h-[120px] resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
         />
         {description.length > 0 && description.trim().length < 5 && (
           <p className="text-xs text-red-500 mt-1">Please enter at least 5 characters</p>
+        )}
+        {tlds.length === 0 && (
+          <p className="mt-1 text-xs text-red-500">Select at least one TLD</p>
         )}
       </div>
 
