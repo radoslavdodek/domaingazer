@@ -27,6 +27,5 @@ export interface DomainResult {
 
 export type SseEvent =
   | { type: 'domain_result'; data: DomainResult }
-  | { type: 'round_start'; round: number }
   | { type: 'done' }
   | { type: 'error'; message: string }

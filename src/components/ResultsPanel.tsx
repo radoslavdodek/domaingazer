@@ -6,7 +6,6 @@ import type { DomainResult, DomainStatus, TLD } from '@/lib/types'
 interface ResultsPanelProps {
   results: DomainResult[]
   status: 'idle' | 'searching' | 'done' | 'cancelled' | 'error'
-  currentRound: number
   errorMessage: string | null
   tlds: TLD[]
   isCheckingCustom?: boolean
@@ -26,10 +25,16 @@ const statusConfig: Record<DomainStatus, { label: string; cellClass: string }> =
   ERROR: { label: 'Error', cellClass: 'text-orange-400' },
 }
 
+function escapeCsvValue(value: string): string {
+  if (/["\n,]/.test(value)) {
+    return `"${value.replace(/"/g, '""')}"`
+  }
+  return value
+}
+
 export function ResultsPanel({
   results,
   status,
-  currentRound,
   errorMessage,
   tlds,
   isCheckingCustom,
@@ -42,18 +47,10 @@ export function ResultsPanel({
   const [customInput, setCustomInput] = useState('')
   const [hint, setHint] = useState('')
   const hintRef = useRef<HTMLInputElement>(null)
-  const refocusHint = useRef(false)
   const newRowsAnchorRef = useRef<HTMLDivElement>(null)
   const prevStatusRef = useRef(status)
   const prevBaseNameCountRef = useRef(0)
   const autoScrollNewRowsRef = useRef(false)
-
-  useEffect(() => {
-    if (refocusHint.current && status !== 'searching') {
-      refocusHint.current = false
-      hintRef.current?.focus()
-    }
-  }, [status])
 
   // Collect unique base names in order of first appearance
   const allBaseNames = Array.from(new Set(results.map((r) => r.baseName)))
@@ -68,6 +65,13 @@ export function ResultsPanel({
       autoScrollNewRowsRef.current = results.length > 0
     } else if (status !== 'searching') {
       autoScrollNewRowsRef.current = false
+    }
+
+    // Once verification finishes, return focus to the steering input.
+    if (prevStatus === 'searching' && status !== 'searching') {
+      requestAnimationFrame(() => {
+        hintRef.current?.focus()
+      })
     }
 
     if (autoScrollNewRowsRef.current && status === 'searching' && baseNameCount > prevBaseNameCount) {
@@ -106,6 +110,44 @@ export function ResultsPanel({
       )
     : allBaseNames
   const showWorkingRow = status === 'searching' && Boolean(isWaitingForNewRows)
+  const canExport =
+    baseNames.length > 0 &&
+    tlds.length > 0 &&
+    baseNames.every((baseName) =>
+      tlds.every((tld) => {
+        const result = resultMap.get(`${baseName}${tld}`)
+        return Boolean(result) && result.status !== 'CHECKING' && result.status !== 'STOPPED'
+      })
+    )
+
+  const handleExportCsv = () => {
+    if (!canExport) return
+
+    const rows = baseNames.map((baseName) =>
+      tlds.map((tld) => {
+        const result = resultMap.get(`${baseName}${tld}`)
+        if (!result) return '—'
+        const { label } = statusConfig[result.status]
+        return `${result.fullDomain} (${label})`
+      })
+    )
+
+    const csvLines = [tlds, ...rows]
+      .map((row) => row.map((cell) => escapeCsvValue(cell)).join(','))
+      .join('\n')
+
+    const blob = new Blob([`\uFEFF${csvLines}`], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+
+    link.href = url
+    link.download = `domain-results-${timestamp}.csv`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className="space-y-4">
@@ -116,10 +158,7 @@ export function ResultsPanel({
             <>
               <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               <span>
-                Round {currentRound}
-                {totalCount > 0 && (
-                  <> · {checkedCount} / {totalCount} checked</>
-                )}
+                {totalCount > 0 ? `${checkedCount} / ${totalCount} checked` : 'Generating and checking names'}
                 {availableCount > 0 && (
                   <span className="text-green-600 font-medium"> · {availableCount} available</span>
                 )}
@@ -153,12 +192,21 @@ export function ResultsPanel({
             </label>
           )}
           {onClear && (
-            <button
-              onClick={onClear}
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              Clear results
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={onClear}
+                className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                Clear results
+              </button>
+              <button
+                onClick={handleExportCsv}
+                disabled={!canExport}
+                className="text-sm text-gray-400 transition-colors hover:text-gray-600 disabled:cursor-not-allowed disabled:text-gray-300"
+              >
+                Export
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -250,7 +298,7 @@ export function ResultsPanel({
             type="text"
             value={hint}
             onChange={(e) => setHint(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter' && status !== 'searching') { refocusHint.current = true; onGenerateMore(hint) } }}
+            onKeyDown={(e) => { if (e.key === 'Enter' && status !== 'searching') { onGenerateMore(hint) } }}
             placeholder="Steer AI: e.g. short, techy, playful…"
             disabled={status === 'searching'}
             className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"

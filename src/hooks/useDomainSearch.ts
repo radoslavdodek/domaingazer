@@ -8,7 +8,6 @@ type SearchStatus = 'idle' | 'searching' | 'done' | 'cancelled' | 'error'
 interface DomainSearchState {
   results: DomainResult[]
   status: SearchStatus
-  currentRound: number
   errorMessage: string | null
   isWaitingForNewRows: boolean
 }
@@ -25,7 +24,6 @@ export function useDomainSearch() {
   const [state, setState] = useState<DomainSearchState>({
     results: [],
     status: 'idle',
-    currentRound: 0,
     errorMessage: null,
     isWaitingForNewRows: false,
   })
@@ -60,7 +58,6 @@ export function useDomainSearch() {
     setState((prev) => ({
       results: appendResults ? prev.results : [],
       status: 'searching',
-      currentRound: appendResults ? prev.currentRound : 1,
       errorMessage: null,
       isWaitingForNewRows: true,
     }))
@@ -119,12 +116,7 @@ export function useDomainSearch() {
           try {
             const event = JSON.parse(line.slice(6)) as SseEvent
 
-            if (event.type === 'round_start') {
-              setState((prev) => {
-                if (isStale()) return prev
-                return { ...prev, currentRound: event.round }
-              })
-            } else if (event.type === 'domain_result') {
+            if (event.type === 'domain_result') {
               setState((prev) => {
                 if (isStale()) return prev
                 const existingIndex = prev.results.findIndex(
@@ -192,9 +184,9 @@ export function useDomainSearch() {
     generationRef.current++
     cancelGenerationRef.current++
     abortRef.current?.abort()
-    for (const controller of pendingControllersRef.current) {
+    pendingControllersRef.current.forEach((controller) => {
       controller.abort()
-    }
+    })
     pendingControllersRef.current.clear()
     // Freeze the current state and mark in-flight checks as stopped.
     setState((prev) => ({
@@ -369,11 +361,11 @@ export function useDomainSearch() {
     generationRef.current++
     cancelGenerationRef.current++
     abortRef.current?.abort()
-    for (const controller of pendingControllersRef.current) {
+    pendingControllersRef.current.forEach((controller) => {
       controller.abort()
-    }
+    })
     pendingControllersRef.current.clear()
-    setState({ results: [], status: 'idle', currentRound: 0, errorMessage: null, isWaitingForNewRows: false })
+    setState({ results: [], status: 'idle', errorMessage: null, isWaitingForNewRows: false })
     setIsCheckingCustom(false)
   }, [])
 

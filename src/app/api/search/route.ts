@@ -60,55 +60,62 @@ export async function POST(request: Request) {
       }
 
       const limit = createLimiter(3)
-      const seenNames: string[] = [...exclude]
-      const MAX_ROUNDS = 5
+      const normalizedExclude = Array.from(new Set(exclude.map((name) => name.trim().toLowerCase()).filter(Boolean)))
+      const seenNames = new Set(normalizedExclude)
+      const generatedNames: string[] = []
+      const generatedNameSet = new Set<string>()
+      const TARGET_NAME_COUNT = 10
+      const MAX_GENERATION_ATTEMPTS = 6
 
       try {
-        for (let round = 1; round <= MAX_ROUNDS; round++) {
-          if (signal.aborted) break
-          emit({ type: 'round_start', round })
-
-          const rawNames = await generateDomainNames(description, seenNames, signal, hint)
-          if (signal.aborted) break
-          const names = rawNames.filter((n) => !seenNames.includes(n))
-          seenNames.push(...names)
-
-          // Build all (name, tld) pairs
-          const pairs: { baseName: string; tld: TLD; fullDomain: string }[] = []
-          for (const name of names) {
-            for (const tld of tlds) {
-              pairs.push({ baseName: name, tld, fullDomain: `${name}${tld}` })
-            }
-          }
-
-          // Emit CHECKING status for all pairs first
-          const checkingResults: DomainResult[] = pairs.map((p) => ({
-            ...p,
-            status: 'CHECKING',
-          }))
-          for (const result of checkingResults) {
-            emit({ type: 'domain_result', data: result })
-          }
-
-          // Check all domains in parallel with concurrency limit
-          let foundAvailable = false
-          await Promise.all(
-            pairs.map((pair) =>
-              limit(async () => {
-                if (signal.aborted) return
-                const status = await checkDomain(pair.fullDomain, signal)
-                if (signal.aborted) return
-                const result: DomainResult = { ...pair, status }
-                emit({ type: 'domain_result', data: result })
-                if (status === 'AVAILABLE') {
-                  foundAvailable = true
-                }
-              })
-            )
+        for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
+          if (signal.aborted || generatedNames.length >= TARGET_NAME_COUNT) break
+          const remaining = TARGET_NAME_COUNT - generatedNames.length
+          const rawNames = await generateDomainNames(
+            description,
+            [...normalizedExclude, ...generatedNames],
+            remaining,
+            signal,
+            hint
           )
-
-          if (signal.aborted || foundAvailable) break
+          if (signal.aborted) break
+          for (const name of rawNames) {
+            if (seenNames.has(name) || generatedNameSet.has(name)) continue
+            generatedNames.push(name)
+            generatedNameSet.add(name)
+            if (generatedNames.length >= TARGET_NAME_COUNT) break
+          }
         }
+
+        // Build all (name, tld) pairs
+        const pairs: { baseName: string; tld: TLD; fullDomain: string }[] = []
+        for (const name of generatedNames) {
+          for (const tld of tlds) {
+            pairs.push({ baseName: name, tld, fullDomain: `${name}${tld}` })
+          }
+        }
+
+        // Emit CHECKING status for all pairs first
+        const checkingResults: DomainResult[] = pairs.map((p) => ({
+          ...p,
+          status: 'CHECKING',
+        }))
+        for (const result of checkingResults) {
+          emit({ type: 'domain_result', data: result })
+        }
+
+        // Check all domains in parallel with concurrency limit
+        await Promise.all(
+          pairs.map((pair) =>
+            limit(async () => {
+              if (signal.aborted) return
+              const status = await checkDomain(pair.fullDomain, signal)
+              if (signal.aborted) return
+              const result: DomainResult = { ...pair, status }
+              emit({ type: 'domain_result', data: result })
+            })
+          )
+        )
 
         if (!signal.aborted) emit({ type: 'done' })
       } catch (err) {
