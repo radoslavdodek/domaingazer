@@ -10,6 +10,7 @@ interface ResultsPanelProps {
   errorMessage: string | null
   tlds: TLD[]
   isCheckingCustom?: boolean
+  isWaitingForNewRows?: boolean
   onGenerateMore?: (hint: string) => void
   onCheckCustom?: (baseName: string) => void
   onClear?: () => void
@@ -25,7 +26,18 @@ const statusConfig: Record<DomainStatus, { label: string; cellClass: string }> =
   ERROR: { label: 'Error', cellClass: 'text-orange-400' },
 }
 
-export function ResultsPanel({ results, status, currentRound, errorMessage, tlds, isCheckingCustom, onGenerateMore, onCheckCustom, onClear }: ResultsPanelProps) {
+export function ResultsPanel({
+  results,
+  status,
+  currentRound,
+  errorMessage,
+  tlds,
+  isCheckingCustom,
+  isWaitingForNewRows,
+  onGenerateMore,
+  onCheckCustom,
+  onClear,
+}: ResultsPanelProps) {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
   const [customInput, setCustomInput] = useState('')
   const [hint, setHint] = useState('')
@@ -67,6 +79,7 @@ export function ResultsPanel({ results, status, currentRound, errorMessage, tlds
         })
       )
     : allBaseNames
+  const showWorkingRow = status === 'searching' && Boolean(isWaitingForNewRows)
 
   return (
     <div className="space-y-4">
@@ -125,7 +138,7 @@ export function ResultsPanel({ results, status, currentRound, errorMessage, tlds
       </div>
 
       {/* Table */}
-      {baseNames.length > 0 && tlds.length > 0 && (
+      {(baseNames.length > 0 || showWorkingRow) && tlds.length > 0 && (
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full text-sm border-collapse">
             <thead className="sticky top-0 z-10 bg-white">
@@ -164,6 +177,16 @@ export function ResultsPanel({ results, status, currentRound, errorMessage, tlds
                   })}
                 </tr>
               ))}
+              {showWorkingRow && (
+                <tr className="border-b border-gray-50 last:border-0 bg-blue-50/40">
+                  <td colSpan={tlds.length} className="px-4 py-3 text-sm text-blue-700">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                      <span>Working on more names. New rows should appear shortly.</span>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

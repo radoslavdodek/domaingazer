@@ -10,6 +10,7 @@ interface DomainSearchState {
   status: SearchStatus
   currentRound: number
   errorMessage: string | null
+  isWaitingForNewRows: boolean
 }
 
 // A promise that resolves with { done: true } as soon as the given AbortSignal fires.
@@ -26,6 +27,7 @@ export function useDomainSearch() {
     status: 'idle',
     currentRound: 0,
     errorMessage: null,
+    isWaitingForNewRows: false,
   })
   const [isCheckingCustom, setIsCheckingCustom] = useState(false)
 
@@ -60,6 +62,7 @@ export function useDomainSearch() {
       status: 'searching',
       currentRound: appendResults ? prev.currentRound : 1,
       errorMessage: null,
+      isWaitingForNewRows: true,
     }))
 
     try {
@@ -127,22 +130,27 @@ export function useDomainSearch() {
                 const existingIndex = prev.results.findIndex(
                   (r) => r.fullDomain === event.data.fullDomain
                 )
+                const hasBaseName = prev.results.some((r) => r.baseName === event.data.baseName)
                 if (existingIndex >= 0) {
                   const updated = [...prev.results]
                   updated[existingIndex] = event.data
                   return { ...prev, results: updated }
                 }
-                return { ...prev, results: [...prev.results, event.data] }
+                return {
+                  ...prev,
+                  results: [...prev.results, event.data],
+                  isWaitingForNewRows: hasBaseName ? prev.isWaitingForNewRows : false,
+                }
               })
             } else if (event.type === 'done') {
               setState((prev) => {
                 if (isStale()) return prev
-                return { ...prev, status: 'done' }
+                return { ...prev, status: 'done', isWaitingForNewRows: false }
               })
             } else if (event.type === 'error') {
               setState((prev) => {
                 if (isStale()) return prev
-                return { ...prev, status: 'error', errorMessage: event.message }
+                return { ...prev, status: 'error', errorMessage: event.message, isWaitingForNewRows: false }
               })
             }
           } catch {
@@ -157,6 +165,7 @@ export function useDomainSearch() {
         ...prev,
         status: 'error',
         errorMessage: err instanceof Error ? err.message : 'Unknown error',
+        isWaitingForNewRows: false,
       }))
     } finally {
       pendingControllersRef.current.delete(controller)
@@ -191,6 +200,7 @@ export function useDomainSearch() {
     setState((prev) => ({
       ...prev,
       status: 'cancelled',
+      isWaitingForNewRows: false,
       results: prev.results.map((result) => (
         result.status === 'CHECKING'
           ? { ...result, status: 'STOPPED' as DomainStatus }
@@ -363,7 +373,7 @@ export function useDomainSearch() {
       controller.abort()
     }
     pendingControllersRef.current.clear()
-    setState({ results: [], status: 'idle', currentRound: 0, errorMessage: null })
+    setState({ results: [], status: 'idle', currentRound: 0, errorMessage: null, isWaitingForNewRows: false })
     setIsCheckingCustom(false)
   }, [])
 
