@@ -7,7 +7,7 @@ import { useDomainSearch } from '@/hooks/useDomainSearch'
 import type { TLD } from '@/lib/types'
 
 export default function Home() {
-  const { results, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
+  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
 
   const handleSearch = (description: string, tlds: TLD[]) => {
@@ -52,6 +52,7 @@ export default function Home() {
 
       <ResultsPanel
         results={results}
+        nameBatches={nameBatches}
         status={status}
         errorMessage={errorMessage}
         tlds={selectedTlds}

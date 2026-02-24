@@ -7,6 +7,7 @@ type SearchStatus = 'idle' | 'searching' | 'done' | 'cancelled' | 'error'
 
 interface DomainSearchState {
   results: DomainResult[]
+  nameBatches: string[][]
   status: SearchStatus
   errorMessage: string | null
   isWaitingForNewRows: boolean
@@ -23,6 +24,7 @@ function makeAbortDone(signal: AbortSignal): Promise<ReadableStreamReadResult<Ui
 export function useDomainSearch() {
   const [state, setState] = useState<DomainSearchState>({
     results: [],
+    nameBatches: [],
     status: 'idle',
     errorMessage: null,
     isWaitingForNewRows: false,
@@ -33,6 +35,7 @@ export function useDomainSearch() {
   const pendingControllersRef = useRef<Set<AbortController>>(new Set())
   const generationRef = useRef(0)
   const cancelGenerationRef = useRef(0)
+  const lastBatchIndexRef = useRef(-1)
   const lastDescriptionRef = useRef<string>('')
   const lastTldsRef = useRef<TLD[]>([])
 
@@ -55,8 +58,14 @@ export function useDomainSearch() {
       || cancelGenerationRef.current !== cancelGeneration
     )
 
+    const batchIndex = appendResults ? lastBatchIndexRef.current + 1 : 0
+    lastBatchIndexRef.current = batchIndex
+
     setState((prev) => ({
       results: appendResults ? prev.results : [],
+      nameBatches: appendResults
+        ? prev.nameBatches.map((batch) => [...batch]).concat([[]])
+        : [[]],
       status: 'searching',
       errorMessage: null,
       isWaitingForNewRows: true,
@@ -123,14 +132,23 @@ export function useDomainSearch() {
                   (r) => r.fullDomain === event.data.fullDomain
                 )
                 const hasBaseName = prev.results.some((r) => r.baseName === event.data.baseName)
+                let nextNameBatches = prev.nameBatches
+                if (!hasBaseName) {
+                  nextNameBatches = prev.nameBatches.map((batch) => [...batch])
+                  if (!nextNameBatches[batchIndex]) nextNameBatches[batchIndex] = []
+                  if (!nextNameBatches[batchIndex].includes(event.data.baseName)) {
+                    nextNameBatches[batchIndex].push(event.data.baseName)
+                  }
+                }
                 if (existingIndex >= 0) {
                   const updated = [...prev.results]
                   updated[existingIndex] = event.data
-                  return { ...prev, results: updated }
+                  return { ...prev, results: updated, nameBatches: nextNameBatches }
                 }
                 return {
                   ...prev,
                   results: [...prev.results, event.data],
+                  nameBatches: nextNameBatches,
                   isWaitingForNewRows: hasBaseName ? prev.isWaitingForNewRows : false,
                 }
               })
@@ -289,6 +307,8 @@ export function useDomainSearch() {
     setState((prev) => {
       if (isCancelled()) return prev
       const next = [...prev.results]
+      const hasBaseName = prev.results.some((r) => r.baseName === baseName)
+      let nextNameBatches = prev.nameBatches
       for (const tld of tlds) {
         const fullDomain = `${baseName}${tld}`
         const placeholder: DomainResult = { baseName, tld, fullDomain, status: 'CHECKING' as DomainStatus }
@@ -299,7 +319,15 @@ export function useDomainSearch() {
           next.push(placeholder)
         }
       }
-      return { ...prev, results: next }
+      if (!hasBaseName) {
+        nextNameBatches = prev.nameBatches.map((batch) => [...batch])
+        if (nextNameBatches.length === 0) nextNameBatches = [[]]
+        const lastIndex = nextNameBatches.length - 1
+        if (!nextNameBatches[lastIndex].includes(baseName)) {
+          nextNameBatches[lastIndex].push(baseName)
+        }
+      }
+      return { ...prev, results: next, nameBatches: nextNameBatches }
     })
 
     setIsCheckingCustom(true)
@@ -365,7 +393,8 @@ export function useDomainSearch() {
       controller.abort()
     })
     pendingControllersRef.current.clear()
-    setState({ results: [], status: 'idle', errorMessage: null, isWaitingForNewRows: false })
+    lastBatchIndexRef.current = -1
+    setState({ results: [], nameBatches: [], status: 'idle', errorMessage: null, isWaitingForNewRows: false })
     setIsCheckingCustom(false)
   }, [])
 
