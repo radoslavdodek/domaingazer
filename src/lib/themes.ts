@@ -130,7 +130,7 @@ export const classicTheme: Theme = {
     rowAvailable: 'border-green-200 bg-green-50',
     textDefault: 'text-gray-700',
     textAvailable: 'font-semibold text-green-800',
-    compactRowDefault: 'border-gray-200 bg-white',
+    compactRowDefault: 'border-gray-200 bg-gray-50',
     compactRowAvailable: 'border-green-200 bg-green-50',
     compactText: 'text-gray-700',
   },
