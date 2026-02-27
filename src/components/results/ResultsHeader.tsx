@@ -1,4 +1,5 @@
 import type { TLD } from '@/lib/types'
+import { useTheme } from '@/contexts/ThemeContext'
 import type { SearchStatus } from './types'
 
 interface ResultsHeaderProps {
@@ -32,27 +33,32 @@ export function ResultsHeader({
   onExport,
   canExport,
 }: ResultsHeaderProps) {
+  const { theme } = useTheme()
+
   return (
-    <div className="sticky top-0 z-30 border-b border-gray-100 bg-white/95 p-4 text-sm text-gray-600 backdrop-blur supports-[backdrop-filter]:bg-white/85 sm:p-5">
+    <div className={theme.resultsHeader.wrapper}>
       <div className="flex min-w-0 items-center gap-3">
         {status === 'searching' && (
-          <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-blue-500" />
+          <span className="relative inline-block h-2.5 w-2.5">
+            <span className={theme.resultsHeader.searchingPing} />
+            <span className={theme.resultsHeader.searchingDot} />
+          </span>
         )}
         {(status === 'searching' || status === 'done') && (
           <span>
             {totalCount > 0 ? `${checkedCount} / ${totalCount} domains checked` : 'Generating and checking domains...'}
             {availableCount > 0 && (
-              <span className="font-semibold text-green-700"> {' '}· {availableCount} available</span>
+              <span className={theme.resultsHeader.availableText}> {' '}· {availableCount} available</span>
             )}
           </span>
         )}
         {status === 'cancelled' && (
-          <span className="text-gray-500">
+          <span className={theme.resultsHeader.cancelledText}>
             Search cancelled. {availableCount} available out of {resultsCount} checked.
           </span>
         )}
         {status === 'error' && (
-          <span className="text-red-600">Error: {errorMessage}</span>
+          <span className={theme.resultsHeader.errorText}>Error: {errorMessage}</span>
         )}
       </div>
 
@@ -61,7 +67,7 @@ export function ResultsHeader({
           {tlds.map((tld) => (
             <span
               key={tld}
-              className="rounded-full border border-gray-300 bg-gray-50 px-3 py-1 text-sm font-medium text-gray-700"
+              className={theme.resultsHeader.tldPill}
             >
               {tld} ({tldCounts[tld] ?? 0})
             </span>
@@ -76,7 +82,7 @@ export function ResultsHeader({
               type="checkbox"
               checked={showAvailableOnly}
               onChange={(event) => onShowAvailableOnlyChange(event.target.checked)}
-              className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-blue-600"
+              className={theme.resultsHeader.checkboxAccent}
             />
             Show available only
           </label>
@@ -86,7 +92,7 @@ export function ResultsHeader({
             <button
               type="button"
               onClick={onClear}
-              className="text-sm text-gray-600 transition-colors hover:text-gray-900"
+              className={theme.resultsHeader.actionLink}
             >
               Clear results
             </button>
@@ -94,7 +100,7 @@ export function ResultsHeader({
               type="button"
               onClick={onExport}
               disabled={!canExport}
-              className="text-sm text-gray-600 transition-colors hover:text-gray-900 disabled:cursor-not-allowed disabled:text-gray-400"
+              className={theme.resultsHeader.actionLinkDisabled}
             >
               Export
             </button>

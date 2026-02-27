@@ -1,8 +1,7 @@
 import type { RefObject } from 'react'
 import type { TLD } from '@/lib/types'
+import { useTheme } from '@/contexts/ThemeContext'
 import type { SearchStatus } from './types'
-
-const secondaryButtonClass = 'w-full rounded-lg border border-blue-300 bg-white px-4 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white sm:w-auto'
 
 interface RefinementCardProps {
   status: SearchStatus
@@ -29,11 +28,13 @@ export function RefinementCard({
   onCheckCustom,
   hintRef,
 }: RefinementCardProps) {
+  const { theme } = useTheme()
+
   return (
-    <div className="space-y-4 border-t border-gray-100 bg-gray-50/80 p-4 sm:p-5">
+    <div className={theme.refinementCard.wrapper}>
       {(status === 'done' || status === 'cancelled' || status === 'searching') && onGenerateMore && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Not quite right? Steer the AI:</label>
+          <label className={theme.refinementCard.label}>Not quite right? Steer the AI:</label>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <input
               ref={hintRef}
@@ -47,7 +48,7 @@ export function RefinementCard({
               }}
               placeholder="e.g. shorter, more playful, finance-focused"
               disabled={status === 'searching'}
-              className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"
+              className={theme.refinementCard.input}
             />
             <button
               type="button"
@@ -55,7 +56,7 @@ export function RefinementCard({
                 onGenerateMore(hint)
               }}
               disabled={status === 'searching'}
-              className={secondaryButtonClass}
+              className={theme.refinementCard.button}
             >
               {status === 'searching' ? 'Generating and verifying names...' : 'Generate more names'}
             </button>
@@ -65,7 +66,7 @@ export function RefinementCard({
 
       {onCheckCustom && tlds.length > 0 && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Add your own idea:</label>
+          <label className={theme.refinementCard.label}>Add your own idea:</label>
           <form
             onSubmit={(event) => {
               event.preventDefault()
@@ -82,12 +83,12 @@ export function RefinementCard({
               onChange={(event) => onCustomInputChange(event.target.value)}
               placeholder="e.g. myapp"
               disabled={isCheckingCustom}
-              className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"
+              className={theme.refinementCard.input}
             />
             <button
               type="submit"
               disabled={!customInput.trim() || isCheckingCustom}
-              className={secondaryButtonClass}
+              className={theme.refinementCard.button}
             >
               {isCheckingCustom ? 'Checking...' : 'Check availability'}
             </button>

@@ -1,6 +1,7 @@
 'use client'
 
 import { ALL_TLDS, type TLD } from '@/lib/types'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface TldSelectorProps {
   selected: TLD[]
@@ -8,6 +9,8 @@ interface TldSelectorProps {
 }
 
 export function TldSelector({ selected, onChange }: TldSelectorProps) {
+  const { theme } = useTheme()
+
   const toggle = (tld: TLD) => {
     if (selected.includes(tld)) {
       onChange(selected.filter((t) => t !== tld))
@@ -26,10 +29,8 @@ export function TldSelector({ selected, onChange }: TldSelectorProps) {
               key={tld}
               type="button"
               onClick={() => toggle(tld)}
-              className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
-                isSelected
-                  ? 'border-blue-600 bg-blue-600 text-white'
-                  : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-100'
+              className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all ${
+                isSelected ? theme.tldSelector.selected : theme.tldSelector.unselected
               }`}
             >
               {tld}

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DOMAIN_STATUS_LABELS } from '@/lib/domainStatus'
 import type { DomainResult, TLD } from '@/lib/types'
+import { useTheme } from '@/contexts/ThemeContext'
 import { BaseNameGroupList } from './results/BaseNameGroupList'
 import { ClearResultsModal } from './results/ClearResultsModal'
 import { RefinementCard } from './results/RefinementCard'
@@ -41,6 +42,7 @@ export function ResultsPanel({
   onCheckCustom,
   onClear,
 }: ResultsPanelProps) {
+  const { theme } = useTheme()
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
   const [hint, setHint] = useState('')
   const [customInput, setCustomInput] = useState('')
@@ -230,7 +232,7 @@ export function ResultsPanel({
   const showRefinementCard = Boolean(onGenerateMore || onCheckCustom)
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className={theme.resultsPanel.container}>
       <ResultsHeader
         status={status}
         errorMessage={errorMessage}

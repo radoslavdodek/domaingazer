@@ -3,10 +3,13 @@
 import { useState } from 'react'
 import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
+import { useTheme } from '@/contexts/ThemeContext'
 import type { TLD } from '@/lib/types'
 
 export default function Home() {
+  const { theme } = useTheme()
   const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
 
@@ -33,35 +36,40 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-      <div className="mb-8 text-center sm:mb-10">
-        <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">Domain Gazer</h1>
-        <p className="mx-auto max-w-2xl text-sm text-gray-500">
-          Describe your project, pick TLDs, and get AI-generated domain names checked for availability.
-        </p>
-      </div>
+    <div className={theme.layout.body}>
+      <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
+        <div className="mb-10 text-center sm:mb-12">
+          <div className="mb-4 flex justify-center">
+            <ThemeToggle />
+          </div>
+          <h1 className={theme.page.title}>Domain Gazer</h1>
+          <p className={theme.page.subtitle}>
+            Describe your project, pick TLDs, and get AI-generated domain names checked for availability.
+          </p>
+        </div>
 
-      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-        <SearchForm
-          isSearching={status === 'searching'}
-          onSearch={handleSearch}
-          onCancel={cancel}
-          onTldsChange={handleTldsChange}
+        <div className={theme.page.searchCard}>
+          <SearchForm
+            isSearching={status === 'searching'}
+            onSearch={handleSearch}
+            onCancel={cancel}
+            onTldsChange={handleTldsChange}
+          />
+        </div>
+
+        <ResultsPanel
+          results={results}
+          nameBatches={nameBatches}
+          status={status}
+          errorMessage={errorMessage}
+          tlds={selectedTlds}
+          isCheckingCustom={isCheckingCustom}
+          isWaitingForNewRows={isWaitingForNewRows}
+          onGenerateMore={handleGenerateMore}
+          onCheckCustom={checkCustom}
+          onClear={clearResults}
         />
-      </div>
-
-      <ResultsPanel
-        results={results}
-        nameBatches={nameBatches}
-        status={status}
-        errorMessage={errorMessage}
-        tlds={selectedTlds}
-        isCheckingCustom={isCheckingCustom}
-        isWaitingForNewRows={isWaitingForNewRows}
-        onGenerateMore={handleGenerateMore}
-        onCheckCustom={checkCustom}
-        onClear={clearResults}
-      />
-    </main>
+      </main>
+    </div>
   )
 }
