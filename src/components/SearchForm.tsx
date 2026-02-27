@@ -14,9 +14,11 @@ interface SearchFormProps {
   onSearch: (description: string, tlds: TLD[]) => void
   onCancel: () => void
   hideTldSelector?: boolean
+  hasResults?: boolean
+  onClearResults?: () => void
 }
 
-export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = false }: SearchFormProps) {
+export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = false, hasResults = false, onClearResults }: SearchFormProps) {
   const { theme } = useTheme()
   const [description, setDescription] = useState('')
   const [tlds, setTlds] = useState<TLD[]>(DEFAULT_TLDS)
@@ -92,7 +94,7 @@ export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = 
         </div>
       )}
 
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         {isSearching ? (
           <button
             type="button"
@@ -108,6 +110,15 @@ export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = 
             className={theme.searchForm.submitButton}
           >
             Find Domains
+          </button>
+        )}
+        {hasResults && !isSearching && onClearResults && (
+          <button
+            type="button"
+            onClick={onClearResults}
+            className={theme.searchForm.clearButton}
+          >
+            Clear results
           </button>
         )}
       </div>

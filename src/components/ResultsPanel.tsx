@@ -5,7 +5,6 @@ import { DOMAIN_STATUS_LABELS } from '@/lib/domainStatus'
 import { ALL_TLDS, type DomainResult, type TLD } from '@/lib/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import { BaseNameGroupList } from './results/BaseNameGroupList'
-import { ClearResultsModal } from './results/ClearResultsModal'
 import { RefinementCard } from './results/RefinementCard'
 import { ResultsHeader } from './results/ResultsHeader'
 import type { SearchStatus } from './results/types'
@@ -22,7 +21,6 @@ interface ResultsPanelProps {
   onGenerateMore?: (hint: string) => void
   onCheckCustom?: (baseName: string) => void
   onAddTldForBase?: (baseName: string, tld: TLD) => void
-  onClear?: () => void
 }
 
 interface BaseNameExplanation {
@@ -50,13 +48,11 @@ export function ResultsPanel({
   onGenerateMore,
   onCheckCustom,
   onAddTldForBase,
-  onClear,
 }: ResultsPanelProps) {
   const { theme } = useTheme()
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
   const [hint, setHint] = useState('')
   const [customInput, setCustomInput] = useState('')
-  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
   const [explanationsByBaseName, setExplanationsByBaseName] = useState<Record<string, BaseNameExplanation>>({})
   const hintRef = useRef<HTMLInputElement>(null)
   const newRowsAnchorRef = useRef<HTMLDivElement>(null)
@@ -138,25 +134,6 @@ export function ResultsPanel({
     prevStatusRef.current = status
     prevBaseNameCountRef.current = baseNameCount
   }, [status, results.length, baseNameCount, latestBatchStartBaseName])
-
-  useEffect(() => {
-    if (!isClearConfirmOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsClearConfirmOpen(false)
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isClearConfirmOpen])
 
   useEffect(() => {
     setExplanationsByBaseName({})
@@ -324,7 +301,6 @@ export function ResultsPanel({
         tldCounts={tldCounts}
         showAvailableOnly={showAvailableOnly}
         onShowAvailableOnlyChange={setShowAvailableOnly}
-        onClear={onClear ? () => setIsClearConfirmOpen(true) : undefined}
         onExport={handleExportCsv}
         canExport={canExport}
       />
@@ -363,15 +339,6 @@ export function ResultsPanel({
         />
       )}
 
-      <ClearResultsModal
-        isOpen={isClearConfirmOpen}
-        onCancel={() => setIsClearConfirmOpen(false)}
-        onConfirm={() => {
-          if (!onClear) return
-          setIsClearConfirmOpen(false)
-          onClear()
-        }}
-      />
     </div>
   )
 }

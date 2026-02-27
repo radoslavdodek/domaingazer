@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
+import { ClearResultsModal } from '@/components/results/ClearResultsModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -14,6 +15,26 @@ export default function Home() {
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
   const [searchDescription, setSearchDescription] = useState('')
   const [isTldSelectionLocked, setIsTldSelectionLocked] = useState(false)
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
+
+  useEffect(() => {
+    if (!isClearConfirmOpen) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsClearConfirmOpen(false)
+      }
+    }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isClearConfirmOpen])
 
   const handleSearch = (description: string, tlds: TLD[]) => {
     setSelectedTlds(tlds)
@@ -57,6 +78,8 @@ export default function Home() {
             onSearch={handleSearch}
             onCancel={cancel}
             hideTldSelector={isTldSelectionLocked}
+            hasResults={results.length > 0}
+            onClearResults={() => setIsClearConfirmOpen(true)}
           />
         </div>
 
@@ -72,7 +95,15 @@ export default function Home() {
           onGenerateMore={handleGenerateMore}
           onCheckCustom={checkCustom}
           onAddTldForBase={handleAddTldForBase}
-          onClear={handleClear}
+        />
+
+        <ClearResultsModal
+          isOpen={isClearConfirmOpen}
+          onCancel={() => setIsClearConfirmOpen(false)}
+          onConfirm={() => {
+            setIsClearConfirmOpen(false)
+            handleClear()
+          }}
         />
       </main>
     </div>

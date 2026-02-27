@@ -17,6 +17,7 @@ export interface Theme {
     validationText: string
     submitButton: string
     cancelButton: string
+    clearButton: string
   }
   tldSelector: {
     selected: string
@@ -98,6 +99,7 @@ export const classicTheme: Theme = {
     validationText: 'mt-1 text-xs text-red-600',
     submitButton: 'w-full rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto',
     cancelButton: 'w-full rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:w-auto',
+    clearButton: 'text-sm text-gray-500 transition-colors hover:text-blue-600',
   },
   tldSelector: {
     selected: 'bg-blue-600 text-white shadow-sm',
@@ -195,6 +197,7 @@ export const vibrantTheme: Theme = {
     validationText: 'mt-1 text-xs text-rose-500',
     submitButton: 'w-full rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:shadow-xl hover:shadow-indigo-500/30 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:w-auto',
     cancelButton: 'w-full rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-rose-500/25 transition-all hover:shadow-xl hover:shadow-rose-500/30 hover:brightness-110 sm:w-auto',
+    clearButton: 'text-sm text-gray-500 transition-colors hover:text-indigo-700',
   },
   tldSelector: {
     selected: 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/25',
@@ -292,6 +295,7 @@ export const midnightTheme: Theme = {
     validationText: 'mt-1 text-xs text-red-400',
     submitButton: 'w-full rounded-xl bg-sky-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto',
     cancelButton: 'w-full rounded-xl bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-500 sm:w-auto',
+    clearButton: 'text-sm text-zinc-500 transition-colors hover:text-sky-400',
   },
   tldSelector: {
     selected: 'bg-sky-600 text-white shadow-sm shadow-sky-500/20',
