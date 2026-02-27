@@ -73,7 +73,7 @@ export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = 
           className={theme.searchForm.textarea}
         />
         {description.length > 0 && description.trim().length < 5 && (
-          <p className={theme.searchForm.validationText}>Please enter at least 5 characters</p>
+          <p className="mt-1 text-xs text-gray-400">{description.trim().length} characters (minimum 5)</p>
         )}
         {tlds.length === 0 && (
           <p className={theme.searchForm.validationText}>Select a TLD</p>

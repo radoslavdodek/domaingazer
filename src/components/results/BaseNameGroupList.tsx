@@ -68,7 +68,7 @@ export function BaseNameGroupList({
                 {batchIndex > 0 && (
                   <div className="flex items-center gap-3 py-1">
                     <div className={theme.baseNameGroupList.batchDividerLine} />
-                    <span className={theme.baseNameGroupList.batchDividerText}>Next batch</span>
+                    <span className={theme.baseNameGroupList.batchDividerText}>Round {batchIndex + 1}</span>
                     <div className={theme.baseNameGroupList.batchDividerLine} />
                   </div>
                 )}
@@ -106,7 +106,7 @@ export function BaseNameGroupList({
                             <button
                               type="button"
                               onClick={() => onExplain(baseName)}
-                              disabled={!canExplain || explanation?.isLoading || (explanation?.text && !explanation?.error)}
+                              disabled={!canExplain || explanation?.isLoading || Boolean(explanation?.text && !explanation?.error)}
                               className={`${theme.baseNameGroupList.variationButton} w-28 text-center`}
                             >
                               {explanation?.isLoading ? 'Explaining...' : 'Explain'}
@@ -178,7 +178,7 @@ export function BaseNameGroupList({
               <span className={theme.baseNameGroupList.workingPing} />
               <span className={theme.baseNameGroupList.workingDot} />
             </span>
-            <span>Working on more names. New rows should appear shortly.</span>
+            <span>Generating names… New rows should appear shortly.</span>
           </div>
         </div>
       )}

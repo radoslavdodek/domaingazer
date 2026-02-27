@@ -35,7 +35,7 @@ export function ResultsHeader({
 
   return (
     <div className={theme.resultsHeader.wrapper}>
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3" aria-live="polite">
         {status === 'searching' && (
           <span className="relative inline-block h-2.5 w-2.5">
             <span className={theme.resultsHeader.searchingPing} />
@@ -90,6 +90,7 @@ export function ResultsHeader({
             type="button"
             onClick={onExport}
             disabled={!canExport}
+            title={!canExport ? 'Export available after all checks complete' : undefined}
             className={`flex items-center gap-1.5 ${theme.resultsHeader.actionLinkDisabled}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">

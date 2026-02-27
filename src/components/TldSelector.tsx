@@ -29,7 +29,7 @@ export function TldSelector({ selected, onChange }: TldSelectorProps) {
               key={tld}
               type="button"
               onClick={() => toggle(tld)}
-              className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-all ${
+              className={`rounded-full px-4 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                 isSelected ? theme.tldSelector.selected : theme.tldSelector.unselected
               }`}
             >

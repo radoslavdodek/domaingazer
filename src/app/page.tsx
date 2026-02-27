@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
@@ -16,25 +16,6 @@ export default function Home() {
   const [searchDescription, setSearchDescription] = useState('')
   const [isTldSelectionLocked, setIsTldSelectionLocked] = useState(false)
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
-
-  useEffect(() => {
-    if (!isClearConfirmOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsClearConfirmOpen(false)
-      }
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isClearConfirmOpen])
 
   const handleSearch = (description: string, tlds: TLD[]) => {
     setSelectedTlds(tlds)
