@@ -12,9 +12,11 @@ export default function Home() {
   const { theme } = useTheme()
   const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
+  const [searchDescription, setSearchDescription] = useState('')
 
   const handleSearch = (description: string, tlds: TLD[]) => {
     setSelectedTlds(tlds)
+    setSearchDescription(description)
     search(description, tlds)
   }
 
@@ -63,6 +65,7 @@ export default function Home() {
           status={status}
           errorMessage={errorMessage}
           tlds={selectedTlds}
+          searchDescription={searchDescription}
           isCheckingCustom={isCheckingCustom}
           isWaitingForNewRows={isWaitingForNewRows}
           onGenerateMore={handleGenerateMore}

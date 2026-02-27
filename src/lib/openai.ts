@@ -179,3 +179,65 @@ export async function generateDomainNames(
   }
   return []
 }
+
+export async function explainDomainName(
+  description: string,
+  baseName: string,
+  signal?: AbortSignal
+): Promise<string> {
+  const provider = getConfiguredProvider()
+  const requestUrl = getChatCompletionsUrl(provider.baseUrl)
+  const requestId = crypto.randomUUID()
+  const startedAt = Date.now()
+
+  console.info('[ai.explain.start]', {
+    requestId,
+    provider: provider.name,
+    model: provider.model,
+    requestUrl,
+    descriptionLength: description.length,
+    baseName,
+  })
+
+  let response: Awaited<ReturnType<OpenAI['chat']['completions']['create']>>
+  try {
+    response = await getClient(provider).chat.completions.create({
+      model: provider.model,
+      temperature: 0.7,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a branding strategist for startup domain names. Explain clearly and concisely why a domain name matches a product description and why it is a strong brand choice.',
+        },
+        {
+          role: 'user',
+          content: `Product description: ${description}\n\nDomain base name: ${baseName}\n\nWrite 2-3 concise sentences in plain text. Cover both: (1) why it matches the product, and (2) why it is a good name.`,
+        },
+      ],
+    }, { signal })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[ai.explain.error]', {
+      requestId,
+      provider: provider.name,
+      model: provider.model,
+      requestUrl,
+      durationMs: Date.now() - startedAt,
+      message,
+    })
+    throw err
+  }
+
+  console.info('[ai.explain.success]', {
+    requestId,
+    provider: provider.name,
+    model: provider.model,
+    requestUrl,
+    durationMs: Date.now() - startedAt,
+    choiceCount: response.choices.length,
+  })
+
+  const content = response.choices[0]?.message?.content
+  const explanation = typeof content === 'string' ? content.trim() : ''
+  return explanation
+}

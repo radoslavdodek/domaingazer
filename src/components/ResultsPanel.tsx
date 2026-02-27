@@ -16,11 +16,18 @@ interface ResultsPanelProps {
   status: SearchStatus
   errorMessage: string | null
   tlds: TLD[]
+  searchDescription?: string
   isCheckingCustom?: boolean
   isWaitingForNewRows?: boolean
   onGenerateMore?: (hint: string) => void
   onCheckCustom?: (baseName: string) => void
   onClear?: () => void
+}
+
+interface BaseNameExplanation {
+  text: string
+  isLoading: boolean
+  error: string | null
 }
 
 function escapeCsvValue(value: string): string {
@@ -36,6 +43,7 @@ export function ResultsPanel({
   status,
   errorMessage,
   tlds,
+  searchDescription,
   isCheckingCustom,
   isWaitingForNewRows,
   onGenerateMore,
@@ -47,6 +55,7 @@ export function ResultsPanel({
   const [hint, setHint] = useState('')
   const [customInput, setCustomInput] = useState('')
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
+  const [explanationsByBaseName, setExplanationsByBaseName] = useState<Record<string, BaseNameExplanation>>({})
   const hintRef = useRef<HTMLInputElement>(null)
   const newRowsAnchorRef = useRef<HTMLDivElement>(null)
   const batchElementsRef = useRef<Map<string, HTMLDivElement>>(new Map())
@@ -147,6 +156,26 @@ export function ResultsPanel({
     }
   }, [isClearConfirmOpen])
 
+  useEffect(() => {
+    setExplanationsByBaseName({})
+  }, [searchDescription])
+
+  useEffect(() => {
+    const allowedBaseNames = new Set(results.map((result) => result.baseName))
+    setExplanationsByBaseName((prev) => {
+      let hasRemovedEntries = false
+      const next: Record<string, BaseNameExplanation> = {}
+      for (const [baseName, value] of Object.entries(prev)) {
+        if (!allowedBaseNames.has(baseName)) {
+          hasRemovedEntries = true
+          continue
+        }
+        next[baseName] = value
+      }
+      return hasRemovedEntries ? next : prev
+    })
+  }, [results])
+
   if (status === 'idle' && results.length === 0) return null
 
   const resultMap = new Map(results.map((result) => [`${result.baseName}${result.tld}`, result]))
@@ -229,6 +258,50 @@ export function ResultsPanel({
     onGenerateMore(variationPrompt)
   }
 
+  const runExplain = async (baseName: string) => {
+    const description = searchDescription?.trim()
+    if (!description) return
+
+    setExplanationsByBaseName((prev) => ({
+      ...prev,
+      [baseName]: { text: '', isLoading: true, error: null },
+    }))
+
+    try {
+      const response = await fetch('/api/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description, baseName }),
+      })
+
+      const payload = await response.json().catch(() => null) as { explanation?: unknown; error?: unknown } | null
+
+      if (!response.ok) {
+        const message = typeof payload?.error === 'string' ? payload.error : 'Failed to generate explanation'
+        throw new Error(message)
+      }
+
+      const explanation = typeof payload?.explanation === 'string' ? payload.explanation.trim() : ''
+      if (!explanation) {
+        throw new Error('AI returned an empty explanation')
+      }
+
+      setExplanationsByBaseName((prev) => ({
+        ...prev,
+        [baseName]: { text: explanation, isLoading: false, error: null },
+      }))
+    } catch (err) {
+      setExplanationsByBaseName((prev) => ({
+        ...prev,
+        [baseName]: {
+          text: '',
+          isLoading: false,
+          error: err instanceof Error ? err.message : 'Failed to generate explanation',
+        },
+      }))
+    }
+  }
+
   const showRefinementCard = Boolean(onGenerateMore || onCheckCustom)
 
   return (
@@ -259,6 +332,9 @@ export function ResultsPanel({
         showWorkingRow={showWorkingRow}
         resultMap={resultMap}
         onTryVariation={onGenerateMore ? runVariationSearch : undefined}
+        onExplain={runExplain}
+        explanationByBaseName={explanationsByBaseName}
+        canExplain={Boolean(searchDescription?.trim())}
         onBatchStartRef={setBatchElement}
         onBaseNameRowRef={setBaseNameRowElement}
       />

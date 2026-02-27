@@ -3,6 +3,12 @@ import type { DomainResult, TLD } from '@/lib/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { SearchStatus } from './types'
 
+interface BaseNameExplanation {
+  text: string
+  isLoading: boolean
+  error: string | null
+}
+
 interface BaseNameGroupListProps {
   status: SearchStatus
   totalCount: number
@@ -13,6 +19,9 @@ interface BaseNameGroupListProps {
   showWorkingRow: boolean
   resultMap: Map<string, DomainResult>
   onTryVariation?: (baseName: string) => void
+  onExplain?: (baseName: string) => void
+  explanationByBaseName?: Record<string, BaseNameExplanation>
+  canExplain?: boolean
   onBatchStartRef?: (batchStartBaseName: string, element: HTMLDivElement | null) => void
   onBaseNameRowRef?: (baseName: string, element: HTMLDivElement | null) => void
 }
@@ -27,6 +36,9 @@ export function BaseNameGroupList({
   showWorkingRow,
   resultMap,
   onTryVariation,
+  onExplain,
+  explanationByBaseName = {},
+  canExplain = false,
   onBatchStartRef,
   onBaseNameRowRef,
 }: BaseNameGroupListProps) {
@@ -61,40 +73,71 @@ export function BaseNameGroupList({
                   </div>
                 )}
 
-                {batch.map((baseName) => (
-                  <div
-                    key={baseName}
-                    ref={(element) => onBaseNameRowRef?.(baseName, element)}
-                    className={theme.baseNameGroupList.card}
-                  >
-                    <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
-                      <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">{baseName}</span>
-                      {onTryVariation && (
-                        <button
-                          type="button"
-                          onClick={() => onTryVariation(baseName)}
-                          disabled={status === 'searching'}
-                          className={theme.baseNameGroupList.variationButton}
-                        >
-                          Try variations
-                        </button>
+                {batch.map((baseName) => {
+                  const explanation = explanationByBaseName[baseName]
+                  const hasExplanationState =
+                    explanation && (explanation.isLoading || Boolean(explanation.error) || Boolean(explanation.text))
+
+                  return (
+                    <div
+                      key={baseName}
+                      ref={(element) => onBaseNameRowRef?.(baseName, element)}
+                      className={theme.baseNameGroupList.card}
+                    >
+                      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+                        <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">{baseName}</span>
+                        <div className="flex items-center gap-1">
+                          {onTryVariation && (
+                            <button
+                              type="button"
+                              onClick={() => onTryVariation(baseName)}
+                              disabled={status === 'searching'}
+                              className={`${theme.baseNameGroupList.variationButton} w-28 text-center`}
+                            >
+                              Try variations
+                            </button>
+                          )}
+                          {onExplain && (
+                            <button
+                              type="button"
+                              onClick={() => onExplain(baseName)}
+                              disabled={!canExplain || explanation?.isLoading}
+                              className={`${theme.baseNameGroupList.variationButton} w-28 text-center`}
+                            >
+                              {explanation?.isLoading ? 'Explaining...' : 'Explain'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      {hasExplanationState && (
+                        <div className={theme.baseNameGroupList.explanationBox}>
+                          {explanation?.isLoading && (
+                            <p className={theme.baseNameGroupList.explanationLoadingText}>Thinking through this name...</p>
+                          )}
+                          {!explanation?.isLoading && explanation?.error && (
+                            <p className={theme.baseNameGroupList.explanationErrorText}>{explanation.error}</p>
+                          )}
+                          {!explanation?.isLoading && explanation?.text && (
+                            <p className={theme.baseNameGroupList.explanationText}>{explanation.text}</p>
+                          )}
+                        </div>
                       )}
+                      <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
+                        {tlds.map((tld) => {
+                          const row = resultMap.get(`${baseName}${tld}`)
+                          return (
+                            <DomainRow
+                              key={`${baseName}${tld}`}
+                              domain={row?.fullDomain ?? `${baseName}${tld}`}
+                              status={row?.status ?? 'PENDING'}
+                              compact
+                            />
+                          )
+                        })}
+                      </div>
                     </div>
-                    <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-                      {tlds.map((tld) => {
-                        const row = resultMap.get(`${baseName}${tld}`)
-                        return (
-                          <DomainRow
-                            key={`${baseName}${tld}`}
-                            domain={row?.fullDomain ?? `${baseName}${tld}`}
-                            status={row?.status ?? 'PENDING'}
-                            compact
-                          />
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )
           })}

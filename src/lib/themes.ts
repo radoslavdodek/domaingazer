@@ -55,6 +55,11 @@ export interface Theme {
     batchDividerText: string
     card: string
     variationButton: string
+    explainButton: string
+    explanationBox: string
+    explanationText: string
+    explanationErrorText: string
+    explanationLoadingText: string
     emptyState: string
     workingRow: string
     workingDot: string
@@ -149,6 +154,11 @@ export const classicTheme: Theme = {
     batchDividerText: 'text-[11px] font-medium uppercase tracking-wide text-gray-400',
     card: 'scroll-mt-24 rounded-lg border border-gray-200 bg-white px-3 py-2 sm:px-3.5',
     variationButton: 'rounded-lg border border-blue-200 bg-white px-2 py-0.5 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50',
+    explainButton: 'rounded-lg border border-gray-200 bg-white px-2 py-0.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50',
+    explanationBox: 'mt-2 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-2',
+    explanationText: 'text-xs leading-relaxed text-gray-700',
+    explanationErrorText: 'text-xs text-red-600',
+    explanationLoadingText: 'text-xs text-gray-500',
     emptyState: 'rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500',
     workingRow: 'rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700',
     workingDot: 'relative inline-block h-2 w-2 rounded-full bg-blue-500',
@@ -241,6 +251,11 @@ export const vibrantTheme: Theme = {
     batchDividerText: 'text-[11px] font-medium uppercase tracking-wide text-indigo-400',
     card: 'scroll-mt-24 rounded-xl border border-white/30 bg-white/50 px-3 py-2 backdrop-blur-sm sm:px-3.5',
     variationButton: 'rounded-lg border border-indigo-200 bg-white/60 px-2 py-0.5 text-xs font-medium text-indigo-600 transition-all hover:bg-indigo-50 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50',
+    explainButton: 'rounded-lg border border-white/40 bg-white/60 px-2 py-0.5 text-xs font-medium text-gray-700 transition-all hover:bg-white/80 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50',
+    explanationBox: 'mt-2 rounded-lg border border-white/30 bg-white/45 px-2.5 py-2 backdrop-blur-sm',
+    explanationText: 'text-xs leading-relaxed text-gray-700',
+    explanationErrorText: 'text-xs text-rose-600',
+    explanationLoadingText: 'text-xs text-gray-500',
     emptyState: 'rounded-xl border border-dashed border-white/30 px-4 py-6 text-center text-sm text-gray-500',
     workingRow: 'rounded-xl border border-indigo-200/40 bg-indigo-50/40 px-4 py-3 text-sm text-indigo-700 backdrop-blur-sm',
     workingDot: 'relative inline-block h-2 w-2 rounded-full bg-indigo-500',
@@ -333,6 +348,11 @@ export const midnightTheme: Theme = {
     batchDividerText: 'text-[11px] font-medium uppercase tracking-wide text-zinc-600',
     card: 'scroll-mt-24 rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 sm:px-3.5',
     variationButton: 'rounded-lg border border-sky-800 bg-zinc-800 px-2 py-0.5 text-xs font-medium text-sky-400 transition-colors hover:bg-sky-950 disabled:cursor-not-allowed disabled:opacity-50',
+    explainButton: 'rounded-lg border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-750 disabled:cursor-not-allowed disabled:opacity-50',
+    explanationBox: 'mt-2 rounded-md border border-zinc-700 bg-zinc-800/80 px-2.5 py-2',
+    explanationText: 'text-xs leading-relaxed text-zinc-300',
+    explanationErrorText: 'text-xs text-red-400',
+    explanationLoadingText: 'text-xs text-zinc-500',
     emptyState: 'rounded-xl border border-dashed border-zinc-700 px-4 py-6 text-center text-sm text-zinc-500',
     workingRow: 'rounded-xl border border-sky-800/40 bg-sky-950/30 px-4 py-3 text-sm text-sky-400',
     workingDot: 'relative inline-block h-2 w-2 rounded-full bg-sky-500',
