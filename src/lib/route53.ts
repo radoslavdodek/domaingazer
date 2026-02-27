@@ -28,7 +28,9 @@ export async function checkDomain(fullDomain: string, signal?: AbortSignal): Pro
       const command = new CheckDomainAvailabilityCommand({
         DomainName: fullDomain,
       })
+      console.log(`[Route53] REQ  CheckDomainAvailability { DomainName: "${fullDomain}" } (attempt ${attempt + 1}/${maxRetries + 1})`)
       const response = await getClient().send(command, { abortSignal: signal })
+      console.log(`[Route53] RES  ${fullDomain} → ${response.Availability}`)
 
       switch (response.Availability) {
         case DomainAvailability.AVAILABLE:
@@ -45,15 +47,17 @@ export async function checkDomain(fullDomain: string, signal?: AbortSignal): Pro
         error.__type === 'UnsupportedTLD' ||
         (err instanceof Error && err.message?.includes('UnsupportedTLD'))
       ) {
+        console.log(`[Route53] RES  ${fullDomain} → UnsupportedTLD`)
         return 'UNSUPPORTED'
       }
       if (isThrottling(err) && attempt < maxRetries && !signal?.aborted) {
         const delay = 500 * 2 ** attempt + Math.random() * 200
+        console.log(`[Route53] THROTTLED ${fullDomain} — retrying in ${Math.round(delay)}ms`)
         await new Promise((r) => setTimeout(r, delay))
         continue
       }
       if (signal?.aborted) return 'ERROR'
-      console.error(`Error checking ${fullDomain}:`, err)
+      console.error(`[Route53] ERROR ${fullDomain}:`, err)
       return 'ERROR'
     }
   }

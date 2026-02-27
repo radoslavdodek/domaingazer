@@ -1,4 +1,4 @@
-export const ALL_TLDS = ['.com', '.io', '.ai', '.app', '.dev', '.co', '.net', '.shop', '.store'] as const
+export const ALL_TLDS = ['.com', '.io', '.ai', '.co', '.net', '.shop', '.store', '.de'] as const
 
 export type TLD = (typeof ALL_TLDS)[number]
 
