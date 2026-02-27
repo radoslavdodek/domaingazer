@@ -32,7 +32,7 @@ export function ResultsHeader({
     <div className={theme.resultsHeader.wrapper}>
       <div className="flex min-w-0 items-center gap-3" aria-live="polite">
         {status === 'searching' && (
-          <span className="relative inline-block h-2.5 w-2.5">
+          <span className="relative inline-flex h-2.5 w-2.5 shrink-0">
             <span className={theme.resultsHeader.searchingPing} />
             <span className={theme.resultsHeader.searchingDot} />
           </span>
