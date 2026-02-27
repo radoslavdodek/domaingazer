@@ -167,9 +167,6 @@ export function ResultsPanel({
     }
     resultsByBaseName.set(result.baseName, [result])
   }
-  const displayTlds = ALL_TLDS.filter(
-    (tld) => tlds.includes(tld) || results.some((result) => result.tld === tld)
-  )
   const availableCount = results.filter((result) => result.status === 'AVAILABLE').length
   const checkedCount = results.filter((result) => result.status !== 'CHECKING').length
   const totalCount = results.length
@@ -190,13 +187,6 @@ export function ResultsPanel({
   if (ungroupedVisibleBaseNames.length > 0) groupedVisibleBaseNames.push(ungroupedVisibleBaseNames)
 
   const visibleRows = results.filter((result) => visibleBaseNameSet.has(result.baseName))
-  const tldCounts = displayTlds.reduce<Record<TLD, number>>((acc, tld) => {
-    acc[tld] = visibleRows.reduce((count, row) => {
-      if (row.tld !== tld) return count
-      return count + 1
-    }, 0)
-    return acc
-  }, {} as Record<TLD, number>)
 
   const showWorkingRow = status === 'searching' && Boolean(isWaitingForNewRows)
   const canExport =
@@ -297,8 +287,6 @@ export function ResultsPanel({
         checkedCount={checkedCount}
         availableCount={availableCount}
         resultsCount={results.length}
-        tlds={displayTlds}
-        tldCounts={tldCounts}
         showAvailableOnly={showAvailableOnly}
         onShowAvailableOnlyChange={setShowAvailableOnly}
         onExport={handleExportCsv}

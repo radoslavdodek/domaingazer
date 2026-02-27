@@ -1,4 +1,3 @@
-import type { TLD } from '@/lib/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { SearchStatus } from './types'
 
@@ -9,8 +8,6 @@ interface ResultsHeaderProps {
   checkedCount: number
   availableCount: number
   resultsCount: number
-  tlds: TLD[]
-  tldCounts: Record<TLD, number>
   showAvailableOnly: boolean
   onShowAvailableOnlyChange: (checked: boolean) => void
   onExport?: () => void
@@ -24,8 +21,6 @@ export function ResultsHeader({
   checkedCount,
   availableCount,
   resultsCount,
-  tlds,
-  tldCounts,
   showAvailableOnly,
   onShowAvailableOnlyChange,
   onExport,
@@ -59,19 +54,6 @@ export function ResultsHeader({
           <span className={theme.resultsHeader.errorText}>Error: {errorMessage}</span>
         )}
       </div>
-
-      {tlds.length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          {tlds.map((tld) => (
-            <span
-              key={tld}
-              className={theme.resultsHeader.tldPill}
-            >
-              {tld} ({tldCounts[tld] ?? 0})
-            </span>
-          ))}
-        </div>
-      )}
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
         {resultsCount > 0 ? (

@@ -45,7 +45,6 @@ export interface Theme {
     availableText: string
     cancelledText: string
     errorText: string
-    tldPill: string
     checkboxAccent: string
     actionLink: string
     actionLinkDisabled: string
@@ -145,7 +144,6 @@ export const classicTheme: Theme = {
     availableText: 'font-semibold text-green-700',
     cancelledText: 'text-gray-500',
     errorText: 'text-red-600',
-    tldPill: 'rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm font-medium text-gray-700',
     checkboxAccent: 'h-4 w-4 cursor-pointer rounded border-gray-300 accent-blue-600',
     actionLink: 'text-sm text-gray-500 transition-colors hover:text-blue-600',
     actionLinkDisabled: 'text-sm text-gray-500 transition-colors hover:text-blue-600 disabled:cursor-not-allowed disabled:text-gray-400',
@@ -243,7 +241,6 @@ export const midnightTheme: Theme = {
     availableText: 'font-semibold text-emerald-400',
     cancelledText: 'text-zinc-500',
     errorText: 'text-red-400',
-    tldPill: 'rounded-full border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm font-medium text-zinc-400',
     checkboxAccent: 'h-4 w-4 cursor-pointer rounded border-zinc-600 accent-sky-500',
     actionLink: 'text-sm text-zinc-500 transition-colors hover:text-sky-400',
     actionLinkDisabled: 'text-sm text-zinc-500 transition-colors hover:text-sky-400 disabled:cursor-not-allowed disabled:text-zinc-600',
