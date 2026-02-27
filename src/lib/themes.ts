@@ -253,7 +253,7 @@ export const midnightTheme: Theme = {
     variationButton: 'rounded-lg border border-sky-800 bg-zinc-800 px-2 py-0.5 text-xs font-medium text-sky-400 transition-colors hover:bg-sky-950 disabled:cursor-not-allowed disabled:opacity-50',
     explainButton: 'rounded-lg border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-750 disabled:cursor-not-allowed disabled:opacity-50',
     explanationBox: 'mt-2 rounded-md border border-zinc-700 bg-zinc-800/80 px-2.5 py-2',
-    explanationText: 'text-xs leading-relaxed text-zinc-300',
+    explanationText: 'text-sm leading-relaxed text-zinc-300',
     explanationErrorText: 'text-xs text-red-400',
     explanationLoadingText: 'text-xs text-zinc-500',
     emptyState: 'rounded-xl border border-dashed border-zinc-700 px-4 py-6 text-center text-sm text-zinc-500',
