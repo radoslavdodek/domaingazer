@@ -5,12 +5,17 @@ type ProviderConfig = {
   name: string
   'api-key': string
   'base-url'?: string
+}
+
+type FeatureConfig = {
+  provider: string
   model: string
 }
 
 type ProvidersConfig = {
   providers: ProviderConfig[]
-  defaultProvider: string
+  generateDomains: FeatureConfig
+  explain: FeatureConfig
 }
 
 const clientByProvider = new Map<string, OpenAI>()
@@ -20,20 +25,27 @@ function getChatCompletionsUrl(baseUrl?: string) {
   return `${normalizedBaseUrl}/chat/completions`
 }
 
-function getConfiguredProvider() {
+function getConfiguredProvider(feature: 'generateDomains' | 'explain') {
   const config = aiProvidersConfig as ProvidersConfig
   const providers = Array.isArray(config.providers) ? config.providers : []
   if (providers.length === 0) {
     throw new Error('No AI providers configured in src/config/ai-providers.json')
   }
 
-  const selected = providers.find((provider) => provider.name === config.defaultProvider)
-  if (!selected) {
-    throw new Error(`Default provider "${config.defaultProvider}" is not defined in src/config/ai-providers.json`)
+  const featureConfig = feature === 'generateDomains' ? config.generateDomains : config.explain
+  const selectedProviderName = featureConfig?.provider?.trim()
+  if (!selectedProviderName) {
+    throw new Error(`${feature}.provider must be set in src/config/ai-providers.json`)
   }
 
-  if (!selected.model?.trim()) {
-    throw new Error(`Provider "${selected.name}" must define a non-empty model in src/config/ai-providers.json`)
+  const selected = providers.find((provider) => provider.name === selectedProviderName)
+  if (!selected) {
+    throw new Error(`${feature}.provider "${selectedProviderName}" is not defined in src/config/ai-providers.json`)
+  }
+
+  const selectedModel = featureConfig?.model?.trim()
+  if (!selectedModel) {
+    throw new Error(`${feature}.model must be set in src/config/ai-providers.json`)
   }
 
   const apiKeyEnvVar = selected['api-key']?.trim()
@@ -48,7 +60,7 @@ function getConfiguredProvider() {
 
   return {
     name: selected.name,
-    model: selected.model,
+    model: selectedModel,
     baseUrl: selected['base-url']?.trim() || undefined,
     apiKey,
   }
@@ -73,7 +85,7 @@ export async function generateDomainNames(
   signal?: AbortSignal,
   hint?: string
 ): Promise<string[]> {
-  const provider = getConfiguredProvider()
+  const provider = getConfiguredProvider('generateDomains')
   const requestUrl = getChatCompletionsUrl(provider.baseUrl)
   const requestId = crypto.randomUUID()
   const startedAt = Date.now()
@@ -185,7 +197,7 @@ export async function explainDomainName(
   baseName: string,
   signal?: AbortSignal
 ): Promise<string> {
-  const provider = getConfiguredProvider()
+  const provider = getConfiguredProvider('explain')
   const requestUrl = getChatCompletionsUrl(provider.baseUrl)
   const requestId = crypto.randomUUID()
   const startedAt = Date.now()

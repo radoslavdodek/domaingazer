@@ -49,21 +49,42 @@ Provider/model selection lives in [`src/config/ai-providers.json`](src/config/ai
     {
       "name": "OpenAI",
       "api-key": "OPENAI_API_KEY",
-      "base-url": "https://api.openai.com/v1",
-      "model": "gpt-4.1"
+      "base-url": "https://api.openai.com/v1"
     },
     {
       "name": "Groq",
       "api-key": "GROQ_API_KEY",
-      "base-url": "https://api.groq.com/openai/v1",
-      "model": "llama-3.3-70b-versatile"
+      "base-url": "https://api.groq.com/openai/v1"
     }
   ],
-  "defaultProvider": "OpenAI"
+  "generateDomains": {
+    "provider": "Groq",
+    "model": "moonshotai/kimi-k2-instruct-0905"
+  },
+  "explain": {
+    "provider": "Groq",
+    "model": "moonshotai/kimi-k2-instruct-0905"
+  }
 }
 ```
 
-Set `defaultProvider` to `OpenAI` or `Groq`, and set the `model` per provider as needed.
+Set `generateDomains.provider` and `generateDomains.model` for search generation.
+Set `explain.provider` and `explain.model` for the Explain button.
+
+If you want both flows to use the same setup, keep both sections identical:
+
+```json
+{
+  "generateDomains": {
+    "provider": "Groq",
+    "model": "moonshotai/kimi-k2-instruct-0905"
+  },
+  "explain": {
+    "provider": "Groq",
+    "model": "moonshotai/kimi-k2-instruct-0905"
+  }
+}
+```
 
 ## Commands
 

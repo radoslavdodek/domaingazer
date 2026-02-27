@@ -3,15 +3,20 @@
     {
       "name": "OpenAI",
       "api-key": "OPENAI_API_KEY",
-      "base-url": "https://api.openai.com/v1",
-      "model": "gpt-4.1"
+      "base-url": "https://api.openai.com/v1"
     },
     {
       "name": "Groq",
       "api-key": "GROQ_API_KEY",
-      "base-url": "https://api.groq.com/openai/v1",
-      "model": "moonshotai/kimi-k2-instruct-0905"
+      "base-url": "https://api.groq.com/openai/v1"
     }
   ],
-  "defaultProvider": "Groq"
+  "generateDomains": {
+    "provider": "Groq",
+    "model": "moonshotai/kimi-k2-instruct-0905"
+  },
+  "explain": {
+    "provider": "Groq",
+    "model": "moonshotai/kimi-k2-instruct-0905"
+  }
 }

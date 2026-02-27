@@ -1,5 +1,5 @@
 import { DomainRow } from '@/components/DomainRow'
-import type { DomainResult, TLD } from '@/lib/types'
+import { ALL_TLDS, type DomainResult, type TLD } from '@/lib/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { SearchStatus } from './types'
 
@@ -12,12 +12,12 @@ interface BaseNameExplanation {
 interface BaseNameGroupListProps {
   status: SearchStatus
   totalCount: number
-  tlds: TLD[]
   groupedVisibleBaseNames: string[][]
   visibleBaseNameCount: number
   showAvailableOnly: boolean
   showWorkingRow: boolean
   resultMap: Map<string, DomainResult>
+  onAddTldForBase?: (baseName: string, tld: TLD) => void
   onTryVariation?: (baseName: string) => void
   onExplain?: (baseName: string) => void
   explanationByBaseName?: Record<string, BaseNameExplanation>
@@ -29,12 +29,12 @@ interface BaseNameGroupListProps {
 export function BaseNameGroupList({
   status,
   totalCount,
-  tlds,
   groupedVisibleBaseNames,
   visibleBaseNameCount,
   showAvailableOnly,
   showWorkingRow,
   resultMap,
+  onAddTldForBase,
   onTryVariation,
   onExplain,
   explanationByBaseName = {},
@@ -54,7 +54,7 @@ export function BaseNameGroupList({
         </div>
       )}
 
-      {tlds.length > 0 && visibleBaseNameCount > 0 && (
+      {visibleBaseNameCount > 0 && (
         <div className="space-y-3">
           {groupedVisibleBaseNames.map((batch, batchIndex) => {
             const batchStartBaseName = batch[0]
@@ -77,6 +77,11 @@ export function BaseNameGroupList({
                   const explanation = explanationByBaseName[baseName]
                   const hasExplanationState =
                     explanation && (explanation.isLoading || Boolean(explanation.error) || Boolean(explanation.text))
+                  const rowsForBase = ALL_TLDS
+                    .map((tld) => resultMap.get(`${baseName}${tld}`))
+                    .filter((row): row is DomainResult => Boolean(row))
+                  const presentTlds = new Set(rowsForBase.map((row) => row.tld))
+                  const remainingTlds = ALL_TLDS.filter((tld) => !presentTlds.has(tld))
 
                   return (
                     <div
@@ -101,7 +106,7 @@ export function BaseNameGroupList({
                             <button
                               type="button"
                               onClick={() => onExplain(baseName)}
-                              disabled={!canExplain || explanation?.isLoading}
+                              disabled={!canExplain || explanation?.isLoading || (explanation?.text && !explanation?.error)}
                               className={`${theme.baseNameGroupList.variationButton} w-28 text-center`}
                             >
                               {explanation?.isLoading ? 'Explaining...' : 'Explain'}
@@ -123,18 +128,32 @@ export function BaseNameGroupList({
                         </div>
                       )}
                       <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-                        {tlds.map((tld) => {
-                          const row = resultMap.get(`${baseName}${tld}`)
-                          return (
-                            <DomainRow
-                              key={`${baseName}${tld}`}
-                              domain={row?.fullDomain ?? `${baseName}${tld}`}
-                              status={row?.status ?? 'PENDING'}
-                              compact
-                            />
-                          )
-                        })}
+                        {rowsForBase.map((row) => (
+                          <DomainRow
+                            key={row.fullDomain}
+                            domain={row.fullDomain}
+                            status={row.status}
+                            compact
+                          />
+                        ))}
                       </div>
+                      {onAddTldForBase && remainingTlds.length > 0 && (
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                          <span className="text-xs text-gray-500">Add TLD:</span>
+                          {remainingTlds.map((tld) => (
+                            <button
+                              key={`${baseName}-${tld}`}
+                              type="button"
+                              onClick={() => onAddTldForBase(baseName, tld)}
+                              className={`rounded-full px-2 py-0.5 text-xs font-medium transition-all ${
+                                theme.tldSelector.unselected
+                              }`}
+                            >
+                              {tld}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )
                 })}
@@ -144,17 +163,11 @@ export function BaseNameGroupList({
         </div>
       )}
 
-      {tlds.length > 0 && visibleBaseNameCount === 0 && status !== 'searching' && (
+      {visibleBaseNameCount === 0 && status !== 'searching' && (
         <div className={theme.baseNameGroupList.emptyState}>
           {showAvailableOnly
             ? 'No names with availability yet. Try turning off the filter or generating more names.'
             : 'No results yet.'}
-        </div>
-      )}
-
-      {tlds.length === 0 && (
-        <div className={theme.baseNameGroupList.emptyState}>
-          Select at least one TLD to view or check results.
         </div>
       )}
 

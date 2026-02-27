@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DOMAIN_STATUS_LABELS } from '@/lib/domainStatus'
-import type { DomainResult, TLD } from '@/lib/types'
+import { ALL_TLDS, type DomainResult, type TLD } from '@/lib/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import { BaseNameGroupList } from './results/BaseNameGroupList'
 import { ClearResultsModal } from './results/ClearResultsModal'
@@ -21,6 +21,7 @@ interface ResultsPanelProps {
   isWaitingForNewRows?: boolean
   onGenerateMore?: (hint: string) => void
   onCheckCustom?: (baseName: string) => void
+  onAddTldForBase?: (baseName: string, tld: TLD) => void
   onClear?: () => void
 }
 
@@ -48,6 +49,7 @@ export function ResultsPanel({
   isWaitingForNewRows,
   onGenerateMore,
   onCheckCustom,
+  onAddTldForBase,
   onClear,
 }: ResultsPanelProps) {
   const { theme } = useTheme()
@@ -179,17 +181,26 @@ export function ResultsPanel({
   if (status === 'idle' && results.length === 0) return null
 
   const resultMap = new Map(results.map((result) => [`${result.baseName}${result.tld}`, result]))
+  const resultsByBaseName = new Map<string, DomainResult[]>()
+  for (const result of results) {
+    const existing = resultsByBaseName.get(result.baseName)
+    if (existing) {
+      existing.push(result)
+      continue
+    }
+    resultsByBaseName.set(result.baseName, [result])
+  }
+  const displayTlds = ALL_TLDS.filter(
+    (tld) => tlds.includes(tld) || results.some((result) => result.tld === tld)
+  )
   const availableCount = results.filter((result) => result.status === 'AVAILABLE').length
   const checkedCount = results.filter((result) => result.status !== 'CHECKING').length
   const totalCount = results.length
 
   const exportBaseNames = showAvailableOnly
-    ? allBaseNames.filter((name) =>
-        tlds.some((tld) => {
-          const rowStatus = resultMap.get(`${name}${tld}`)?.status
-          return rowStatus === 'AVAILABLE' || rowStatus === 'CHECKING'
-        })
-      )
+    ? allBaseNames.filter((name) => (resultsByBaseName.get(name) ?? []).some(
+      (row) => row.status === 'AVAILABLE' || row.status === 'CHECKING'
+    ))
     : allBaseNames
 
   const visibleBaseNames = exportBaseNames
@@ -201,10 +212,10 @@ export function ResultsPanel({
   const ungroupedVisibleBaseNames = visibleBaseNames.filter((name) => !groupedVisibleSet.has(name))
   if (ungroupedVisibleBaseNames.length > 0) groupedVisibleBaseNames.push(ungroupedVisibleBaseNames)
 
-  const tldCounts = tlds.reduce<Record<TLD, number>>((acc, tld) => {
-    acc[tld] = visibleBaseNames.reduce((count, baseName) => {
-      const row = resultMap.get(`${baseName}${tld}`)
-      if (!row) return count
+  const visibleRows = results.filter((result) => visibleBaseNameSet.has(result.baseName))
+  const tldCounts = displayTlds.reduce<Record<TLD, number>>((acc, tld) => {
+    acc[tld] = visibleRows.reduce((count, row) => {
+      if (row.tld !== tld) return count
       return count + 1
     }, 0)
     return acc
@@ -212,29 +223,25 @@ export function ResultsPanel({
 
   const showWorkingRow = status === 'searching' && Boolean(isWaitingForNewRows)
   const canExport =
-    exportBaseNames.length > 0 &&
-    tlds.length > 0 &&
-    exportBaseNames.every((baseName) =>
-      tlds.every((tld) => {
-        const result = resultMap.get(`${baseName}${tld}`)
-        if (!result) return false
-        return result.status !== 'CHECKING' && result.status !== 'STOPPED'
-      })
-    )
+    visibleRows.length > 0 &&
+    visibleRows.every((row) => row.status !== 'CHECKING' && row.status !== 'STOPPED')
 
   const handleExportCsv = () => {
     if (!canExport) return
 
-    const rows = exportBaseNames.map((baseName) =>
-      tlds.map((tld) => {
-        const result = resultMap.get(`${baseName}${tld}`)
-        if (!result) return '—'
-        const label = DOMAIN_STATUS_LABELS[result.status]
-        return `${result.fullDomain} (${label})`
-      })
-    )
+    const baseNameOrder = new Map(visibleBaseNames.map((baseName, index) => [baseName, index]))
+    const tldOrder = new Map(ALL_TLDS.map((tld, index) => [tld, index]))
+    const exportRows = [...visibleRows].sort((a, b) => {
+      const baseDiff = (baseNameOrder.get(a.baseName) ?? 0) - (baseNameOrder.get(b.baseName) ?? 0)
+      if (baseDiff !== 0) return baseDiff
+      return (tldOrder.get(a.tld) ?? 0) - (tldOrder.get(b.tld) ?? 0)
+    })
 
-    const csvLines = [tlds, ...rows]
+    const rows = exportRows.map((row) => (
+      [row.baseName, row.fullDomain, DOMAIN_STATUS_LABELS[row.status]]
+    ))
+
+    const csvLines = [['Base name', 'Domain', 'Status'], ...rows]
       .map((row) => row.map((cell) => escapeCsvValue(cell)).join(','))
       .join('\n')
 
@@ -313,7 +320,7 @@ export function ResultsPanel({
         checkedCount={checkedCount}
         availableCount={availableCount}
         resultsCount={results.length}
-        tlds={tlds}
+        tlds={displayTlds}
         tldCounts={tldCounts}
         showAvailableOnly={showAvailableOnly}
         onShowAvailableOnlyChange={setShowAvailableOnly}
@@ -325,12 +332,12 @@ export function ResultsPanel({
       <BaseNameGroupList
         status={status}
         totalCount={totalCount}
-        tlds={tlds}
         groupedVisibleBaseNames={groupedVisibleBaseNames}
         visibleBaseNameCount={visibleBaseNames.length}
         showAvailableOnly={showAvailableOnly}
         showWorkingRow={showWorkingRow}
         resultMap={resultMap}
+        onAddTldForBase={onAddTldForBase}
         onTryVariation={onGenerateMore ? runVariationSearch : undefined}
         onExplain={runExplain}
         explanationByBaseName={explanationsByBaseName}

@@ -10,31 +10,32 @@ import type { TLD } from '@/lib/types'
 
 export default function Home() {
   const { theme } = useTheme()
-  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
+  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
   const [searchDescription, setSearchDescription] = useState('')
+  const [isTldSelectionLocked, setIsTldSelectionLocked] = useState(false)
 
   const handleSearch = (description: string, tlds: TLD[]) => {
     setSelectedTlds(tlds)
     setSearchDescription(description)
+    setIsTldSelectionLocked(true)
     search(description, tlds)
   }
 
-  const handleTldsChange = (newTlds: TLD[]) => {
-    const addedTlds = newTlds.filter((t) => !selectedTlds.includes(t))
-    setActiveTlds(newTlds)
-    setSelectedTlds(newTlds)
-    if (addedTlds.length > 0 && results.length > 0) {
-      const baseNames = Array.from(new Set(results.map((r) => r.baseName)))
-      for (const tld of addedTlds) {
-        checkNewTld(tld, baseNames)
-      }
-    }
+  const handleAddTldForBase = (baseName: string, tld: TLD) => {
+    checkNewTld(tld, [baseName])
   }
 
   const handleGenerateMore = (hint: string) => {
     const baseNames = Array.from(new Set(results.map((r) => r.baseName)))
     generateMore(baseNames, hint || undefined)
+  }
+
+  const handleClear = () => {
+    clearResults()
+    setSearchDescription('')
+    setSelectedTlds([])
+    setIsTldSelectionLocked(false)
   }
 
   return (
@@ -55,7 +56,7 @@ export default function Home() {
             isSearching={status === 'searching'}
             onSearch={handleSearch}
             onCancel={cancel}
-            onTldsChange={handleTldsChange}
+            hideTldSelector={isTldSelectionLocked}
           />
         </div>
 
@@ -70,7 +71,8 @@ export default function Home() {
           isWaitingForNewRows={isWaitingForNewRows}
           onGenerateMore={handleGenerateMore}
           onCheckCustom={checkCustom}
-          onClear={clearResults}
+          onAddTldForBase={handleAddTldForBase}
+          onClear={handleClear}
         />
       </main>
     </div>

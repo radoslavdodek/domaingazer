@@ -13,10 +13,10 @@ interface SearchFormProps {
   isSearching: boolean
   onSearch: (description: string, tlds: TLD[]) => void
   onCancel: () => void
-  onTldsChange?: (tlds: TLD[]) => void
+  hideTldSelector?: boolean
 }
 
-export function SearchForm({ isSearching, onSearch, onCancel, onTldsChange }: SearchFormProps) {
+export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = false }: SearchFormProps) {
   const { theme } = useTheme()
   const [description, setDescription] = useState('')
   const [tlds, setTlds] = useState<TLD[]>(DEFAULT_TLDS)
@@ -75,18 +75,19 @@ export function SearchForm({ isSearching, onSearch, onCancel, onTldsChange }: Se
         )}
       </div>
 
-      <div>
-        <label className={`mb-2 ${theme.searchForm.label}`}>
-          Select top level domains to check:
-        </label>
-        <TldSelector
-          selected={tlds}
-          onChange={(newTlds) => {
-            setTlds(newTlds)
-            onTldsChange?.(newTlds)
-          }}
-        />
-      </div>
+      {!hideTldSelector && (
+        <div>
+          <label className={`mb-2 ${theme.searchForm.label}`}>
+            Select top level domains to check:
+          </label>
+          <TldSelector
+            selected={tlds}
+            onChange={(newTlds) => {
+              setTlds(newTlds)
+            }}
+          />
+        </div>
+      )}
 
       <div className="flex flex-col gap-3 sm:flex-row">
         {isSearching ? (
