@@ -92,7 +92,7 @@ export function BaseNameGroupList({
                       className={theme.baseNameGroupList.card}
                     >
                       <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">
+                        <span className={`break-all font-mono text-sm font-medium leading-tight ${theme.domainRow.textDefault}`}>
                           {baseName}
                           {userAddedBaseNames?.has(baseName) && (
                             <span className="ml-2 inline-flex items-center gap-1 align-middle font-sans text-xs font-normal text-gray-400">
