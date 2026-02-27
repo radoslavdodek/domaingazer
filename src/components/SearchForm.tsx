@@ -103,6 +103,14 @@ export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = 
           >
             Cancel
           </button>
+        ) : hasResults && onClearResults ? (
+          <button
+            type="button"
+            onClick={onClearResults}
+            className={theme.searchForm.submitButton}
+          >
+            New Search
+          </button>
         ) : (
           <button
             type="submit"
@@ -110,15 +118,6 @@ export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = 
             className={theme.searchForm.submitButton}
           >
             Find Domains
-          </button>
-        )}
-        {hasResults && !isSearching && onClearResults && (
-          <button
-            type="button"
-            onClick={onClearResults}
-            className={theme.searchForm.clearButton}
-          >
-            Clear results
           </button>
         )}
       </div>
