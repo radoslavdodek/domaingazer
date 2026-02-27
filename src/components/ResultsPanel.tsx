@@ -53,6 +53,7 @@ export function ResultsPanel({
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
   const [hint, setHint] = useState('')
   const [customInput, setCustomInput] = useState('')
+  const [customBaseNames, setCustomBaseNames] = useState<Set<string>>(new Set())
   const [explanationsByBaseName, setExplanationsByBaseName] = useState<Record<string, BaseNameExplanation>>({})
   const hintRef = useRef<HTMLInputElement>(null)
   const newRowsAnchorRef = useRef<HTMLDivElement>(null)
@@ -137,6 +138,7 @@ export function ResultsPanel({
 
   useEffect(() => {
     setExplanationsByBaseName({})
+    setCustomBaseNames(new Set())
   }, [searchDescription])
 
   useEffect(() => {
@@ -155,6 +157,11 @@ export function ResultsPanel({
     })
   }, [results])
 
+  const handleCheckCustom = useCallback((baseName: string) => {
+    setCustomBaseNames((prev) => new Set(prev).add(baseName))
+    onCheckCustom?.(baseName)
+  }, [onCheckCustom])
+
   if (status === 'idle' && results.length === 0) return null
 
   const resultMap = new Map(results.map((result) => [`${result.baseName}${result.tld}`, result]))
@@ -172,7 +179,7 @@ export function ResultsPanel({
   const totalCount = results.length
 
   const exportBaseNames = showAvailableOnly
-    ? allBaseNames.filter((name) => (resultsByBaseName.get(name) ?? []).some(
+    ? allBaseNames.filter((name) => customBaseNames.has(name) || (resultsByBaseName.get(name) ?? []).some(
       (row) => row.status === 'AVAILABLE' || row.status === 'CHECKING'
     ))
     : allBaseNames
@@ -306,6 +313,7 @@ export function ResultsPanel({
         onExplain={runExplain}
         explanationByBaseName={explanationsByBaseName}
         canExplain={Boolean(searchDescription?.trim())}
+        userAddedBaseNames={customBaseNames}
         onBatchStartRef={setBatchElement}
         onBaseNameRowRef={setBaseNameRowElement}
       />
@@ -322,7 +330,7 @@ export function ResultsPanel({
           onHintChange={setHint}
           onCustomInputChange={setCustomInput}
           onGenerateMore={onGenerateMore}
-          onCheckCustom={onCheckCustom}
+          onCheckCustom={onCheckCustom ? handleCheckCustom : undefined}
           hintRef={hintRef}
         />
       )}

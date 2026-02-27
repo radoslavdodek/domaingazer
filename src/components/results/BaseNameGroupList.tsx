@@ -22,6 +22,7 @@ interface BaseNameGroupListProps {
   onExplain?: (baseName: string) => void
   explanationByBaseName?: Record<string, BaseNameExplanation>
   canExplain?: boolean
+  userAddedBaseNames?: Set<string>
   onBatchStartRef?: (batchStartBaseName: string, element: HTMLDivElement | null) => void
   onBaseNameRowRef?: (baseName: string, element: HTMLDivElement | null) => void
 }
@@ -39,6 +40,7 @@ export function BaseNameGroupList({
   onExplain,
   explanationByBaseName = {},
   canExplain = false,
+  userAddedBaseNames,
   onBatchStartRef,
   onBaseNameRowRef,
 }: BaseNameGroupListProps) {
@@ -90,7 +92,12 @@ export function BaseNameGroupList({
                       className={theme.baseNameGroupList.card}
                     >
                       <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">{baseName}</span>
+                        <span className="break-all font-mono text-sm font-medium leading-tight text-gray-900">
+                          {baseName}
+                          {userAddedBaseNames?.has(baseName) && (
+                            <span className="ml-2 inline-block align-middle font-sans text-xs font-normal text-gray-400">your idea</span>
+                          )}
+                        </span>
                         <div className="flex items-center gap-1">
                           {onTryVariation && (
                             <button
