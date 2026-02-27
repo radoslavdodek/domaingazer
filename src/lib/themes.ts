@@ -138,7 +138,7 @@ export const classicTheme: Theme = {
     container: 'rounded-xl border border-gray-200 bg-white shadow-sm',
   },
   resultsHeader: {
-    wrapper: 'sticky top-0 z-30 rounded-t-xl border-b border-gray-200 bg-gray-50 p-4 text-sm text-gray-600 sm:p-5',
+    wrapper: 'sticky top-0 z-30 rounded-t-xl border-b border-gray-200 bg-gray-50 p-4 text-sm text-gray-600 shadow-sm sm:p-5',
     searchingDot: 'relative inline-block h-2.5 w-2.5 rounded-full bg-blue-500',
     searchingPing: 'absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-75',
     availableText: 'font-semibold text-green-700',
@@ -165,7 +165,7 @@ export const classicTheme: Theme = {
     workingPing: 'absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-75',
   },
   refinementCard: {
-    wrapper: 'space-y-4 rounded-b-xl border-t border-gray-200 bg-gray-50 p-4 sm:p-5',
+    wrapper: 'space-y-4 rounded-b-xl border-t border-gray-200 bg-gray-50 p-4 shadow-[0_-2px_4px_-1px_rgba(0,0,0,0.06)] sm:p-5',
     label: 'block text-sm font-semibold text-gray-700',
     input: 'flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50',
     button: 'w-full rounded-lg border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white sm:w-auto',
@@ -235,7 +235,7 @@ export const midnightTheme: Theme = {
     container: 'rounded-2xl border border-zinc-800 bg-zinc-900 shadow-lg shadow-black/20',
   },
   resultsHeader: {
-    wrapper: 'sticky top-0 z-30 rounded-t-2xl border-b border-zinc-800 bg-zinc-800/60 p-4 text-sm text-zinc-400 backdrop-blur-xl sm:p-5',
+    wrapper: 'sticky top-0 z-30 rounded-t-2xl border-b border-zinc-800 bg-zinc-800/60 p-4 text-sm text-zinc-400 shadow-md shadow-black/20 backdrop-blur-xl sm:p-5',
     searchingDot: 'relative inline-block h-2.5 w-2.5 rounded-full bg-sky-500',
     searchingPing: 'absolute inset-0 animate-ping rounded-full bg-sky-400 opacity-75',
     availableText: 'font-semibold text-emerald-400',
@@ -262,7 +262,7 @@ export const midnightTheme: Theme = {
     workingPing: 'absolute inset-0 animate-ping rounded-full bg-sky-400 opacity-75',
   },
   refinementCard: {
-    wrapper: 'space-y-4 rounded-b-2xl border-t border-zinc-800 bg-zinc-900/80 p-4 sm:p-5',
+    wrapper: 'space-y-4 rounded-b-2xl border-t border-zinc-800 bg-zinc-900/80 p-4 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.3)] sm:p-5',
     label: 'block text-sm font-semibold text-zinc-300',
     input: 'flex-1 rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 disabled:opacity-50',
     button: 'w-full rounded-xl border border-sky-700 bg-zinc-800 px-4 py-2 text-sm font-semibold text-sky-400 transition-colors hover:bg-sky-950 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-zinc-800 sm:w-auto',
