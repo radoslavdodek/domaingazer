@@ -20,7 +20,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LS_KEY)
-      if (saved === 'classic' || saved === 'vibrant' || saved === 'midnight') {
+      if (saved === 'classic' || saved === 'midnight') {
         setThemeNameState(saved)
       }
     } catch { /* ignore */ }

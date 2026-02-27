@@ -3,11 +3,10 @@
 import { useTheme } from '@/contexts/ThemeContext'
 import type { ThemeName } from '@/lib/themes'
 
-const cycle: ThemeName[] = ['vibrant', 'midnight', 'classic']
+const cycle: ThemeName[] = ['classic', 'midnight']
 
 const labels: Record<ThemeName, string> = {
   classic: 'Classic',
-  vibrant: 'Vibrant',
   midnight: 'Midnight',
 }
 

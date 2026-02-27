@@ -82,7 +82,7 @@ export interface Theme {
   }
 }
 
-export type ThemeName = 'classic' | 'vibrant' | 'midnight'
+export type ThemeName = 'classic' | 'midnight'
 
 export const classicTheme: Theme = {
   layout: {
@@ -179,104 +179,6 @@ export const classicTheme: Theme = {
     body: 'mt-2 text-sm leading-relaxed text-gray-600',
     cancelButton: 'rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50',
     confirmButton: 'rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700',
-  },
-}
-
-export const vibrantTheme: Theme = {
-  layout: {
-    body: 'bg-mesh-gradient min-h-screen font-sans',
-  },
-  page: {
-    title: 'text-gradient mb-3 text-3xl font-extrabold sm:text-4xl',
-    subtitle: 'mx-auto max-w-2xl text-sm text-white/70',
-    searchCard: 'glass mb-6 rounded-2xl p-4 shadow-lg shadow-indigo-500/10 sm:p-6',
-  },
-  searchForm: {
-    label: 'mb-1 block text-sm font-medium text-gray-700',
-    textarea: 'w-full min-h-[120px] resize-none rounded-xl border border-white/30 bg-white/50 px-4 py-3 text-sm shadow-inner shadow-indigo-500/5 placeholder:text-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 disabled:bg-white/30 disabled:text-gray-500',
-    validationText: 'mt-1 text-xs text-rose-500',
-    submitButton: 'w-full rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:shadow-xl hover:shadow-indigo-500/30 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:w-auto',
-    cancelButton: 'w-full rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-rose-500/25 transition-all hover:shadow-xl hover:shadow-rose-500/30 hover:brightness-110 sm:w-auto',
-    clearButton: 'text-sm text-gray-500 transition-colors hover:text-indigo-700',
-  },
-  tldSelector: {
-    selected: 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/25',
-    unselected: 'border border-white/30 bg-white/40 text-gray-700 hover:-translate-y-0.5 hover:bg-white/60 hover:shadow-md',
-  },
-  domainRow: {
-    badgeClassByStatus: {
-      CHECKING: 'bg-indigo-50 text-indigo-500',
-      STOPPED: 'bg-gray-100 text-gray-600',
-      AVAILABLE: 'bg-emerald-100 text-emerald-700 shadow-sm shadow-emerald-500/20',
-      UNAVAILABLE: 'bg-rose-50 text-rose-600',
-      RESERVED: 'bg-amber-50 text-amber-700',
-      UNSUPPORTED: 'bg-gray-100 text-gray-400',
-      ERROR: 'bg-orange-50 text-orange-600',
-      PENDING: 'bg-gray-100 text-gray-500',
-    },
-    compactBadgeClassByStatus: {
-      CHECKING: 'border border-indigo-200 bg-indigo-50 text-indigo-600 font-medium',
-      STOPPED: 'border border-gray-200 bg-gray-100 text-gray-600 font-medium',
-      AVAILABLE: 'border border-emerald-300 bg-emerald-100 text-emerald-800 font-bold shadow-sm shadow-emerald-500/20',
-      UNAVAILABLE: 'border border-rose-200 bg-rose-50 text-rose-700 font-semibold',
-      RESERVED: 'border border-amber-200 bg-amber-50 text-amber-700 font-medium',
-      UNSUPPORTED: 'border border-gray-200 bg-gray-100 text-gray-500 font-medium',
-      ERROR: 'border border-orange-200 bg-orange-50 text-orange-700 font-medium',
-      PENDING: 'border border-gray-200 bg-gray-100 text-gray-500 font-medium',
-    },
-    spinner: 'h-3 w-3 animate-spin rounded-full border border-indigo-400 border-t-transparent',
-    rowDefault: 'border-white/30 bg-white/50',
-    rowAvailable: 'border-emerald-200/60 bg-emerald-50/60 shadow-sm shadow-emerald-500/10',
-    textDefault: 'text-gray-700',
-    textAvailable: 'font-semibold text-emerald-800',
-    compactRowDefault: 'border-white/30 bg-white/40',
-    compactRowAvailable: 'border-emerald-200/60 bg-emerald-50/50',
-    compactText: 'text-gray-700',
-  },
-  resultsPanel: {
-    container: 'glass rounded-2xl shadow-lg shadow-indigo-500/10',
-  },
-  resultsHeader: {
-    wrapper: 'sticky top-0 z-30 rounded-t-2xl border-b border-white/20 bg-white/60 p-4 text-sm text-gray-600 backdrop-blur-xl sm:p-5',
-    searchingDot: 'relative inline-block h-2.5 w-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500',
-    searchingPing: 'absolute inset-0 animate-ping rounded-full bg-indigo-400 opacity-75',
-    availableText: 'font-semibold text-emerald-700',
-    cancelledText: 'text-gray-500',
-    errorText: 'text-rose-600',
-    tldPill: 'rounded-full border border-white/30 bg-white/50 px-3 py-1 text-sm font-medium text-gray-700',
-    checkboxAccent: 'h-4 w-4 cursor-pointer rounded border-gray-300 accent-indigo-600',
-    actionLink: 'text-sm text-gray-500 transition-colors hover:text-indigo-700',
-    actionLinkDisabled: 'text-sm text-gray-500 transition-colors hover:text-indigo-700 disabled:cursor-not-allowed disabled:text-gray-400',
-  },
-  baseNameGroupList: {
-    skeleton: 'shimmer h-10 rounded-xl border border-white/20',
-    batchDividerLine: 'gradient-divider h-px flex-1 opacity-40',
-    batchDividerText: 'text-[11px] font-medium uppercase tracking-wide text-indigo-400',
-    card: 'scroll-mt-24 rounded-xl border border-white/30 bg-white/50 px-3 py-2 backdrop-blur-sm sm:px-3.5',
-    variationButton: 'rounded-lg border border-indigo-200 bg-white/60 px-2 py-0.5 text-xs font-medium text-indigo-600 transition-all hover:bg-indigo-50 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50',
-    explainButton: 'rounded-lg border border-white/40 bg-white/60 px-2 py-0.5 text-xs font-medium text-gray-700 transition-all hover:bg-white/80 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50',
-    explanationBox: 'mt-2 rounded-lg border border-white/30 bg-white/45 px-2.5 py-2 backdrop-blur-sm',
-    explanationText: 'text-xs leading-relaxed text-gray-700',
-    explanationErrorText: 'text-xs text-rose-600',
-    explanationLoadingText: 'text-xs text-gray-500',
-    emptyState: 'rounded-xl border border-dashed border-white/30 px-4 py-6 text-center text-sm text-gray-500',
-    workingRow: 'rounded-xl border border-indigo-200/40 bg-indigo-50/40 px-4 py-3 text-sm text-indigo-700 backdrop-blur-sm',
-    workingDot: 'relative inline-block h-2 w-2 rounded-full bg-indigo-500',
-    workingPing: 'absolute inset-0 animate-ping rounded-full bg-indigo-400 opacity-75',
-  },
-  refinementCard: {
-    wrapper: 'space-y-4 border-t border-white/20 bg-white/40 p-4 backdrop-blur-sm sm:p-5',
-    label: 'block text-sm font-semibold text-gray-700',
-    input: 'flex-1 rounded-xl border border-white/30 bg-white/50 px-3 py-2 text-sm shadow-inner shadow-indigo-500/5 placeholder:text-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 disabled:opacity-50',
-    button: 'w-full rounded-xl border border-indigo-300/50 bg-white/60 px-4 py-2 text-sm font-semibold text-indigo-700 transition-all hover:bg-indigo-50/80 hover:shadow-md hover:shadow-indigo-500/10 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white/60 disabled:hover:shadow-none sm:w-auto',
-  },
-  clearResultsModal: {
-    overlay: 'fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4 backdrop-blur-md',
-    dialog: 'glass-strong w-full max-w-md rounded-2xl p-5 shadow-2xl shadow-indigo-500/10',
-    title: 'text-base font-semibold text-gray-900',
-    body: 'mt-2 text-sm leading-relaxed text-gray-600',
-    cancelButton: 'rounded-xl border border-white/30 bg-white/60 px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-white/80',
-    confirmButton: 'rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-rose-500/25 transition-all hover:shadow-xl hover:shadow-rose-500/30 hover:brightness-110',
   },
 }
 
@@ -380,6 +282,5 @@ export const midnightTheme: Theme = {
 
 export const themes: Record<ThemeName, Theme> = {
   classic: classicTheme,
-  vibrant: vibrantTheme,
   midnight: midnightTheme,
 }

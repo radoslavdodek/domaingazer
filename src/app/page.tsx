@@ -49,7 +49,7 @@ export default function Home() {
           </div>
           <h1 className={theme.page.title}>Domain Gazer</h1>
           <p className={theme.page.subtitle}>
-            Describe your project, pick TLDs, and get AI-generated domain names checked for availability.
+            Describe your project, pick TLD, and get AI-generated domain names checked for availability.
           </p>
         </div>
 
