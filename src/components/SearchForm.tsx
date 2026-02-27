@@ -26,7 +26,10 @@ export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = 
       const savedDesc = localStorage.getItem(LS_DESCRIPTION)
       if (savedDesc) setDescription(savedDesc)
       const savedTlds = localStorage.getItem(LS_TLDS)
-      if (savedTlds) setTlds(JSON.parse(savedTlds) as TLD[])
+      if (savedTlds) {
+        const parsed = JSON.parse(savedTlds) as TLD[]
+        setTlds(parsed.length > 0 ? [parsed[0]] : DEFAULT_TLDS)
+      }
     } catch { /* ignore */ }
   }, [])
 
@@ -71,14 +74,14 @@ export function SearchForm({ isSearching, onSearch, onCancel, hideTldSelector = 
           <p className={theme.searchForm.validationText}>Please enter at least 5 characters</p>
         )}
         {tlds.length === 0 && (
-          <p className={theme.searchForm.validationText}>Select at least one TLD</p>
+          <p className={theme.searchForm.validationText}>Select a TLD</p>
         )}
       </div>
 
       {!hideTldSelector && (
         <div>
           <label className={`mb-2 ${theme.searchForm.label}`}>
-            Select top level domains to check:
+            Select the primary top level domain you are interested in:
           </label>
           <TldSelector
             selected={tlds}

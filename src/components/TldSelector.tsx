@@ -13,9 +13,9 @@ export function TldSelector({ selected, onChange }: TldSelectorProps) {
 
   const toggle = (tld: TLD) => {
     if (selected.includes(tld)) {
-      onChange(selected.filter((t) => t !== tld))
+      onChange([])
     } else {
-      onChange([...selected, tld])
+      onChange([tld])
     }
   }
 
