@@ -156,7 +156,7 @@ export const classicTheme: Theme = {
     variationButton: 'rounded-lg border border-blue-200 bg-white px-2 py-0.5 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50',
     explainButton: 'rounded-lg border border-gray-200 bg-white px-2 py-0.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50',
     explanationBox: 'mt-2 rounded-md border border-gray-200 bg-gray-50 px-2.5 py-2',
-    explanationText: 'text-xs leading-relaxed text-gray-700',
+    explanationText: 'text-sm leading-relaxed text-gray-700',
     explanationErrorText: 'text-xs text-red-600',
     explanationLoadingText: 'text-xs text-gray-500',
     emptyState: 'rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500',
