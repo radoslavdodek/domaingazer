@@ -5,13 +5,26 @@ import type { ThemeName } from '@/lib/themes'
 
 const cycle: ThemeName[] = ['classic', 'midnight']
 
+const icons: Record<ThemeName, React.ReactNode> = {
+  classic: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+      <path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zM10 15a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 15zM10 7a3 3 0 100 6 3 3 0 000-6zM15.657 5.404a.75.75 0 10-1.06-1.06l-1.061 1.06a.75.75 0 001.06 1.06l1.06-1.06zM6.464 14.596a.75.75 0 10-1.06-1.06l-1.06 1.06a.75.75 0 001.06 1.06l1.06-1.06zM18 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0118 10zM5 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 015 10zM14.596 15.657a.75.75 0 001.06-1.06l-1.06-1.061a.75.75 0 10-1.06 1.06l1.06 1.06zM5.404 6.464a.75.75 0 001.06-1.06l-1.06-1.06a.75.75 0 10-1.06 1.06l1.06 1.06z" />
+    </svg>
+  ),
+  midnight: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+      <path fillRule="evenodd" d="M7.455 2.004a.75.75 0 01.26.77 7 7 0 009.958 7.967.75.75 0 011.067.853A8.5 8.5 0 116.647 1.921a.75.75 0 01.808.083z" clipRule="evenodd" />
+    </svg>
+  ),
+}
+
 const labels: Record<ThemeName, string> = {
-  classic: 'Classic',
-  midnight: 'Midnight',
+  classic: 'Light',
+  midnight: 'Dark',
 }
 
 export function ThemeToggle() {
-  const { themeName, setThemeName } = useTheme()
+  const { themeName, setThemeName, theme } = useTheme()
 
   const next = () => {
     const idx = cycle.indexOf(themeName)
@@ -23,8 +36,9 @@ export function ThemeToggle() {
       type="button"
       onClick={next}
       aria-label="Switch theme"
-      className="rounded-full border border-white/30 bg-white/50 px-3.5 py-2 text-xs font-medium text-gray-600 backdrop-blur-sm transition-all hover:bg-white/70 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-400 dark:hover:bg-zinc-800"
+      className={theme.navbar.toggleButton}
     >
+      {icons[themeName]}
       {labels[themeName]}
     </button>
   )

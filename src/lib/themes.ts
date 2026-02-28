@@ -6,10 +6,21 @@ export interface Theme {
   layout: {
     body: string
   }
+  navbar: {
+    wrapper: string
+    brand: string
+    icon: string
+    toggleButton: string
+  }
+  footer: {
+    wrapper: string
+    text: string
+  }
   page: {
     title: string
     subtitle: string
     searchCard: string
+    heroBadge: string
   }
   searchForm: {
     label: string
@@ -85,12 +96,23 @@ export type ThemeName = 'classic' | 'midnight'
 
 export const classicTheme: Theme = {
   layout: {
-    body: 'min-h-screen bg-gray-50 font-sans',
+    body: 'min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 font-sans',
+  },
+  navbar: {
+    wrapper: 'flex items-center justify-between border-b border-gray-200 bg-white/70 px-4 py-3 backdrop-blur-sm sm:px-6',
+    brand: 'flex items-center gap-2 text-base font-bold text-gray-900',
+    icon: 'h-5 w-5 text-blue-600',
+    toggleButton: 'flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-medium text-gray-600 transition-all hover:bg-gray-50',
+  },
+  footer: {
+    wrapper: 'mt-12 border-t border-gray-200 py-6 text-center',
+    text: 'text-xs text-gray-400',
   },
   page: {
-    title: 'mb-3 text-3xl font-extrabold text-gray-900 sm:text-4xl',
+    title: 'mb-3 text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent sm:text-4xl',
     subtitle: 'mx-auto max-w-2xl text-sm text-gray-500',
     searchCard: 'mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6',
+    heroBadge: 'mb-4 inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600',
   },
   searchForm: {
     label: 'mb-1 block text-sm font-medium text-gray-700',
@@ -182,12 +204,23 @@ export const classicTheme: Theme = {
 
 export const midnightTheme: Theme = {
   layout: {
-    body: 'min-h-screen bg-zinc-950 font-sans',
+    body: 'min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-950 to-sky-950/20 font-sans',
+  },
+  navbar: {
+    wrapper: 'flex items-center justify-between border-b border-zinc-800 bg-zinc-900/70 px-4 py-3 backdrop-blur-sm sm:px-6',
+    brand: 'flex items-center gap-2 text-base font-bold text-zinc-100',
+    icon: 'h-5 w-5 text-sky-400',
+    toggleButton: 'flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-800/50 px-3.5 py-1.5 text-xs font-medium text-zinc-400 transition-all hover:bg-zinc-800',
+  },
+  footer: {
+    wrapper: 'mt-12 border-t border-zinc-800 py-6 text-center',
+    text: 'text-xs text-zinc-600',
   },
   page: {
-    title: 'mb-3 text-3xl font-extrabold text-zinc-100 sm:text-4xl',
+    title: 'mb-3 text-3xl font-extrabold bg-gradient-to-r from-sky-400 to-violet-400 bg-clip-text text-transparent sm:text-4xl',
     subtitle: 'mx-auto max-w-2xl text-sm text-zinc-500',
     searchCard: 'mb-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 shadow-lg shadow-black/20 sm:p-6',
+    heroBadge: 'mb-4 inline-flex items-center gap-1.5 rounded-full border border-sky-800 bg-sky-950/50 px-3 py-1 text-xs font-semibold text-sky-400',
   },
   searchForm: {
     label: 'mb-1 block text-sm font-medium text-zinc-400',
