@@ -5,6 +5,7 @@ import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { UserMenu } from '@/components/UserMenu'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { TLD } from '@/lib/types'
@@ -50,7 +51,10 @@ export default function Home() {
             </svg>
             <span>Domain Gazer</span>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <UserMenu />
+          </div>
         </nav>
 
         <div className="px-4 py-10 sm:px-6 sm:py-14">

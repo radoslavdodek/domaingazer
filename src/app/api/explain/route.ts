@@ -1,8 +1,18 @@
 export const runtime = 'nodejs'
 
 import { explainDomainName } from '@/lib/openai'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
   const body = (await request.json()) as { description?: string; baseName?: string }
   const description = (body.description ?? '').trim()
   const baseName = (body.baseName ?? '')
