@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
@@ -10,6 +10,12 @@ import { useDomainSearch } from '@/hooks/useDomainSearch'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { TLD } from '@/lib/types'
 
+interface SearchHistoryEntry {
+  id: string
+  description: string
+  selected_tlds: TLD[]
+}
+
 export default function Home() {
   const { theme } = useTheme()
   const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
@@ -17,12 +23,40 @@ export default function Home() {
   const [searchDescription, setSearchDescription] = useState('')
   const [isTldSelectionLocked, setIsTldSelectionLocked] = useState(false)
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([])
+  const [initialDescription, setInitialDescription] = useState<string | undefined>(undefined)
+  const [initialTlds, setInitialTlds] = useState<TLD[] | undefined>(undefined)
+
+  useEffect(() => {
+    fetch('/api/search-history')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (!data?.history?.length) return
+        const history: SearchHistoryEntry[] = data.history
+        setSearchHistory(history)
+        setInitialDescription(history[0].description)
+        setInitialTlds(history[0].selected_tlds)
+      })
+      .catch(() => {/* ignore — user may not be logged in */})
+  }, [])
 
   const handleSearch = (description: string, tlds: TLD[]) => {
     setSelectedTlds(tlds)
     setSearchDescription(description)
     setIsTldSelectionLocked(true)
     search(description, tlds)
+
+    // Fire-and-forget save + optimistic prepend (skip if description already in history)
+    setSearchHistory((prev) => {
+      if (prev.some((e) => e.description === description)) return prev
+      const newEntry: SearchHistoryEntry = { id: crypto.randomUUID(), description, selected_tlds: tlds }
+      fetch('/api/search-history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description, selected_tlds: tlds }),
+      }).catch(() => {/* ignore */})
+      return [newEntry, ...prev].slice(0, 10)
+    })
   }
 
   const handleAddTldForBase = (baseName: string, tld: TLD) => {
@@ -32,6 +66,15 @@ export default function Home() {
   const handleGenerateMore = (hint: string) => {
     const baseNames = Array.from(new Set(results.map((r) => r.baseName)))
     generateMore(baseNames, hint || undefined)
+  }
+
+  const handleDeleteHistory = (id: string) => {
+    setSearchHistory((prev) => prev.filter((e) => e.id !== id))
+    fetch('/api/search-history', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    }).catch(() => {/* ignore */})
   }
 
   const handleClear = () => {
@@ -76,6 +119,10 @@ export default function Home() {
               hideTldSelector={isTldSelectionLocked}
               hasResults={results.length > 0}
               onClearResults={() => setIsClearConfirmOpen(true)}
+              initialDescription={initialDescription}
+              initialTlds={initialTlds}
+              searchHistory={searchHistory}
+              onDeleteHistory={handleDeleteHistory}
             />
           </div>
 
