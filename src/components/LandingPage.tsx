@@ -131,7 +131,13 @@ const ACCENT_CLASSES: Record<string, { icon: string; bg: string; border: string 
   orange: { icon: 'text-orange-400', bg: 'bg-orange-950/50', border: 'border-orange-900/50' },
 }
 
-export function LandingPage() {
+type LandingPagePricing = {
+  monthly: string | null
+  yearlyPerMonth: string | null
+  yearlyBillingNote: string | null
+}
+
+export function LandingPage({ pricing }: { pricing: LandingPagePricing | null }) {
   const [isSignedIn, setIsSignedIn] = useState(false)
   const { billing, isLoading: isBillingLoading, error: billingError } = useBillingStatus(isSignedIn)
   const [pricingAction, setPricingAction] = useState<'month' | 'year' | 'portal' | null>(null)
@@ -448,13 +454,13 @@ export function LandingPage() {
           </div>
 
           <div className="grid gap-5 lg:grid-cols-3">
-            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/70 p-7">
+            <div className="flex h-full flex-col rounded-3xl border border-zinc-800 bg-zinc-900/70 p-7">
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-zinc-500">Free</p>
               <h3 className="mt-4 text-3xl font-bold">Starter</h3>
               <p className="mt-3 text-sm leading-relaxed text-zinc-400">
                 One-time free credits for trying domain generation and name explanations before you pay.
               </p>
-              <div className="mt-8">
+              <div className="mt-auto pt-8">
                 {isSignedIn ? (
                   <Link
                     href="/"
@@ -474,11 +480,17 @@ export function LandingPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-blue-500/30 bg-gradient-to-b from-blue-500/10 to-zinc-900/80 p-7 shadow-lg shadow-blue-600/10">
+            <div className="flex h-full flex-col rounded-3xl border border-blue-500/30 bg-gradient-to-b from-blue-500/10 to-zinc-900/80 p-7 shadow-lg shadow-blue-600/10">
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Pro Monthly</p>
               <h3 className="mt-4 text-3xl font-bold">Monthly</h3>
+              {pricing?.monthly && (
+                <div className="mt-6 flex items-end gap-2">
+                  <span className="text-5xl font-black tracking-tight">{pricing.monthly}</span>
+                  <span className="pb-1 text-sm font-medium text-zinc-400">/month</span>
+                </div>
+              )}
               <p className="mt-2 text-sm text-zinc-400">Unlimited searches and explanations. Cancel anytime.</p>
-              <div className="mt-8">
+              <div className="mt-auto pt-8">
                 <button
                   type="button"
                   onClick={() => { void handlePricing('month') }}
@@ -490,7 +502,7 @@ export function LandingPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-cyan-500/30 bg-gradient-to-b from-cyan-500/10 to-zinc-900/80 p-7 shadow-lg shadow-cyan-600/10">
+            <div className="flex h-full flex-col rounded-3xl border border-cyan-500/30 bg-gradient-to-b from-cyan-500/10 to-zinc-900/80 p-7 shadow-lg shadow-cyan-600/10">
               <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">Pro Yearly</p>
                 <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-200">
@@ -498,8 +510,19 @@ export function LandingPage() {
                 </span>
               </div>
               <h3 className="mt-4 text-3xl font-bold">Yearly</h3>
+              {pricing?.yearlyPerMonth && (
+                <div className="mt-6 flex items-end gap-2">
+                  <span className="text-5xl font-black tracking-tight">{pricing.yearlyPerMonth}</span>
+                  <span className="pb-1 text-sm font-medium text-zinc-400">/month</span>
+                </div>
+              )}
+              {pricing?.yearlyBillingNote && (
+                <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-cyan-200/80">
+                  {pricing.yearlyBillingNote}
+                </p>
+              )}
               <p className="mt-2 text-sm text-zinc-400">The same unlimited access with discounted annual billing.</p>
-              <div className="mt-8">
+              <div className="mt-auto pt-8">
                 <button
                   type="button"
                   onClick={() => { void handlePricing('year') }}

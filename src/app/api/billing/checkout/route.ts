@@ -3,11 +3,10 @@ export const runtime = 'nodejs'
 import { NextResponse } from 'next/server'
 import type { BillingInterval } from '@/lib/billing-types'
 import {
-  getStoredStripeCustomerId,
+  getOrCreateStripeCustomerId,
   getUserBillingState,
-  upsertBillingCustomer,
 } from '@/lib/billing'
-import { createStripeCheckoutSession, createStripeCustomer } from '@/lib/stripe'
+import { createStripeCheckoutSession } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 
 function isBillingInterval(value: unknown): value is BillingInterval {
@@ -38,16 +37,7 @@ export async function POST(request: Request) {
       )
     }
 
-    let stripeCustomerId = await getStoredStripeCustomerId(user.id)
-
-    if (!stripeCustomerId) {
-      const customer = await createStripeCustomer({
-        email: user.email,
-        userId: user.id,
-      })
-      stripeCustomerId = customer.id
-      await upsertBillingCustomer(user.id, stripeCustomerId)
-    }
+    const stripeCustomerId = await getOrCreateStripeCustomerId(user.id, user.email)
 
     const origin = new URL(request.url).origin
     const session = await createStripeCheckoutSession({

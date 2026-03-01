@@ -21,6 +21,11 @@ export type StripeCustomer = {
   email?: string | null
 }
 
+export type StripeDeletedCustomer = {
+  id: string
+  deleted: true
+}
+
 export type StripeCheckoutSession = {
   id: string
   url: string | null
@@ -62,6 +67,16 @@ export type StripeEvent<T = Record<string, unknown>> = {
   }
 }
 
+export type StripePrice = {
+  id: string
+  unit_amount: number | null
+  currency: string
+  recurring?: {
+    interval?: string | null
+    interval_count?: number | null
+  } | null
+}
+
 function getRequiredEnv(name: string) {
   const value = process.env[name]
   if (!value) {
@@ -90,25 +105,32 @@ function appendFormValue(searchParams: URLSearchParams, key: string, value: Stri
   searchParams.append(key, String(value))
 }
 
-async function stripeRequest<T>(path: string, body?: Record<string, StripeRequestValue>): Promise<T> {
+async function stripeRequest<T>(
+  path: string,
+  options?: {
+    method?: 'GET' | 'POST'
+    body?: Record<string, StripeRequestValue>
+  }
+): Promise<T> {
   const secretKey = getRequiredEnv('STRIPE_SECRET_KEY')
   const normalizedPath = path.replace(/^\/+/, '')
   const url = new URL(`/v1/${normalizedPath}`, 'https://api.stripe.com')
   const formBody = new URLSearchParams()
+  const method = options?.method ?? 'POST'
 
-  if (body) {
-    Object.entries(body).forEach(([key, value]) => {
+  if (options?.body) {
+    Object.entries(options.body).forEach(([key, value]) => {
       appendFormValue(formBody, key, value)
     })
   }
 
   const response = await fetch(url, {
-    method: 'POST',
+    method,
     headers: {
       Authorization: `Bearer ${secretKey}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
+      ...(method === 'POST' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
     },
-    body: formBody,
+    body: method === 'POST' ? formBody : undefined,
   })
 
   if (!response.ok) {
@@ -128,12 +150,26 @@ export function getStripePriceId(interval: BillingInterval) {
     : getRequiredEnv('STRIPE_PRICE_YEARLY_ID')
 }
 
+export async function getStripePrice(priceId: string) {
+  return stripeRequest<StripePrice>(`/prices/${priceId}`, {
+    method: 'GET',
+  })
+}
+
 export async function createStripeCustomer(params: { email?: string | null; userId: string }) {
   return stripeRequest<StripeCustomer>('/customers', {
-    email: params.email ?? undefined,
-    metadata: {
-      userId: params.userId,
+    body: {
+      email: params.email ?? undefined,
+      metadata: {
+        userId: params.userId,
+      },
     },
+  })
+}
+
+export async function getStripeCustomer(customerId: string) {
+  return stripeRequest<StripeCustomer | StripeDeletedCustomer>(`/customers/${customerId}`, {
+    method: 'GET',
   })
 }
 
@@ -144,24 +180,26 @@ export async function createStripeCheckoutSession(params: {
   origin: string
 }) {
   return stripeRequest<StripeCheckoutSession>('/checkout/sessions', {
-    mode: 'subscription',
-    customer: params.customerId,
-    client_reference_id: params.userId,
-    allow_promotion_codes: true,
-    success_url: `${params.origin}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${params.origin}/billing/cancel`,
-    line_items: [
-      {
-        price: getStripePriceId(params.interval),
-        quantity: 1,
-      },
-    ],
-    metadata: {
-      userId: params.userId,
-    },
-    subscription_data: {
+    body: {
+      mode: 'subscription',
+      customer: params.customerId,
+      client_reference_id: params.userId,
+      allow_promotion_codes: true,
+      success_url: `${params.origin}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${params.origin}/billing/cancel`,
+      line_items: [
+        {
+          price: getStripePriceId(params.interval),
+          quantity: 1,
+        },
+      ],
       metadata: {
         userId: params.userId,
+      },
+      subscription_data: {
+        metadata: {
+          userId: params.userId,
+        },
       },
     },
   })
@@ -172,8 +210,10 @@ export async function createStripeBillingPortalSession(params: {
   origin: string
 }) {
   return stripeRequest<StripeBillingPortalSession>('/billing_portal/sessions', {
-    customer: params.customerId,
-    return_url: `${params.origin}/`,
+    body: {
+      customer: params.customerId,
+      return_url: `${params.origin}/`,
+    },
   })
 }
 

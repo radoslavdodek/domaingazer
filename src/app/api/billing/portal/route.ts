@@ -1,8 +1,8 @@
 export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
-import { getStoredStripeCustomerId, upsertBillingCustomer } from '@/lib/billing'
-import { createStripeBillingPortalSession, createStripeCustomer } from '@/lib/stripe'
+import { getOrCreateStripeCustomerId } from '@/lib/billing'
+import { createStripeBillingPortalSession } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request) {
@@ -14,16 +14,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    let stripeCustomerId = await getStoredStripeCustomerId(user.id)
-
-    if (!stripeCustomerId) {
-      const customer = await createStripeCustomer({
-        email: user.email,
-        userId: user.id,
-      })
-      stripeCustomerId = customer.id
-      await upsertBillingCustomer(user.id, stripeCustomerId)
-    }
+    const stripeCustomerId = await getOrCreateStripeCustomerId(user.id, user.email)
 
     const origin = new URL(request.url).origin
     const session = await createStripeBillingPortalSession({

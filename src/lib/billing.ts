@@ -1,5 +1,6 @@
 import type { BillingInterval, BillingStatusResponse } from '@/lib/billing-types'
 import type { StripeSubscription } from '@/lib/stripe'
+import { createStripeCustomer, getStripeCustomer } from '@/lib/stripe'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 type BillableFeature = 'search' | 'explain'
@@ -165,6 +166,37 @@ export async function upsertBillingCustomer(userId: string, stripeCustomerId: st
   if (error) {
     throw new Error(error.message)
   }
+}
+
+function isMissingStripeCustomerError(error: unknown) {
+  return error instanceof Error && error.message.includes('No such customer')
+}
+
+export async function getOrCreateStripeCustomerId(userId: string, email?: string | null) {
+  const storedStripeCustomerId = await getStoredStripeCustomerId(userId)
+
+  if (storedStripeCustomerId) {
+    try {
+      const customer = await getStripeCustomer(storedStripeCustomerId)
+
+      if (!('deleted' in customer && customer.deleted)) {
+        return storedStripeCustomerId
+      }
+    } catch (error) {
+      if (!isMissingStripeCustomerError(error)) {
+        throw error
+      }
+    }
+  }
+
+  const customer = await createStripeCustomer({
+    email,
+    userId,
+  })
+
+  await upsertBillingCustomer(userId, customer.id)
+
+  return customer.id
 }
 
 export async function upsertSubscriptionFromStripe(userId: string, subscription: StripeSubscription) {
