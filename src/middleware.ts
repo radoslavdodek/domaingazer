@@ -1,8 +1,29 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { PRIVACY_REGION_COOKIE } from '@/lib/privacy/constants'
+import { getCountryHeaderName, getDefaultRegion, getRegionFromCountryCode } from '@/lib/privacy/region'
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request })
+  const countryCode = request.geo?.country
+    ?? request.headers.get('x-vercel-ip-country')
+    ?? request.headers.get(getCountryHeaderName())
+
+  const region = countryCode
+    ? getRegionFromCountryCode(countryCode)
+    : getDefaultRegion()
+
+  const applyRegionCookie = (response: NextResponse) => {
+    response.cookies.set(PRIVACY_REGION_COOKIE, region, {
+      httpOnly: false,
+      sameSite: 'lax',
+      secure: request.nextUrl.protocol === 'https:',
+      path: '/',
+      maxAge: 60 * 60 * 24,
+    })
+    return response
+  }
+
+  let supabaseResponse = applyRegionCookie(NextResponse.next({ request }))
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,7 +33,7 @@ export async function middleware(request: NextRequest) {
         getAll: () => request.cookies.getAll(),
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({ request })
+          supabaseResponse = applyRegionCookie(NextResponse.next({ request }))
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           )
@@ -30,6 +51,9 @@ export async function middleware(request: NextRequest) {
     pathname === '/'
     || pathname.startsWith('/landing')
     || pathname.startsWith('/login')
+    || pathname.startsWith('/privacy')
+    || pathname.startsWith('/cookies')
+    || pathname.startsWith('/terms')
     || pathname.startsWith('/auth')
     || pathname.startsWith('/billing/success')
     || pathname.startsWith('/billing/cancel')
@@ -41,13 +65,13 @@ export async function middleware(request: NextRequest) {
   if (!user) {
     // API routes: return 401
     if (pathname.startsWith('/api/')) {
-      return new NextResponse('Unauthorized', { status: 401 })
+      return applyRegionCookie(new NextResponse('Unauthorized', { status: 401 }))
     }
     // Page routes: redirect to login
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     url.searchParams.set('next', pathname)
-    return NextResponse.redirect(url)
+    return applyRegionCookie(NextResponse.redirect(url))
   }
 
   return supabaseResponse

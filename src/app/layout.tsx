@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { cookies } from 'next/headers'
 import { ThemeProvider } from '@/contexts/ThemeContext'
+import { ConsentBanner } from '@/components/ConsentBanner'
+import { PRIVACY_REGION_COOKIE, type RegionKind } from '@/lib/privacy/constants'
 import './globals.css'
 
 const inter = Inter({
@@ -96,6 +99,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const regionCookie = cookies().get(PRIVACY_REGION_COOKIE)?.value
+  const initialRegion: RegionKind = regionCookie === 'eu' ? 'eu' : 'non-eu'
+
   return (
     <html lang="en" className={inter.variable}>
       <head>
@@ -105,7 +111,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen font-sans">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <ConsentBanner initialRegion={initialRegion} />
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -143,6 +143,16 @@ export function UserMenu({
           )}
           <button
             type="button"
+            onClick={() => { setOpen(false); router.push('/settings/privacy') }}
+            className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+              <path fillRule="evenodd" d="M10 2a1.75 1.75 0 0 0-1.75 1.75v.55a5.87 5.87 0 0 0-1.472.61l-.39-.39a1.75 1.75 0 1 0-2.475 2.475l.39.39a5.87 5.87 0 0 0-.61 1.472h-.55a1.75 1.75 0 1 0 0 3.5h.55c.133.514.338 1.008.61 1.472l-.39.39a1.75 1.75 0 1 0 2.475 2.475l.39-.39c.464.272.958.477 1.472.61v.55a1.75 1.75 0 1 0 3.5 0v-.55a5.87 5.87 0 0 0 1.472-.61l.39.39a1.75 1.75 0 1 0 2.475-2.475l-.39-.39c.272-.464.477-.958.61-1.472h.55a1.75 1.75 0 1 0 0-3.5h-.55a5.87 5.87 0 0 0-.61-1.472l.39-.39a1.75 1.75 0 1 0-2.475-2.475l-.39.39a5.87 5.87 0 0 0-1.472-.61v-.55A1.75 1.75 0 0 0 10 2Zm0 5.25A2.75 2.75 0 1 0 10 12.75 2.75 2.75 0 0 0 10 7.25Z" clipRule="evenodd" />
+            </svg>
+            Privacy &amp; Data
+          </button>
+          <button
+            type="button"
             onClick={handleSignOut}
             className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-red-600"
           >

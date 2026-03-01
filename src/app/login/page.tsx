@@ -59,6 +59,22 @@ export default function LoginPage() {
               </svg>
               Continue with Google
             </button>
+
+            <p className={`mt-4 text-xs leading-5 ${theme.page.subtitle}`}>
+              Continuing uses essential authentication cookies. Optional browser storage for theme and draft searches is
+              controlled separately, with opt-in required for EU users.
+            </p>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-gray-500 dark:text-zinc-400">
+              <Link href="/privacy" className="underline underline-offset-2">
+                Privacy
+              </Link>
+              <Link href="/cookies" className="underline underline-offset-2">
+                Cookies
+              </Link>
+              <Link href="/terms" className="underline underline-offset-2">
+                Terms
+              </Link>
+            </div>
           </div>
         </div>
       </main>

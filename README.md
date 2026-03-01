@@ -51,6 +51,8 @@ FREE_CREDITS_TOTAL=
 FREE_CREDITS_COST_SEARCH=
 FREE_CREDITS_COST_EXPLAIN=
 NEXT_PUBLIC_SITE_URL=
+GDPR_COUNTRY_HEADER_NAME=x-country-code
+GDPR_DEFAULT_REGION=eu
 ```
 
 Notes:
@@ -61,6 +63,8 @@ Notes:
 - `STRIPE_PRICE_MONTHLY_ID` and `STRIPE_PRICE_YEARLY_ID` must be recurring Stripe Price IDs, not Product IDs.
 - `FREE_CREDITS_TOTAL` is a one-time lifetime allowance. It does not reset.
 - `FREE_CREDITS_COST_SEARCH` and `FREE_CREDITS_COST_EXPLAIN` define how many credits each successful action consumes.
+- `GDPR_COUNTRY_HEADER_NAME` lets you trust a reverse-proxy header for country detection (useful on VPS deployments behind Nginx).
+- `GDPR_DEFAULT_REGION` controls the fallback when no country signal exists. The safest default is `eu`.
 
 ## Supabase setup
 

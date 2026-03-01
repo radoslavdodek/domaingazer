@@ -14,10 +14,11 @@ interface HistoryDialogProps {
   history: SearchHistoryEntry[]
   onSelect: (entry: SearchHistoryEntry) => void
   onDelete: (id: string) => void
+  onClearAll: () => void
   onClose: () => void
 }
 
-export function HistoryDialog({ isOpen, history, onSelect, onDelete, onClose }: HistoryDialogProps) {
+export function HistoryDialog({ isOpen, history, onSelect, onDelete, onClearAll, onClose }: HistoryDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
@@ -54,17 +55,33 @@ export function HistoryDialog({ isOpen, history, onSelect, onDelete, onClose }: 
     >
       <div className="flex flex-col rounded-xl bg-white dark:bg-zinc-900">
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-zinc-700">
-          <h2 className="text-sm font-semibold text-gray-800 dark:text-zinc-100">Recent searches</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
-            aria-label="Close"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
-              <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
-            </svg>
-          </button>
+          <div>
+            <h2 className="text-sm font-semibold text-gray-800 dark:text-zinc-100">Recent searches</h2>
+            <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
+              Search descriptions are stored to help you resume prior searches. Remove them any time.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {history.length > 0 && (
+              <button
+                type="button"
+                onClick={onClearAll}
+                className="rounded-md px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+              >
+                Clear all
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+              aria-label="Close"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <ul className="max-h-80 overflow-y-auto py-2">

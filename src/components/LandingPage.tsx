@@ -214,8 +214,14 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
                   Get started free
                 </button>
               )}
-              <p className="text-sm text-zinc-500">No credit card required</p>
             </div>
+            <p className="text-sm text-zinc-500">No credit card required</p>
+            {!isSignedIn && (
+              <p className="mt-3 max-w-xl text-xs leading-5 text-zinc-500">
+                Continuing with Google uses essential authentication cookies. Optional theme and draft-search storage is
+                controlled separately for EU users. See <Link href="/privacy" className="underline underline-offset-2">Privacy</Link> and <Link href="/terms" className="underline underline-offset-2">Terms</Link>.
+              </p>
+            )}
           </div>
 
           {/* App preview mockup */}
@@ -428,6 +434,10 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
                 </button>
               )}
               <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
+              <p className="mt-3 text-xs leading-5 text-zinc-500">
+                Essential authentication cookies are required for sign-in. Optional browser storage is only enabled when
+                your settings allow it.
+              </p>
             </div>
           </div>
         </div>
@@ -440,7 +450,20 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
             <GlobeIcon className="h-5 w-5" />
             <span className="text-sm font-semibold text-zinc-400">Domain Gazer</span>
           </div>
-          <p className="text-sm text-zinc-600">© 2026 Domain Gazer · Find your perfect domain name with AI</p>
+          <div className="flex flex-col items-center gap-3 sm:items-end">
+            <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-zinc-500">
+              <Link href="/privacy" className="underline underline-offset-2">
+                Privacy
+              </Link>
+              <Link href="/cookies" className="underline underline-offset-2">
+                Cookies
+              </Link>
+              <Link href="/terms" className="underline underline-offset-2">
+                Terms
+              </Link>
+            </div>
+            <p className="text-sm text-zinc-600">© 2026 Domain Gazer · Find your perfect domain name with AI</p>
+          </div>
         </div>
       </footer>
     </div>

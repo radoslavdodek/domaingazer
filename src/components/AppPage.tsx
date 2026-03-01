@@ -87,6 +87,15 @@ export function AppPage() {
     }).catch(() => {/* ignore */})
   }
 
+  const handleClearAllHistory = () => {
+    setSearchHistory([])
+    fetch('/api/search-history', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    }).catch(() => {/* ignore */})
+  }
+
   const handleClear = () => {
     clearResults()
     setSearchDescription('')
@@ -271,6 +280,7 @@ export function AppPage() {
               initialTlds={initialTlds}
               searchHistory={searchHistory}
               onDeleteHistory={handleDeleteHistory}
+              onClearAllHistory={handleClearAllHistory}
             />
           </div>
 
@@ -301,7 +311,23 @@ export function AppPage() {
           />
 
           <footer className={theme.footer.wrapper}>
-            <p className={theme.footer.text}>© 2026 Domain Gazer · Find your perfect domain name with AI</p>
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+              <p className={theme.footer.text}>© 2026 Domain Gazer · Find your perfect domain name with AI</p>
+              <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-500 dark:text-zinc-400">
+                <Link href="/settings/privacy" className="underline underline-offset-2">
+                  Privacy &amp; Data
+                </Link>
+                <Link href="/privacy" className="underline underline-offset-2">
+                  Privacy Policy
+                </Link>
+                <Link href="/cookies" className="underline underline-offset-2">
+                  Cookie Policy
+                </Link>
+                <Link href="/terms" className="underline underline-offset-2">
+                  Terms
+                </Link>
+              </div>
+            </div>
           </footer>
         </div>
       </main>

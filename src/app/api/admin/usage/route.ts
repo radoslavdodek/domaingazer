@@ -1,6 +1,7 @@
 export const runtime = 'nodejs'
 
 import { createClient } from '@/lib/supabase/server'
+import { purgeExpiredModelUsage } from '@/lib/privacy/server'
 
 export async function GET(request: Request) {
   const supabase = createClient()
@@ -12,6 +13,8 @@ export async function GET(request: Request) {
       headers: { 'Content-Type': 'application/json' },
     })
   }
+
+  await purgeExpiredModelUsage()
 
   const { searchParams } = new URL(request.url)
   const groupBy = searchParams.get('groupBy')

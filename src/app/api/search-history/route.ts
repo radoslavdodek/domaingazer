@@ -60,13 +60,23 @@ export async function DELETE(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { id } = await req.json() as { id: string }
+  let payload: { id?: string } = {}
+  try {
+    payload = await req.json() as { id?: string }
+  } catch {
+    payload = {}
+  }
 
-  await supabase
+  const query = supabase
     .from('search_history')
     .delete()
-    .eq('id', id)
     .eq('user_id', user.id)
+
+  if (payload.id) {
+    await query.eq('id', payload.id)
+  } else {
+    await query
+  }
 
   return NextResponse.json({ ok: true })
 }

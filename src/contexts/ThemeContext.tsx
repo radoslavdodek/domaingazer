@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { getOptionalItem, setOptionalItem } from '@/lib/privacy/optional-storage'
 import { themes, type Theme, type ThemeName } from '@/lib/themes'
 
 const LS_KEY = 'domainerio_theme'
@@ -18,17 +19,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeName, setThemeNameState] = useState<ThemeName>(DEFAULT_THEME)
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(LS_KEY)
-      if (saved === 'classic' || saved === 'midnight') {
-        setThemeNameState(saved)
-      }
-    } catch { /* ignore */ }
+    const saved = getOptionalItem(LS_KEY)
+    if (saved === 'classic' || saved === 'midnight') {
+      setThemeNameState(saved)
+    }
   }, [])
 
   const setThemeName = (name: ThemeName) => {
     setThemeNameState(name)
-    try { localStorage.setItem(LS_KEY, name) } catch { /* ignore */ }
+    setOptionalItem(LS_KEY, name)
   }
 
   return (

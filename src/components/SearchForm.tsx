@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import type { TLD } from '@/lib/types'
 import { useTheme } from '@/contexts/ThemeContext'
+import { getOptionalItem, setOptionalItem } from '@/lib/privacy/optional-storage'
 import { TldSelector } from './TldSelector'
 import { HistoryDialog } from './HistoryDialog'
 
@@ -27,6 +28,7 @@ interface SearchFormProps {
   initialTlds?: TLD[]
   searchHistory?: SearchHistoryEntry[]
   onDeleteHistory?: (id: string) => void
+  onClearAllHistory?: () => void
 }
 
 export function SearchForm({
@@ -40,6 +42,7 @@ export function SearchForm({
   initialTlds,
   searchHistory,
   onDeleteHistory,
+  onClearAllHistory,
 }: SearchFormProps) {
   const { theme } = useTheme()
   const [description, setDescription] = useState('')
@@ -48,15 +51,16 @@ export function SearchForm({
 
   // Fast initial load from localStorage
   useEffect(() => {
-    try {
-      const savedDesc = localStorage.getItem(LS_DESCRIPTION)
-      if (savedDesc) setDescription(savedDesc)
-      const savedTlds = localStorage.getItem(LS_TLDS)
-      if (savedTlds) {
+    const savedDesc = getOptionalItem(LS_DESCRIPTION)
+    if (savedDesc) setDescription(savedDesc)
+
+    const savedTlds = getOptionalItem(LS_TLDS)
+    if (savedTlds) {
+      try {
         const parsed = JSON.parse(savedTlds) as TLD[]
         setTlds(parsed.length > 0 ? [parsed[0]] : DEFAULT_TLDS)
-      }
-    } catch { /* ignore */ }
+      } catch { /* ignore */ }
+    }
   }, [])
 
   // Once DB response arrives, overwrite with most-recent entry (runs once)
@@ -69,11 +73,11 @@ export function SearchForm({
   }, [initialDescription, initialTlds])
 
   useEffect(() => {
-    try { localStorage.setItem(LS_DESCRIPTION, description) } catch { /* ignore */ }
+    setOptionalItem(LS_DESCRIPTION, description)
   }, [description])
 
   useEffect(() => {
-    try { localStorage.setItem(LS_TLDS, JSON.stringify(tlds)) } catch { /* ignore */ }
+    setOptionalItem(LS_TLDS, JSON.stringify(tlds))
   }, [tlds])
 
   const canSubmit = description.trim().length >= 5 && tlds.length > 0
@@ -188,6 +192,10 @@ export function SearchForm({
       history={searchHistory ?? []}
       onSelect={handleHistorySelect}
       onDelete={(id) => onDeleteHistory?.(id)}
+      onClearAll={() => {
+        onClearAllHistory?.()
+        setIsHistoryOpen(false)
+      }}
       onClose={() => setIsHistoryOpen(false)}
     />
     </>
