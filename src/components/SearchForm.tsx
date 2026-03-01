@@ -8,13 +8,13 @@ import { TldSelector } from './TldSelector'
 import { ExamplesDialog } from './ExamplesDialog'
 import { HistoryDialog } from './HistoryDialog'
 
-const LS_DESCRIPTION = 'domainerio_description'
-const LS_TLDS = 'domainerio_tlds'
+const LS_DESCRIPTION = 'domaingazer_description'
+const LS_TLDS = 'domaingazer_tlds'
 const DEFAULT_TLDS: TLD[] = ['.com']
 const DESCRIPTION_EXAMPLES = [
-  'AI customer research platform that helps product teams capture interviews, surface insights, and turn feedback into smarter roadmap decisions. The name should feel credible, memorable, and strong enough for a category-defining SaaS company.',
-  'Finance platform designed for ecommerce operators to track revenue, ad spend, inventory risk, and cash flow—all in one dashboard. The name should be polished, easy to pronounce, and appealing to ambitious online brands. Use real words when possible.',
-  'Digital healthcare platform that lets private clinics manage online booking, patient intake forms, reminders, and daily operations. The name should inspire trust, feel easy to remember, and work well across marketing and word-of-mouth referrals.',
+  'AI customer research platform that helps product teams capture interviews, surface insights, and turn feedback into smarter roadmap decisions. The name should feel credible, memorable, and strong enough for a category-defining SaaS company. Prefer real words when possible.',
+  'Finance platform designed for ecommerce operators to track revenue, ad spend, inventory risk, and cash flow—all in one dashboard. The name should be polished, easy to pronounce, and appealing to ambitious online brands. Prefer real words when possible.',
+  'Digital healthcare platform that lets private clinics manage online booking, patient intake forms, reminders, and daily operations. The name should inspire trust, feel easy to remember, and work well across marketing and word-of-mouth referrals. Prefer real words when possible.',
 ]
 
 interface SearchHistoryEntry {

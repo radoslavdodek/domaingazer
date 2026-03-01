@@ -1,4 +1,4 @@
-# domainerio
+# DomainGazer
 
 An AI-powered domain name finder. Describe your project, select your preferred TLDs, and get brandable domain name candidates with real-time availability checking.
 
@@ -345,8 +345,8 @@ sudo apt install -y nodejs
 sudo npm install -g pm2
 
 # Clone the repo
-git clone <repo-url> /var/www/domainerio
-cd /var/www/domainerio
+git clone <repo-url> /var/www/domaingazer
+cd /var/www/domaingazer
 cp .env.example .env.local
 # edit .env.local and fill in real values
 
@@ -359,15 +359,15 @@ echo "deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl reload nginx, /usr/sbin/ngin
 
 Edit the variables at the top of `deploy.sh`:
 
-| Variable | Default | Description |
-|---|---|---|
-| `SSH_USER` | `deploy` | SSH user on the server |
-| `SSH_HOST` | _(required)_ | VPS IP or hostname |
-| `SSH_PORT` | `22` | SSH port |
-| `SSH_KEY` | _(empty)_ | Path to private key, e.g. `~/.ssh/id_ed25519` |
-| `APP_DIR` | `/var/www/domainerio` | App directory on the server |
-| `PM2_APP_NAME` | `domainerio` | PM2 process name |
-| `BRANCH` | `main` | Git branch to deploy |
+| Variable | Default                | Description |
+|---|------------------------|---|
+| `SSH_USER` | `deploy`               | SSH user on the server |
+| `SSH_HOST` | _(required)_           | VPS IP or hostname |
+| `SSH_PORT` | `22`                   | SSH port |
+| `SSH_KEY` | _(empty)_              | Path to private key, e.g. `~/.ssh/id_ed25519` |
+| `APP_DIR` | `/var/www/domaingazer` | App directory on the server |
+| `PM2_APP_NAME` | `domaingazer`          | PM2 process name |
+| `BRANCH` | `main`                 | Git branch to deploy |
 
 ### Deploy
 

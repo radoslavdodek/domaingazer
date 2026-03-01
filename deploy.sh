@@ -7,9 +7,9 @@ set -euo pipefail
 SSH_USER="deploy"
 SSH_HOST="your-vps-ip-or-hostname"
 SSH_PORT="22"
-SSH_KEY=""                        # e.g. ~/.ssh/id_ed25519 (leave empty to use default)
-APP_DIR="/var/www/domainerio"     # absolute path on the server
-PM2_APP_NAME="domainerio"         # name used in: pm2 start ... --name <this>
+SSH_KEY=""                          # e.g. ~/.ssh/id_ed25519 (leave empty to use default)
+APP_DIR="/var/www/domaingazer"      # absolute path on the server
+PM2_APP_NAME="domaingazer"          # name used in: pm2 start ... --name <this>
 BRANCH="main"
 # ---------------------------------------------------------------------------
 

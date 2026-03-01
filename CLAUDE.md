@@ -14,7 +14,7 @@ No test suite is configured.
 
 ## Architecture
 
-**domainerio** is an AI-powered domain name finder. The user describes their project, selects TLDs, and the app generates brandable domain name candidates via OpenAI and streams their availability status in real time via AWS Route 53 Domains.
+**DomainGazer** is an AI-powered domain name finder. The user describes their project, selects TLDs, and the app generates brandable domain name candidates via OpenAI and streams their availability status in real time via AWS Route 53 Domains.
 
 ### Data flow
 

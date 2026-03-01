@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 import { getOptionalItem, setOptionalItem } from '@/lib/privacy/optional-storage'
 import { themes, type Theme, type ThemeName } from '@/lib/themes'
 
-const LS_KEY = 'domainerio_theme'
+const LS_KEY = 'domaingazer_theme'
 const DEFAULT_THEME: ThemeName = 'classic'
 
 interface ThemeContextValue {
