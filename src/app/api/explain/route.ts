@@ -2,6 +2,7 @@ export const runtime = 'nodejs'
 
 import { explainDomainName } from '@/lib/openai'
 import { createClient } from '@/lib/supabase/server'
+import { trackUsage } from '@/lib/track-usage'
 
 export async function POST(request: Request) {
   const supabase = createClient()
@@ -35,7 +36,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const explanation = await explainDomainName(description, baseName)
+    const { explanation, usage } = await explainDomainName(description, baseName)
+    trackUsage(user.id, user.email ?? '', 'explain', usage)
     if (!explanation) {
       return new Response(
         JSON.stringify({ error: 'AI did not return an explanation' }),

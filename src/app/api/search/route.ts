@@ -3,6 +3,7 @@ export const runtime = 'nodejs'
 import { generateDomainNames } from '@/lib/openai'
 import { checkDomain } from '@/lib/route53'
 import { createClient } from '@/lib/supabase/server'
+import { trackUsage } from '@/lib/track-usage'
 import type { DomainResult, SseEvent, TLD } from '@/lib/types'
 
 const DEFAULT_SEARCH_TLDS: TLD[] = ['.com', '.io']
@@ -83,13 +84,14 @@ export async function POST(request: Request) {
         for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
           if (signal.aborted || generatedNames.length >= TARGET_NAME_COUNT) break
           const remaining = TARGET_NAME_COUNT - generatedNames.length
-          const rawNames = await generateDomainNames(
+          const { names: rawNames, usage } = await generateDomainNames(
             description,
             [...normalizedExclude, ...generatedNames],
             remaining,
             signal,
             hint
           )
+          trackUsage(user.id, user.email ?? '', 'generateDomains', usage)
           if (signal.aborted) break
           for (const name of rawNames) {
             if (seenNames.has(name) || generatedNameSet.has(name)) continue

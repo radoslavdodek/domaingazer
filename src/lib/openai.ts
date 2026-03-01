@@ -78,13 +78,21 @@ function getClient(provider: { name: string; baseUrl?: string; apiKey: string })
   return client
 }
 
+export type AiUsage = {
+  provider: string
+  model: string
+  promptTokens: number
+  completionTokens: number
+  totalTokens: number
+}
+
 export async function generateDomainNames(
   description: string,
   alreadySeen: string[],
   count = 10,
   signal?: AbortSignal,
   hint?: string
-): Promise<string[]> {
+): Promise<{ names: string[]; usage: AiUsage }> {
   const provider = getConfiguredProvider('generateDomains')
   const requestUrl = getChatCompletionsUrl(provider.baseUrl)
   const requestId = crypto.randomUUID()
@@ -161,6 +169,14 @@ export async function generateDomainNames(
     response,
   })
 
+  const usage: AiUsage = {
+    provider: provider.name,
+    model: provider.model,
+    promptTokens: response.usage?.prompt_tokens ?? 0,
+    completionTokens: response.usage?.completion_tokens ?? 0,
+    totalTokens: response.usage?.total_tokens ?? 0,
+  }
+
   try {
     const content = response.choices[0]?.message?.content ?? '{}'
     const parsed = JSON.parse(content) as { names?: unknown }
@@ -175,7 +191,7 @@ export async function generateDomainNames(
         model: provider.model,
         parsedNameCount: names.length,
       })
-      return names
+      return { names, usage }
     }
     console.warn('[ai.request.parse_invalid_schema]', {
       requestId,
@@ -189,14 +205,14 @@ export async function generateDomainNames(
       model: provider.model,
     })
   }
-  return []
+  return { names: [], usage }
 }
 
 export async function explainDomainName(
   description: string,
   baseName: string,
   signal?: AbortSignal
-): Promise<string> {
+): Promise<{ explanation: string; usage: AiUsage }> {
   const provider = getConfiguredProvider('explain')
   const requestUrl = getChatCompletionsUrl(provider.baseUrl)
   const requestId = crypto.randomUUID()
@@ -249,7 +265,14 @@ export async function explainDomainName(
     choiceCount: response.choices.length,
   })
 
+  const usage: AiUsage = {
+    provider: provider.name,
+    model: provider.model,
+    promptTokens: response.usage?.prompt_tokens ?? 0,
+    completionTokens: response.usage?.completion_tokens ?? 0,
+    totalTokens: response.usage?.total_tokens ?? 0,
+  }
   const content = response.choices[0]?.message?.content
   const explanation = typeof content === 'string' ? content.trim() : ''
-  return explanation
+  return { explanation, usage }
 }
