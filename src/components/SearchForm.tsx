@@ -136,7 +136,13 @@ export function SearchForm({
             <button
               type="button"
               onClick={() => setIsExamplesOpen(true)}
-              className={utilityButtonClass}
+              className={
+                description.trim().length === 0 && !isSearching
+                  ? isMidnightTheme
+                    ? 'flex items-center gap-1 rounded-lg border border-indigo-500/60 bg-indigo-500/10 px-2.5 py-1.5 text-xs font-medium text-indigo-300 transition-colors hover:border-indigo-400 hover:bg-indigo-500/20 hover:text-indigo-200 animate-pulse'
+                    : 'flex items-center gap-1 rounded-md border border-indigo-400 bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-100 hover:text-indigo-700 animate-pulse'
+                  : utilityButtonClass
+              }
               aria-expanded={isExamplesOpen}
               aria-haspopup="dialog"
             >
