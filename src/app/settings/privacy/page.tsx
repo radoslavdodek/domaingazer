@@ -14,12 +14,25 @@ type ErrorPayload = {
 
 export default function PrivacySettingsPage() {
   const router = useRouter()
-  const { theme } = useTheme()
+  const { theme, themeName } = useTheme()
   const [isExporting, setIsExporting] = useState(false)
   const [exportError, setExportError] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const isMidnight = themeName === 'midnight'
+  const mutedLabelClassName = isMidnight ? 'text-zinc-400' : 'text-gray-500'
+  const breadcrumbCurrentClassName = isMidnight ? 'text-zinc-300' : 'text-gray-600'
+  const primaryButtonClassName = isMidnight
+    ? 'inline-flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60'
+    : 'inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60'
+  const dangerLabelClassName = isMidnight ? 'text-red-300' : 'text-red-500'
+  const errorTextClassName = isMidnight ? 'text-red-300' : 'text-red-600'
+  const deletePromptClassName = isMidnight ? 'text-zinc-200' : 'text-gray-700'
+  const deleteInputClassName = isMidnight
+    ? 'mt-2 w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-100 outline-none transition-colors focus:border-sky-500'
+    : 'mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-zinc-500'
+  const legalLinkClassName = isMidnight ? 'text-zinc-200 underline underline-offset-2' : 'underline underline-offset-2'
 
   const handleExport = async () => {
     setIsExporting(true)
@@ -91,13 +104,13 @@ export default function PrivacySettingsPage() {
             </svg>
             <span>Dashboard</span>
           </Link>
-          <span className="text-gray-400">/</span>
-          <span className="font-medium text-gray-600 dark:text-zinc-300">Privacy &amp; Data</span>
+          <span className={mutedLabelClassName}>/</span>
+          <span className={`font-medium ${breadcrumbCurrentClassName}`}>Privacy &amp; Data</span>
         </nav>
 
         <div className="space-y-6">
           <section className={theme.page.searchCard}>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-zinc-400">Privacy</p>
+            <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${mutedLabelClassName}`}>Privacy</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight">Privacy &amp; Data</h1>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
               Manage optional browser storage, download the app data stored for your account, and request permanent
@@ -108,7 +121,7 @@ export default function PrivacySettingsPage() {
           <PrivacyStorageControls />
 
           <section className={theme.page.searchCard}>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-zinc-400">Export</p>
+            <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${mutedLabelClassName}`}>Export</p>
             <h2 className="mt-2 text-xl font-semibold">Download my data</h2>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
               Export includes your profile summary, search history, credit usage, billing linkage, and AI usage records
@@ -119,30 +132,30 @@ export default function PrivacySettingsPage() {
                 type="button"
                 onClick={() => { void handleExport() }}
                 disabled={isExporting}
-                className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
+                className={primaryButtonClassName}
               >
                 {isExporting ? 'Preparing export...' : 'Download my data'}
               </button>
               {exportError && (
-                <p className="text-sm text-red-600 dark:text-red-300">{exportError}</p>
+                <p className={`text-sm ${errorTextClassName}`}>{exportError}</p>
               )}
             </div>
           </section>
 
           <section className={theme.page.searchCard}>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-red-500 dark:text-red-300">Danger zone</p>
+            <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${dangerLabelClassName}`}>Danger zone</p>
             <h2 className="mt-2 text-xl font-semibold">Delete account</h2>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
               This permanently removes your Domain Gazer account and app data. If you have an active paid subscription,
               cancel it first from the billing portal before continuing.
             </p>
-            <label className="mt-5 block text-sm font-medium text-gray-700 dark:text-zinc-200">
+            <label className={`mt-5 block text-sm font-medium ${deletePromptClassName}`}>
               Type <span className="font-semibold">DELETE</span> to confirm
             </label>
             <input
               value={deleteConfirm}
               onChange={(e) => setDeleteConfirm(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+              className={deleteInputClassName}
               placeholder="DELETE"
             />
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -155,21 +168,21 @@ export default function PrivacySettingsPage() {
                 {isDeleting ? 'Deleting account...' : 'Delete account'}
               </button>
               {deleteError && (
-                <p className="text-sm text-red-600 dark:text-red-300">{deleteError}</p>
+                <p className={`text-sm ${errorTextClassName}`}>{deleteError}</p>
               )}
             </div>
           </section>
 
           <section className={theme.page.searchCard}>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-zinc-400">Legal</p>
+            <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${mutedLabelClassName}`}>Legal</p>
             <div className="mt-3 flex flex-wrap gap-3 text-sm">
-              <Link href="/privacy" className="underline underline-offset-2">
+              <Link href="/privacy" className={legalLinkClassName}>
                 Privacy Policy
               </Link>
-              <Link href="/cookies" className="underline underline-offset-2">
+              <Link href="/cookies" className={legalLinkClassName}>
                 Cookie Policy
               </Link>
-              <Link href="/terms" className="underline underline-offset-2">
+              <Link href="/terms" className={legalLinkClassName}>
                 Terms of Service
               </Link>
             </div>

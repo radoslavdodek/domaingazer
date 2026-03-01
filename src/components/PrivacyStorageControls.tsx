@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useTheme } from '@/contexts/ThemeContext'
 import {
   CONSENT_CHANGED_EVENT,
   type ConsentStatus,
@@ -39,8 +40,10 @@ export function PrivacyStorageControls({
   onDecision,
   compact = false,
 }: PrivacyStorageControlsProps) {
+  const { themeName } = useTheme()
   const [region, setRegion] = useState<RegionKind>(initialRegion)
   const [status, setStatus] = useState<ConsentStatus>('unknown')
+  const isMidnight = themeName === 'midnight'
 
   useEffect(() => {
     const sync = () => {
@@ -55,15 +58,29 @@ export function PrivacyStorageControls({
   }, [])
 
   const containerClassName = compact
-    ? 'rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4 text-sm text-zinc-700'
-    : 'rounded-3xl border border-zinc-200 bg-white px-5 py-5 shadow-sm'
+    ? isMidnight
+      ? 'rounded-2xl border border-zinc-700 bg-zinc-900/80 px-4 py-4 text-sm text-zinc-300'
+      : 'rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4 text-sm text-zinc-700'
+    : isMidnight
+      ? 'rounded-3xl border border-zinc-800 bg-zinc-900 px-5 py-5 text-zinc-100 shadow-lg shadow-black/20'
+      : 'rounded-3xl border border-zinc-200 bg-white px-5 py-5 text-zinc-900 shadow-sm'
+  const eyebrowClassName = isMidnight ? 'text-zinc-400' : 'text-zinc-500'
+  const descriptionClassName = isMidnight ? 'text-zinc-300' : 'text-zinc-700'
+  const primaryButtonClassName = isMidnight
+    ? 'inline-flex items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sky-500'
+    : 'inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800'
+  const secondaryButtonClassName = isMidnight
+    ? 'inline-flex items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-700'
+    : 'inline-flex items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50'
+  const legalCopyClassName = isMidnight ? 'text-zinc-400' : 'text-zinc-500'
+  const legalLinkClassName = isMidnight ? 'font-medium text-zinc-200 underline underline-offset-2' : 'font-medium text-zinc-700 underline underline-offset-2'
 
   return (
     <section className={containerClassName}>
       <div className="flex flex-col gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Optional Storage</p>
-          <p className="mt-2 text-sm leading-6 text-zinc-700">{getStatusCopy(region, status)}</p>
+          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${eyebrowClassName}`}>Optional Storage</p>
+          <p className={`mt-2 text-sm leading-6 ${descriptionClassName}`}>{getStatusCopy(region, status)}</p>
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -73,7 +90,7 @@ export function PrivacyStorageControls({
               setConsentStatus('accepted')
               onDecision?.()
             }}
-            className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+            className={primaryButtonClassName}
           >
             Enable optional storage
           </button>
@@ -83,15 +100,15 @@ export function PrivacyStorageControls({
               setConsentStatus('declined')
               onDecision?.()
             }}
-            className="inline-flex items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
+            className={secondaryButtonClassName}
           >
             Disable optional storage
           </button>
         </div>
 
-        <p className="text-xs leading-5 text-zinc-500">
+        <p className={`text-xs leading-5 ${legalCopyClassName}`}>
           Essential authentication cookies remain active so sign-in and account security continue to work.
-          Read our <Link href="/privacy" className="font-medium text-zinc-700 underline underline-offset-2">Privacy Policy</Link> and <Link href="/cookies" className="font-medium text-zinc-700 underline underline-offset-2">Cookie Policy</Link>.
+          Read our <Link href="/privacy" className={legalLinkClassName}>Privacy Policy</Link> and <Link href="/cookies" className={legalLinkClassName}>Cookie Policy</Link>.
         </p>
       </div>
     </section>
