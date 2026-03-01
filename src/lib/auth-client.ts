@@ -14,6 +14,9 @@ export async function signInWithGoogle(nextPath = '/') {
     provider: 'google',
     options: {
       redirectTo: callbackUrl.toString(),
+      queryParams: {
+        prompt: 'select_account',
+      },
     },
   })
 }
