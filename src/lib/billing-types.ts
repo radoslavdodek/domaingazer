@@ -1,5 +1,11 @@
 export type BillingInterval = 'month' | 'year'
 
+export interface BillingPlanPricing {
+  monthly: string | null
+  yearlyPerMonth: string | null
+  yearlyBillingNote: string | null
+}
+
 export interface BillingStatusResponse {
   isSubscribed: boolean
   subscriptionStatus: string | null

@@ -147,7 +147,7 @@ export function AppPage() {
               isSubscribed={billing?.isSubscribed}
               billingDisabled={billingAction !== null}
               onUpgrade={billing && !billing.isSubscribed
-                ? () => { void handleCheckout('month') }
+                ? () => { window.location.assign('/billing') }
                 : undefined}
               onManageBilling={billing?.isSubscribed
                 ? () => { void handleManageBilling() }
