@@ -136,7 +136,7 @@ export async function generateDomainNames(
       },
         {
           role: 'user',
-          content: `Generate ${targetCount} domain base names for: ${description}${hint ? `\n\nAdditional guidance: ${hint}` : ''}`,
+          content: `Generate ${targetCount} domain base names for: ${description}${hint ? `\n\nAdditional guidance given by user: <hint>${hint}</hint>. Respect it as much as possible.` : ''}`,
         },
       ],
     }, { signal })
