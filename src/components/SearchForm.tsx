@@ -108,7 +108,7 @@ export function SearchForm({
     <>
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <div className="mb-1.5 flex items-center justify-between">
+        <div className="mb-1.5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <label className={theme.searchForm.label}>
             Describe your project
           </label>

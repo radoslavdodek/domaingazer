@@ -99,7 +99,7 @@ export const classicTheme: Theme = {
     body: 'min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 font-sans',
   },
   navbar: {
-    wrapper: 'flex items-center justify-between border-b border-gray-200 bg-white/70 px-4 py-3 backdrop-blur-sm sm:px-6',
+    wrapper: 'flex flex-wrap items-center justify-between border-b border-gray-200 bg-white/70 px-4 py-3 backdrop-blur-sm sm:px-6',
     brand: 'flex items-center gap-2 text-base font-bold text-gray-900',
     icon: 'h-5 w-5 text-blue-600',
     toggleButton: 'flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-medium text-gray-600 transition-all hover:bg-gray-50',
@@ -207,7 +207,7 @@ export const midnightTheme: Theme = {
     body: 'min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-950 to-sky-950 font-sans',
   },
   navbar: {
-    wrapper: 'flex items-center justify-between border-b border-zinc-800 bg-zinc-900/70 px-4 py-3 backdrop-blur-sm sm:px-6',
+    wrapper: 'flex flex-wrap items-center justify-between border-b border-zinc-800 bg-zinc-900/70 px-4 py-3 backdrop-blur-sm sm:px-6',
     brand: 'flex items-center gap-2 text-base font-bold text-zinc-100',
     icon: 'h-5 w-5 text-sky-400',
     toggleButton: 'flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-800/50 px-3.5 py-1.5 text-xs font-medium text-zinc-400 transition-all hover:bg-zinc-800',

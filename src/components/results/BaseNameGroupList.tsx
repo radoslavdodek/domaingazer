@@ -91,7 +91,7 @@ export function BaseNameGroupList({
                       ref={(element) => onBaseNameRowRef?.(baseName, element)}
                       className={theme.baseNameGroupList.card}
                     >
-                      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <span className={`break-all font-mono text-sm font-medium leading-tight ${theme.domainRow.textDefault}`}>
                           {baseName}
                           {userAddedBaseNames?.has(baseName) && (
@@ -104,13 +104,13 @@ export function BaseNameGroupList({
                             </span>
                           )}
                         </span>
-                        <div className="flex items-center gap-1">
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
                           {onTryVariation && (
                             <button
                               type="button"
                               onClick={() => onTryVariation(baseName)}
                               disabled={status === 'searching'}
-                              className={`${theme.baseNameGroupList.variationButton} w-28 text-center`}
+                              className={`${theme.baseNameGroupList.variationButton} w-full text-center sm:w-28`}
                             >
                               Try variations
                             </button>
@@ -120,7 +120,7 @@ export function BaseNameGroupList({
                               type="button"
                               onClick={() => onExplain(baseName)}
                               disabled={!canExplain || explanation?.isLoading || Boolean(explanation?.text && !explanation?.error)}
-                              className={`${theme.baseNameGroupList.variationButton} w-28 text-center`}
+                              className={`${theme.baseNameGroupList.variationButton} w-full text-center sm:w-28`}
                             >
                               {explanation?.isLoading ? 'Explaining...' : 'Explain'}
                             </button>

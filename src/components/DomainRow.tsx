@@ -32,7 +32,7 @@ function CopyButton({ domain }: { domain: string }) {
       type="button"
       onClick={handleCopy}
       aria-label={`Copy ${domain}`}
-      className="ml-1.5 rounded p-0.5 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-gray-600"
+      className="ml-1.5 rounded p-0.5 text-gray-400 opacity-100 transition-opacity hover:text-gray-600 sm:opacity-0 sm:group-hover:opacity-100"
     >
       {copied ? (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-green-600">
@@ -65,11 +65,11 @@ export function DomainRow({ domain, status, compact = false }: DomainRowProps) {
       <div className={`group flex flex-col gap-1.5 rounded-lg border px-2.5 py-1.5 sm:flex-row sm:items-center sm:justify-between ${
         isAvailable ? theme.domainRow.compactRowAvailable : theme.domainRow.compactRowDefault
       }`}>
-        <span className={`inline-flex items-center break-all font-mono text-[13px] leading-tight ${theme.domainRow.compactText}`}>
+        <span className={`min-w-0 inline-flex items-center break-all font-mono text-[13px] leading-tight ${theme.domainRow.compactText}`}>
           {domain}
           {isAvailable && <CopyButton domain={domain} />}
         </span>
-        <span className={`inline-block w-fit rounded-full px-2 py-0.5 text-xs ${theme.domainRow.compactBadgeClassByStatus[status]}`}>
+        <span className={`inline-block w-fit shrink-0 rounded-full px-2 py-0.5 text-xs ${theme.domainRow.compactBadgeClassByStatus[status]}`}>
           {isChecking ? checkingContent : label}
         </span>
       </div>
@@ -78,15 +78,15 @@ export function DomainRow({ domain, status, compact = false }: DomainRowProps) {
 
   return (
     <div
-      className={`group flex items-center justify-between rounded-xl border px-4 py-3 ${
+      className={`group flex min-w-0 flex-col gap-2 rounded-xl border px-4 py-3 sm:flex-row sm:items-center sm:justify-between ${
         isAvailable ? theme.domainRow.rowAvailable : theme.domainRow.rowDefault
       }`}
     >
-      <span className={`inline-flex items-center font-mono text-sm ${isAvailable ? theme.domainRow.textAvailable : theme.domainRow.textDefault}`}>
+      <span className={`min-w-0 inline-flex items-center break-all font-mono text-sm ${isAvailable ? theme.domainRow.textAvailable : theme.domainRow.textDefault}`}>
         {domain}
         {isAvailable && <CopyButton domain={domain} />}
       </span>
-      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${theme.domainRow.badgeClassByStatus[status]}`}>
+      <span className={`w-fit shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${theme.domainRow.badgeClassByStatus[status]}`}>
         {isChecking ? checkingContent : label}
       </span>
     </div>

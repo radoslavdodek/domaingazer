@@ -123,28 +123,35 @@ export function AppPage() {
     : 'Free'
   const isCreditsExhausted = Boolean(billing && !billing.isSubscribed && billing.freeCreditsRemaining <= 0)
   const billingNotice = billingActionError ?? billingError
-  const renewalDate = billing?.currentPeriodEnd
-    ? new Date(billing.currentPeriodEnd).toLocaleDateString()
-    : null
+  const showBillingSection = Boolean(billingError) || Boolean(billing && !billing.isSubscribed)
 
   return (
     <div className={theme.layout.body}>
       <main className="mx-auto w-full max-w-4xl">
-        <nav className={theme.navbar.wrapper}>
-          <Link href="/landing" className={theme.navbar.brand}>
+        <nav className={`${theme.navbar.wrapper} gap-3`}>
+          <Link href="/landing" className={`${theme.navbar.brand} min-w-0`}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={theme.navbar.icon}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
             </svg>
-            <span>Domain Gazer</span>
+            <span className="truncate">Domain Gazer</span>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+            {billing?.isSubscribed && (
+              <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-200">
+                {planLabel}
+              </span>
+            )}
             <ThemeToggle />
             <UserMenu
-              planLabel={planLabel}
+              planLabel={billing ? planLabel : undefined}
               isSubscribed={billing?.isSubscribed}
               billingDisabled={billingAction !== null}
-              onUpgrade={() => { void handleCheckout('month') }}
-              onManageBilling={() => { void handleManageBilling() }}
+              onUpgrade={billing && !billing.isSubscribed
+                ? () => { void handleCheckout('month') }
+                : undefined}
+              onManageBilling={billing?.isSubscribed
+                ? () => { void handleManageBilling() }
+                : undefined}
             />
           </div>
         </nav>
@@ -160,25 +167,16 @@ export function AppPage() {
             </p>
           </div>
 
-          <section className="mb-8 overflow-hidden rounded-3xl border border-gray-200/80 bg-white/95 shadow-sm dark:border-gray-700/70 dark:bg-gray-900/80">
-            <div className="border-b border-gray-100/80 px-5 py-4 dark:border-gray-800">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-300">Billing</p>
-                  <h2 className="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    {isBillingLoading && !billing ? 'Loading usage' : `${planLabel} plan`}
-                  </h2>
-                </div>
-                {billing?.isSubscribed ? (
-                  <button
-                    type="button"
-                    onClick={() => { void handleManageBilling() }}
-                    disabled={billingAction !== null}
-                    className="inline-flex items-center justify-center rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
-                  >
-                    Manage Billing
-                  </button>
-                ) : (
+          {showBillingSection && (
+            <section className="mb-8 overflow-hidden rounded-3xl border border-gray-200/80 bg-white/95 shadow-sm dark:border-gray-700/70 dark:bg-gray-900/80">
+              <div className="border-b border-gray-100/80 px-5 py-4 dark:border-gray-800">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-300">Billing</p>
+                    <h2 className="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {isBillingLoading && !billing ? 'Loading usage' : `${planLabel} plan`}
+                    </h2>
+                  </div>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <button
                       type="button"
@@ -197,63 +195,50 @@ export function AppPage() {
                       Upgrade Yearly
                     </button>
                   </div>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-4 px-5 py-5">
-              {billing?.isSubscribed ? (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 dark:border-emerald-900/60 dark:bg-emerald-950/30">
-                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
-                    Unlimited AI usage is active.
-                  </p>
-                  <p className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/80">
-                    {billing.cancelAtPeriodEnd && renewalDate
-                      ? `Your subscription will end on ${renewalDate}.`
-                      : renewalDate
-                        ? `Your current billing period renews on ${renewalDate}.`
-                        : 'You can update your plan, payment method, or cancellation settings in the billing portal.'}
-                  </p>
                 </div>
-              ) : billing ? (
-                <div className={`rounded-2xl border px-4 py-4 ${isCreditsExhausted
-                  ? 'border-red-200 bg-red-50 dark:border-red-900/60 dark:bg-red-950/30'
-                  : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/70'}`}>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {billing.freeCreditsUsed} / {billing.freeCreditsTotal} free credits used
-                      </p>
-                      <p className={`mt-1 text-sm ${isCreditsExhausted ? 'text-red-700 dark:text-red-200' : 'text-gray-600 dark:text-gray-300'}`}>
-                        {isCreditsExhausted
-                          ? 'Your free credits are exhausted. Upgrade to continue using AI features.'
-                          : `${billing.freeCreditsRemaining} free credits remaining before a subscription is required.`}
+              </div>
+
+              <div className="space-y-4 px-5 py-5">
+                {billing ? (
+                  <div className={`rounded-2xl border px-4 py-4 ${isCreditsExhausted
+                    ? 'border-red-200 bg-red-50 dark:border-red-900/60 dark:bg-red-950/30'
+                    : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/70'}`}>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {billing.freeCreditsUsed} / {billing.freeCreditsTotal} free credits used
+                        </p>
+                        <p className={`mt-1 text-sm ${isCreditsExhausted ? 'text-red-700 dark:text-red-200' : 'text-gray-600 dark:text-gray-300'}`}>
+                          {isCreditsExhausted
+                            ? 'Your free credits are exhausted. Upgrade to continue using AI features.'
+                            : `${billing.freeCreditsRemaining} free credits remaining before a subscription is required.`}
+                        </p>
+                      </div>
+                      <p className={`text-2xl font-semibold ${isCreditsExhausted ? 'text-red-700 dark:text-red-200' : 'text-gray-900 dark:text-gray-100'}`}>
+                        {billing.usagePercent}%
                       </p>
                     </div>
-                    <p className={`text-2xl font-semibold ${isCreditsExhausted ? 'text-red-700 dark:text-red-200' : 'text-gray-900 dark:text-gray-100'}`}>
-                      {billing.usagePercent}%
-                    </p>
+                    <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                      <div
+                        className={`h-full rounded-full transition-all ${isCreditsExhausted ? 'bg-red-500' : 'bg-blue-600'}`}
+                        style={{ width: `${billing.usagePercent}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                    <div
-                      className={`h-full rounded-full transition-all ${isCreditsExhausted ? 'bg-red-500' : 'bg-blue-600'}`}
-                      style={{ width: `${billing.usagePercent}%` }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Billing status will appear here once it loads.
-                </p>
-              )}
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Billing status will appear here once it loads.
+                  </p>
+                )}
 
-              {billingNotice && (
-                <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200">
-                  {billingNotice}
-                </p>
-              )}
-            </div>
-          </section>
+                {billingNotice && (
+                  <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200">
+                    {billingNotice}
+                  </p>
+                )}
+              </div>
+            </section>
+          )}
 
           <div className={theme.page.searchCard}>
             <SearchForm

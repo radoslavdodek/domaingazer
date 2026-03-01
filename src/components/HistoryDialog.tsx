@@ -49,7 +49,7 @@ export function HistoryDialog({ isOpen, history, onSelect, onDelete, onClose }: 
     <dialog
       ref={dialogRef}
       onClick={handleBackdropClick}
-      className="m-auto w-full max-w-lg rounded-xl p-0 shadow-2xl backdrop:bg-black/50 open:flex open:flex-col"
+      className="m-auto w-full max-w-lg rounded-xl px-3 py-0 shadow-2xl backdrop:bg-black/50 sm:px-0 open:flex open:flex-col"
       style={{ border: 'none', background: 'transparent' }}
     >
       <div className="flex flex-col rounded-xl bg-white dark:bg-zinc-900">
@@ -92,7 +92,7 @@ export function HistoryDialog({ isOpen, history, onSelect, onDelete, onClose }: 
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onDelete(entry.id) }}
-                className="mt-3 shrink-0 rounded p-1 text-gray-300 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-100 hover:text-gray-500 dark:text-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
+                className="mt-3 shrink-0 rounded p-1 text-gray-300 opacity-100 transition-opacity hover:bg-gray-100 hover:text-gray-500 dark:text-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Delete"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3.5">

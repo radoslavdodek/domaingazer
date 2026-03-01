@@ -191,23 +191,23 @@ export function LandingPage() {
 
       {/* Navbar */}
       <nav className="relative z-10 border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="flex items-center gap-2.5">
             <GlobeIcon className="h-7 w-7 text-blue-400" />
             <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
           </div>
           {isSignedIn ? (
-            <div className="flex items-center gap-2">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
               <Link
                 href="/"
-                className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+                className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
               >
                 Go to Dashboard
               </Link>
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-600 hover:bg-zinc-800 hover:text-red-400"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-600 hover:bg-zinc-800 hover:text-red-400 sm:w-auto"
               >
                 Logout
               </button>
@@ -216,7 +216,7 @@ export function LandingPage() {
             <button
               type="button"
               onClick={() => { void handleSignIn() }}
-              className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800 sm:w-auto"
             >
               <GoogleIcon />
               Sign in
@@ -235,7 +235,7 @@ export function LandingPage() {
               AI-powered
             </div>
 
-            <h1 className="mb-6 text-5xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
+            <h1 className="mb-6 text-4xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
               Find your perfect{' '}
               <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">
                 domain name
@@ -315,7 +315,7 @@ export function LandingPage() {
                 </div>
 
                 {/* Results header */}
-                <div className="mb-4 flex items-center justify-between text-sm">
+                <div className="mb-4 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-2">
                     <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
                     <span className="text-zinc-300">
@@ -329,20 +329,20 @@ export function LandingPage() {
                 <div className="space-y-3">
                   {/* Group: sparkflow */}
                   <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/40 p-4">
-                    <div className="mb-3 flex items-center justify-between">
+                    <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-sm font-bold text-zinc-100">sparkflow</span>
                       <button className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">Try variations →</button>
                     </div>
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                      <div className="flex items-center justify-between rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2">
+                      <div className="flex flex-col gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-sm text-zinc-200">sparkflow.io</span>
                         <span className="text-xs font-bold text-emerald-400">AVAILABLE</span>
                       </div>
-                      <div className="flex items-center justify-between rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2">
+                      <div className="flex flex-col gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-sm text-zinc-200">sparkflow.ai</span>
                         <span className="text-xs font-bold text-emerald-400">AVAILABLE</span>
                       </div>
-                      <div className="flex items-center justify-between rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2">
+                      <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-sm text-zinc-500">sparkflow.com</span>
                         <span className="text-xs font-medium text-zinc-600">TAKEN</span>
                       </div>
@@ -351,23 +351,23 @@ export function LandingPage() {
 
                   {/* Group: teamcraft */}
                   <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/40 p-4">
-                    <div className="mb-3 flex items-center justify-between">
+                    <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-sm font-bold text-zinc-100">teamcraft</span>
                       <button className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">Try variations →</button>
                     </div>
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                      <div className="flex items-center justify-between rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2">
+                      <div className="flex flex-col gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-sm text-zinc-200">teamcraft.io</span>
                         <span className="text-xs font-bold text-emerald-400">AVAILABLE</span>
                       </div>
-                      <div className="flex items-center justify-between rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2">
+                      <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-sm text-zinc-500">teamcraft.ai</span>
                         <div className="flex items-center gap-1.5">
                           <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" />
                           <span className="text-xs text-zinc-600">Checking</span>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2">
+                      <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                         <span className="text-sm text-zinc-500">teamcraft.com</span>
                         <div className="flex items-center gap-1.5">
                           <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" />
@@ -491,7 +491,7 @@ export function LandingPage() {
             </div>
 
             <div className="rounded-3xl border border-cyan-500/30 bg-gradient-to-b from-cyan-500/10 to-zinc-900/80 p-7 shadow-lg shadow-cyan-600/10">
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">Pro Yearly</p>
                 <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-200">
                   Best Value
@@ -543,7 +543,7 @@ export function LandingPage() {
               {isSignedIn ? (
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50 sm:w-auto"
                 >
                   Go to Dashboard
                 </Link>
@@ -551,7 +551,7 @@ export function LandingPage() {
                 <button
                   type="button"
                   onClick={() => { void handleSignIn() }}
-                  className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50 sm:w-auto"
                 >
                   <GoogleIcon />
                   Get started free
