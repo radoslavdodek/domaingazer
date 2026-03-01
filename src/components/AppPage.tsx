@@ -20,7 +20,7 @@ interface SearchHistoryEntry {
 }
 
 export function AppPage() {
-  const { theme } = useTheme()
+  const { theme, themeName } = useTheme()
   const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
   const { billing, isLoading: isBillingLoading, error: billingError, refresh: refreshBilling } = useBillingStatus()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
@@ -124,6 +124,7 @@ export function AppPage() {
   const isCreditsExhausted = Boolean(billing && !billing.isSubscribed && billing.freeCreditsRemaining <= 0)
   const billingNotice = billingActionError ?? billingError
   const showBillingSection = Boolean(billingError) || Boolean(billing && !billing.isSubscribed)
+  const isMidnightTheme = themeName === 'midnight'
 
   return (
     <div className={theme.layout.body}>
@@ -137,7 +138,11 @@ export function AppPage() {
           </Link>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
             {billing?.isSubscribed && (
-              <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-200">
+              <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${
+                isMidnightTheme
+                  ? 'border-emerald-800 bg-emerald-950/40 text-emerald-300'
+                  : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+              }`}>
                 {planLabel}
               </span>
             )}
@@ -168,12 +173,22 @@ export function AppPage() {
           </div>
 
           {showBillingSection && (
-            <section className="mb-8 overflow-hidden rounded-3xl border border-gray-200/80 bg-white/95 shadow-sm dark:border-gray-700/70 dark:bg-gray-900/80">
-              <div className="border-b border-gray-100/80 px-5 py-4 dark:border-gray-800">
+            <section className={`mb-8 overflow-hidden rounded-3xl border ${
+              isMidnightTheme
+                ? 'border-zinc-800 bg-zinc-900 shadow-lg shadow-black/20'
+                : 'border-gray-200/80 bg-white/95 shadow-sm'
+            }`}>
+              <div className={`border-b px-5 py-4 ${
+                isMidnightTheme ? 'border-zinc-800' : 'border-gray-100/80'
+              }`}>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-300">Billing</p>
-                    <h2 className="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${
+                      isMidnightTheme ? 'text-sky-400' : 'text-blue-600'
+                    }`}>Billing</p>
+                    <h2 className={`mt-1 text-lg font-semibold ${
+                      isMidnightTheme ? 'text-zinc-100' : 'text-gray-900'
+                    }`}>
                       {isBillingLoading && !billing ? 'Loading usage' : `${planLabel} plan`}
                     </h2>
                   </div>
@@ -182,7 +197,9 @@ export function AppPage() {
                       type="button"
                       onClick={() => { void handleCheckout('month') }}
                       disabled={billingAction !== null}
-                      className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                      className={`inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                        isMidnightTheme ? 'bg-sky-600 hover:bg-sky-500' : 'bg-blue-600 hover:bg-blue-700'
+                      }`}
                     >
                       Upgrade Monthly
                     </button>
@@ -190,7 +207,11 @@ export function AppPage() {
                       type="button"
                       onClick={() => { void handleCheckout('year') }}
                       disabled={billingAction !== null}
-                      className="inline-flex items-center justify-center rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-blue-500/40 dark:text-blue-200 dark:hover:bg-blue-900/20"
+                      className={`inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                        isMidnightTheme
+                          ? 'border-sky-800 bg-zinc-900 text-sky-300 hover:bg-sky-950/40'
+                          : 'border-blue-200 text-blue-700 hover:bg-blue-50'
+                      }`}
                     >
                       Upgrade Yearly
                     </button>
@@ -201,24 +222,34 @@ export function AppPage() {
               <div className="space-y-4 px-5 py-5">
                 {billing ? (
                   <div className={`rounded-2xl border px-4 py-4 ${isCreditsExhausted
-                    ? 'border-red-200 bg-red-50 dark:border-red-900/60 dark:bg-red-950/30'
-                    : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/70'}`}>
+                    ? isMidnightTheme
+                      ? 'border-red-900/60 bg-red-950/30'
+                      : 'border-red-200 bg-red-50'
+                    : isMidnightTheme
+                      ? 'border-zinc-800 bg-zinc-950/70'
+                      : 'border-gray-200 bg-gray-50'}`}>
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <p className={`text-sm font-medium ${isMidnightTheme ? 'text-zinc-100' : 'text-gray-900'}`}>
                           {billing.freeCreditsUsed} / {billing.freeCreditsTotal} free credits used
                         </p>
-                        <p className={`mt-1 text-sm ${isCreditsExhausted ? 'text-red-700 dark:text-red-200' : 'text-gray-600 dark:text-gray-300'}`}>
+                        <p className={`mt-1 text-sm ${isCreditsExhausted
+                          ? isMidnightTheme ? 'text-red-200' : 'text-red-700'
+                          : isMidnightTheme ? 'text-zinc-400' : 'text-gray-600'}`}>
                           {isCreditsExhausted
                             ? 'Your free credits are exhausted. Upgrade to continue using AI features.'
                             : `${billing.freeCreditsRemaining} free credits remaining before a subscription is required.`}
                         </p>
                       </div>
-                      <p className={`text-2xl font-semibold ${isCreditsExhausted ? 'text-red-700 dark:text-red-200' : 'text-gray-900 dark:text-gray-100'}`}>
+                      <p className={`text-2xl font-semibold ${isCreditsExhausted
+                        ? isMidnightTheme ? 'text-red-200' : 'text-red-700'
+                        : isMidnightTheme ? 'text-zinc-100' : 'text-gray-900'}`}>
                         {billing.usagePercent}%
                       </p>
                     </div>
-                    <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                    <div className={`mt-4 h-2.5 overflow-hidden rounded-full ${
+                      isMidnightTheme ? 'bg-zinc-800' : 'bg-gray-200'
+                    }`}>
                       <div
                         className={`h-full rounded-full transition-all ${isCreditsExhausted ? 'bg-red-500' : 'bg-blue-600'}`}
                         style={{ width: `${billing.usagePercent}%` }}
@@ -226,13 +257,17 @@ export function AppPage() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className={`text-sm ${isMidnightTheme ? 'text-zinc-500' : 'text-gray-500'}`}>
                     Billing status will appear here once it loads.
                   </p>
                 )}
 
                 {billingNotice && (
-                  <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200">
+                  <p className={`rounded-2xl border px-4 py-3 text-sm ${
+                    isMidnightTheme
+                      ? 'border-red-900/60 bg-red-950/30 text-red-200'
+                      : 'border-red-200 bg-red-50 text-red-700'
+                  }`}>
                     {billingNotice}
                   </p>
                 )}
