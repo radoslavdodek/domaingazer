@@ -114,7 +114,8 @@ export default function PrivacySettingsPage() {
             <h1 className="mt-2 text-3xl font-bold tracking-tight">Privacy &amp; Data</h1>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
               Manage optional browser storage, download the app data stored for your account, and request permanent
-              account deletion. AI usage records are retained for up to 180 days.
+              account deletion. AI usage records are retained for up to 180 days. A minimal hashed anti-abuse marker may
+              be retained after deletion to enforce one-time free-credit limits.
             </p>
           </section>
 
@@ -147,7 +148,8 @@ export default function PrivacySettingsPage() {
             <h2 className="mt-2 text-xl font-semibold">Delete account</h2>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
               This permanently removes your Domain Gazer account and app data. If you have an active paid subscription,
-              cancel it first from the billing portal before continuing.
+              cancel it first from the billing portal before continuing. To prevent free-credit abuse, a minimal hashed
+              anti-abuse record may be retained after deletion.
             </p>
             <label className={`mt-5 block text-sm font-medium ${deletePromptClassName}`}>
               Type <span className="font-semibold">DELETE</span> to confirm

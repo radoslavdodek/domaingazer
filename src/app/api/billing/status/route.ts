@@ -13,7 +13,7 @@ export async function GET() {
   }
 
   try {
-    const billing = await getUserBillingState(user.id)
+    const billing = await getUserBillingState(user)
     return NextResponse.json(billing)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to load billing status'

@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const billing = await getUserBillingState(user.id)
+    const billing = await getUserBillingState(user)
     if (billing.isSubscribed) {
       return NextResponse.json(
         { error: 'You already have an active subscription. Use the billing portal to manage it.' },

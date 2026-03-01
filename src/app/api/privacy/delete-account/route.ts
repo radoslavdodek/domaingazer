@@ -2,7 +2,7 @@ export const runtime = 'nodejs'
 
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { getUserBillingState } from '@/lib/billing'
+import { getUserBillingState, markFreeCreditEntitlementDeleted } from '@/lib/billing'
 
 function jsonError(message: string, status: number) {
   return new Response(JSON.stringify({ error: message }), {
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const billing = await getUserBillingState(user.id)
+    const billing = await getUserBillingState(user)
 
     if (billing.isSubscribed) {
       console.info('[privacy.delete_blocked_active_subscription]', { userId: user.id })
@@ -43,6 +43,8 @@ export async function POST(request: Request) {
     }
 
     console.info('[privacy.delete_requested]', { userId: user.id })
+
+    await markFreeCreditEntitlementDeleted(user)
 
     const admin: any = createAdminClient()
 

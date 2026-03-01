@@ -69,7 +69,7 @@ export async function POST(request: Request) {
 
   let billingState: BillingStatusResponse
   try {
-    billingState = await requireEntitlement(user.id, 'search')
+    billingState = await requireEntitlement(user, 'search')
   } catch (err) {
     if (err instanceof SubscriptionRequiredError) {
       return new Response(
@@ -161,7 +161,7 @@ export async function POST(request: Request) {
 
         if (!signal.aborted) {
           try {
-            await recordCreditUsage(user.id, 'search', billingState)
+            await recordCreditUsage(user, 'search', billingState)
           } catch (creditError) {
             console.error('[credit_usage.error]', creditError)
           }

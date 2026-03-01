@@ -1,19 +1,29 @@
+import { createHmac } from 'node:crypto'
+import type { User } from '@supabase/supabase-js'
 import type { BillingInterval, BillingStatusResponse } from '@/lib/billing-types'
 import type { StripeSubscription } from '@/lib/stripe'
 import { createStripeCustomer, getStripeCustomer } from '@/lib/stripe'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 type BillableFeature = 'search' | 'explain'
+type AuthenticatedBillingUser = Pick<User, 'id' | 'email' | 'identities'>
 
 type BillingCustomerRow = {
   stripe_customer_id: string
 }
 
-type SubscriptionRow = {
-  status: string
-  plan_interval: string | null
-  cancel_at_period_end: boolean | null
-  current_period_end: string | null
+type FreeCreditEntitlementRow = {
+  email_hash: string
+  google_subject_hash: string | null
+  lifetime_credits_used: number
+  first_seen_at: string
+  last_seen_at: string
+  deleted_account_count: number
+}
+
+type FreeCreditIdentity = {
+  emailHash: string
+  googleSubjectHash: string | null
 }
 
 const ACTIVE_SUBSCRIPTION_STATUSES = new Set(['active', 'trialing', 'past_due'])
@@ -35,6 +45,10 @@ function getNonNegativeIntegerEnv(name: string) {
   }
 
   return parsed
+}
+
+function getFreeCreditIdentitySalt() {
+  return getRequiredEnv('FREE_CREDIT_IDENTITY_SALT')
 }
 
 function normalizePlanInterval(value: string | null): BillingInterval | null {
@@ -80,34 +94,161 @@ function getUsagePercent(freeCreditsUsed: number, freeCreditsTotal: number) {
   return Math.min(100, Math.max(0, Math.round((freeCreditsUsed / freeCreditsTotal) * 100)))
 }
 
-export async function getUserBillingState(userId: string): Promise<BillingStatusResponse> {
+function hashFreeCreditIdentity(rawValue: string) {
+  return createHmac('sha256', getFreeCreditIdentitySalt())
+    .update(rawValue)
+    .digest('hex')
+}
+
+function getNormalizedBillingEmail(user: AuthenticatedBillingUser) {
+  const email = user.email?.trim().toLowerCase()
+
+  if (!email) {
+    throw new Error('Authenticated user is missing an email address required for billing.')
+  }
+
+  return email
+}
+
+function getGoogleIdentitySubject(user: AuthenticatedBillingUser) {
+  const googleIdentity = user.identities?.find((identity) => identity.provider === 'google')
+  const identityData = googleIdentity?.identity_data as { sub?: unknown } | undefined
+
+  if (typeof identityData?.sub === 'string' && identityData.sub.trim()) {
+    return identityData.sub.trim()
+  }
+
+  if (typeof googleIdentity?.identity_id === 'string' && googleIdentity.identity_id.trim()) {
+    return googleIdentity.identity_id.trim()
+  }
+
+  if (typeof googleIdentity?.id === 'string' && googleIdentity.id.trim()) {
+    return googleIdentity.id.trim()
+  }
+
+  return null
+}
+
+export function getFreeCreditIdentity(user: AuthenticatedBillingUser): FreeCreditIdentity {
+  const normalizedEmail = getNormalizedBillingEmail(user)
+  const googleSubject = getGoogleIdentitySubject(user)
+
+  return {
+    emailHash: hashFreeCreditIdentity(`email:${normalizedEmail}`),
+    googleSubjectHash: googleSubject ? hashFreeCreditIdentity(`google:${googleSubject}`) : null,
+  }
+}
+
+async function ensureFreeCreditEntitlement(user: AuthenticatedBillingUser) {
+  const identity = getFreeCreditIdentity(user)
+  const supabase: any = createAdminClient()
+  const { error: ensureError } = await supabase.rpc('ensure_free_credit_entitlement', {
+    p_email_hash: identity.emailHash,
+    p_google_subject_hash: identity.googleSubjectHash,
+  })
+
+  if (ensureError) {
+    throw new Error(ensureError.message)
+  }
+
+  const { data, error } = await supabase
+    .from('free_credit_entitlements')
+    .select('email_hash, google_subject_hash, lifetime_credits_used, first_seen_at, last_seen_at, deleted_account_count')
+    .eq('email_hash', identity.emailHash)
+    .single()
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  let entitlement = data as FreeCreditEntitlementRow
+
+  if (entitlement.first_seen_at !== entitlement.last_seen_at) {
+    return entitlement
+  }
+
+  const { data: creditUsageData, error: creditUsageError } = await supabase
+    .from('credit_usage')
+    .select('credits_used')
+    .eq('user_id', user.id)
+
+  if (creditUsageError) {
+    throw new Error(creditUsageError.message)
+  }
+
+  const legacyCreditsUsed = (creditUsageData ?? []).reduce(
+    (sum: number, row: { credits_used?: number | null }) => sum + (row.credits_used ?? 0),
+    0
+  )
+
+  if (legacyCreditsUsed > entitlement.lifetime_credits_used) {
+    const { error: syncError } = await supabase.rpc('sync_free_credit_entitlement_floor', {
+      p_email_hash: identity.emailHash,
+      p_google_subject_hash: identity.googleSubjectHash,
+      p_min_credits: legacyCreditsUsed,
+    })
+
+    if (syncError) {
+      throw new Error(syncError.message)
+    }
+
+    entitlement = {
+      ...entitlement,
+      lifetime_credits_used: legacyCreditsUsed,
+    }
+  }
+
+  return entitlement
+}
+
+async function consumeFreeCredits(user: AuthenticatedBillingUser, credits: number) {
+  const identity = getFreeCreditIdentity(user)
+  const supabase: any = createAdminClient()
+  const { error } = await supabase.rpc('consume_free_credits', {
+    p_email_hash: identity.emailHash,
+    p_google_subject_hash: identity.googleSubjectHash,
+    p_credits: credits,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+}
+
+export async function markFreeCreditEntitlementDeleted(user: AuthenticatedBillingUser) {
+  const identity = getFreeCreditIdentity(user)
+  const supabase: any = createAdminClient()
+  const { error } = await supabase.rpc('mark_free_credit_entitlement_deleted', {
+    p_email_hash: identity.emailHash,
+    p_google_subject_hash: identity.googleSubjectHash,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+}
+
+export async function getUserBillingState(user: AuthenticatedBillingUser): Promise<BillingStatusResponse> {
   const supabase: any = createAdminClient()
 
-  const [{ data: subscriptionData, error: subscriptionError }, { data: creditUsageData, error: creditUsageError }] = await Promise.all([
+  const [
+    { data: subscriptionData, error: subscriptionError },
+    entitlement,
+  ] = await Promise.all([
     supabase
       .from('subscriptions')
       .select('status, plan_interval, cancel_at_period_end, current_period_end')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .maybeSingle(),
-    supabase
-      .from('credit_usage')
-      .select('credits_used')
-      .eq('user_id', userId),
+    ensureFreeCreditEntitlement(user),
   ])
 
   if (subscriptionError) {
     throw new Error(subscriptionError.message)
   }
 
-  if (creditUsageError) {
-    throw new Error(creditUsageError.message)
-  }
-
   const freeCreditsTotal = getFreeCreditsTotal()
-  const freeCreditsUsed = (creditUsageData ?? []).reduce(
-    (sum: number, row: { credits_used?: number | null }) => sum + (row.credits_used ?? 0),
-    0
-  )
+  const freeCreditsUsed = entitlement.lifetime_credits_used ?? 0
   const freeCreditsRemaining = Math.max(freeCreditsTotal - freeCreditsUsed, 0)
   const subscriptionStatus = subscriptionData?.status ?? null
 
@@ -247,8 +388,8 @@ export async function upsertSubscriptionFromStripe(userId: string, subscription:
   }
 }
 
-export async function requireEntitlement(userId: string, feature: BillableFeature) {
-  const billing = await getUserBillingState(userId)
+export async function requireEntitlement(user: AuthenticatedBillingUser, feature: BillableFeature) {
+  const billing = await getUserBillingState(user)
   const requiredCredits = getFeatureCreditCost(feature)
 
   if (!billing.isSubscribed && requiredCredits > billing.freeCreditsRemaining) {
@@ -259,20 +400,22 @@ export async function requireEntitlement(userId: string, feature: BillableFeatur
 }
 
 export async function recordCreditUsage(
-  userId: string,
+  user: AuthenticatedBillingUser,
   feature: BillableFeature,
   billingState?: BillingStatusResponse
 ) {
-  const billing = billingState ?? await getUserBillingState(userId)
+  const billing = billingState ?? await getUserBillingState(user)
   if (billing.isSubscribed) return
 
   const creditsUsed = getFeatureCreditCost(feature)
   if (creditsUsed <= 0) return
 
+  await consumeFreeCredits(user, creditsUsed)
+
   const supabase = createAdminClient()
   const supabaseAdmin: any = supabase
   const { error } = await supabaseAdmin.from('credit_usage').insert({
-    user_id: userId,
+    user_id: user.id,
     feature,
     credits_used: creditsUsed,
   })

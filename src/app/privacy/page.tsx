@@ -52,9 +52,11 @@ export default function PrivacyPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Retention</h2>
         <p className="mt-2">
-          Search history remains until you delete entries or delete your account. Billing linkage and credit usage are
-          retained while your account exists. AI usage records are retained for up to 180 days. Optional browser storage
-          remains on your device until you change your preference or clear browser storage.
+          Search history remains until you delete entries or delete your account. Billing linkage and per-account credit
+          usage are retained while your account exists. After account deletion, Domain Gazer may retain a minimal hashed
+          anti-abuse record to enforce one-time free-credit limits and protect against fraud. AI usage records are
+          retained for up to 180 days. Optional browser storage remains on your device until you change your preference
+          or clear browser storage.
         </p>
       </section>
 
@@ -62,8 +64,9 @@ export default function PrivacyPage() {
         <h2 className="text-base font-semibold text-zinc-900">Your rights</h2>
         <p className="mt-2">
           You can access and download your app data, delete saved search history, disable optional storage, and request
-          account deletion from the signed-in Privacy &amp; Data page. EU users may also lodge a complaint with their local
-          supervisory authority.
+          account deletion from the signed-in Privacy &amp; Data page. Account deletion removes your app data and auth
+          account, but may leave a minimal hashed anti-abuse record for security. EU users may also lodge a complaint
+          with their local supervisory authority.
         </p>
       </section>
     </LegalPageLayout>

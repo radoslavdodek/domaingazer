@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
   let billingState: BillingStatusResponse
   try {
-    billingState = await requireEntitlement(user.id, 'explain')
+    billingState = await requireEntitlement(user, 'explain')
   } catch (err) {
     if (err instanceof SubscriptionRequiredError) {
       return new Response(
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      await recordCreditUsage(user.id, 'explain', billingState)
+      await recordCreditUsage(user, 'explain', billingState)
     } catch (creditError) {
       console.error('[credit_usage.error]', creditError)
     }

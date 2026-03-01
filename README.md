@@ -47,6 +47,7 @@ STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 STRIPE_PRICE_MONTHLY_ID=
 STRIPE_PRICE_YEARLY_ID=
+FREE_CREDIT_IDENTITY_SALT=
 FREE_CREDITS_TOTAL=
 FREE_CREDITS_COST_SEARCH=
 FREE_CREDITS_COST_EXPLAIN=
@@ -61,6 +62,7 @@ Notes:
 - `STRIPE_SECRET_KEY` must be a secret key (`sk_test_...` locally, `sk_live_...` in production).
 - `STRIPE_WEBHOOK_SECRET` is the signing secret for the Stripe endpoint that points to `/api/stripe/webhook`.
 - `STRIPE_PRICE_MONTHLY_ID` and `STRIPE_PRICE_YEARLY_ID` must be recurring Stripe Price IDs, not Product IDs.
+- `FREE_CREDIT_IDENTITY_SALT` is a server-only secret used to hash account identifiers for durable free-credit enforcement after account deletion.
 - `FREE_CREDITS_TOTAL` is a one-time lifetime allowance. It does not reset.
 - `FREE_CREDITS_COST_SEARCH` and `FREE_CREDITS_COST_EXPLAIN` define how many credits each successful action consumes.
 - `GDPR_COUNTRY_HEADER_NAME` lets you trust a reverse-proxy header for country detection (useful on VPS deployments behind Nginx).
@@ -85,6 +87,7 @@ Run all migrations in the `supabase/migrations/` folder, including the billing m
 - `20260301_model_usage.sql`
 - `20260302_model_usage_cost.sql`
 - `20260303_billing.sql`
+- `20260304_free_credit_entitlements.sql`
 
 You can apply them with the Supabase CLI or by running the SQL in the Supabase SQL editor.
 
@@ -93,8 +96,10 @@ The billing migration creates:
 - `billing_customers`
 - `subscriptions`
 - `credit_usage`
+- `free_credit_entitlements`
 
-Those tables are required for Stripe customer mapping, subscription status, and free-credit tracking.
+Those tables are required for Stripe customer mapping, subscription status, per-account audit history, and durable
+free-credit tracking that survives account deletion.
 
 ## Stripe billing setup
 
@@ -219,6 +224,7 @@ The portal returns users to the app root (`/`) after completion.
 The free plan is controlled entirely by environment variables:
 
 ```bash
+FREE_CREDIT_IDENTITY_SALT=replace-with-a-random-secret
 FREE_CREDITS_TOTAL=100
 FREE_CREDITS_COST_SEARCH=10
 FREE_CREDITS_COST_EXPLAIN=1
@@ -228,6 +234,7 @@ Behavior:
 
 - every user starts with `FREE_CREDITS_TOTAL`
 - free credits are lifetime-only and never replenish
+- a hashed anti-abuse marker is retained after account deletion so the same email/Google identity cannot reclaim fresh free credits
 - a successful `search` consumes `FREE_CREDITS_COST_SEARCH`
 - a successful `explain` consumes `FREE_CREDITS_COST_EXPLAIN`
 - paid subscribers bypass the free-credit cap entirely
