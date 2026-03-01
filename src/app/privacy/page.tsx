@@ -4,13 +4,16 @@ export default function PrivacyPage() {
   return (
     <LegalPageLayout
       title="Privacy Policy"
-      description="This document explains what personal data Domain Gazer processes, why we process it, and how users can exercise their privacy rights. Replace the controller contact details below with your production business details before launch."
+      description="This document explains what personal data Domain Gazer processes, why we process it, and how users can exercise their privacy rights."
     >
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Controller and contact</h2>
         <p className="mt-2">
-          Domain Gazer is the data controller for the product data described here. For privacy requests, use the in-app
-          Privacy &amp; Data page when signed in or contact <span className="font-medium">privacy@your-domain.com</span>.
+          Indek s.r.o. is the data controller for the product data described here. 
+          Address: Lichardova 26, 01001 Zilina, Slovakia.
+          Company ID: 46942955.
+          For privacy requests, use the in-app
+          Privacy &amp; Data page when signed in or contact <span className="font-medium">support@domaingazer.com</span>.
         </p>
       </section>
 
