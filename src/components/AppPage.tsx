@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { startCheckout, openBillingPortal } from '@/lib/billing-client'
+import { openBillingPortal } from '@/lib/billing-client'
 import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
@@ -30,7 +30,7 @@ export function AppPage() {
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([])
   const [initialDescription, setInitialDescription] = useState<string | undefined>(undefined)
   const [initialTlds, setInitialTlds] = useState<TLD[] | undefined>(undefined)
-  const [billingAction, setBillingAction] = useState<'month' | 'year' | 'portal' | null>(null)
+  const [billingAction, setBillingAction] = useState<'portal' | null>(null)
   const [billingActionError, setBillingActionError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -94,16 +94,8 @@ export function AppPage() {
     setIsTldSelectionLocked(false)
   }
 
-  const handleCheckout = async (interval: 'month' | 'year') => {
-    setBillingAction(interval)
-    setBillingActionError(null)
-
-    try {
-      await startCheckout(interval)
-    } catch (err) {
-      setBillingAction(null)
-      setBillingActionError(err instanceof Error ? err.message : 'Failed to start checkout')
-    }
+  const handleUpgrade = () => {
+    window.location.assign('/billing')
   }
 
   const handleManageBilling = async () => {
@@ -152,7 +144,7 @@ export function AppPage() {
               isSubscribed={billing?.isSubscribed}
               billingDisabled={billingAction !== null}
               onUpgrade={billing && !billing.isSubscribed
-                ? () => { window.location.assign('/billing') }
+                ? handleUpgrade
                 : undefined}
               onManageBilling={billing?.isSubscribed
                 ? () => { void handleManageBilling() }
@@ -192,28 +184,20 @@ export function AppPage() {
                       {isBillingLoading && !billing ? 'Loading usage' : `${planLabel} plan`}
                     </h2>
                   </div>
-                  <div className="flex flex-col gap-2 sm:flex-row">
+                  <div className="flex">
                     <button
                       type="button"
-                      onClick={() => { void handleCheckout('month') }}
+                      onClick={handleUpgrade}
                       disabled={billingAction !== null}
                       className={`inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
                         isMidnightTheme ? 'bg-sky-600 hover:bg-sky-500' : 'bg-blue-600 hover:bg-blue-700'
                       }`}
                     >
-                      Upgrade Monthly
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { void handleCheckout('year') }}
-                      disabled={billingAction !== null}
-                      className={`inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
-                        isMidnightTheme
-                          ? 'border-sky-800 bg-zinc-900 text-sky-300 hover:bg-sky-950/40'
-                          : 'border-blue-200 text-blue-700 hover:bg-blue-50'
-                      }`}
-                    >
-                      Upgrade Yearly
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="mr-2 h-4 w-4">
+                        <path d="M3 5.75a.75.75 0 0 1 1.18-.615l3.07 2.193 2.316-4.054a.75.75 0 0 1 1.304 0l2.316 4.054 3.07-2.193A.75.75 0 0 1 17 5.75V8a.75.75 0 0 1-.03.212l-1.5 5.25A.75.75 0 0 1 14.75 14h-9.5a.75.75 0 0 1-.72-.538l-1.5-5.25A.75.75 0 0 1 3 8V5.75Z" />
+                        <path d="M6.25 15.5a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5H7a.75.75 0 0 1-.75-.75Z" />
+                      </svg>
+                      Upgrade to Pro
                     </button>
                   </div>
                 </div>

@@ -123,8 +123,8 @@ export function UserMenu({
               className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-                <path d="M10 2.5a.75.75 0 0 1 .75.75v6.69l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 0 1 1.06-1.06l1.72 1.72V3.25A.75.75 0 0 1 10 2.5Z" />
-                <path d="M3.5 11.75a.75.75 0 0 1 .75.75v1.75c0 .69.56 1.25 1.25 1.25h9c.69 0 1.25-.56 1.25-1.25V12.5a.75.75 0 0 1 1.5 0v1.75A2.75 2.75 0 0 1 14.5 17h-9a2.75 2.75 0 0 1-2.75-2.75V12.5a.75.75 0 0 1 .75-.75Z" />
+                <path d="M3 5.75a.75.75 0 0 1 1.18-.615l3.07 2.193 2.316-4.054a.75.75 0 0 1 1.304 0l2.316 4.054 3.07-2.193A.75.75 0 0 1 17 5.75V8a.75.75 0 0 1-.03.212l-1.5 5.25A.75.75 0 0 1 14.75 14h-9.5a.75.75 0 0 1-.72-.538l-1.5-5.25A.75.75 0 0 1 3 8V5.75Z" />
+                <path d="M6.25 15.5a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5H7a.75.75 0 0 1-.75-.75Z" />
               </svg>
               Upgrade to Pro
             </button>
