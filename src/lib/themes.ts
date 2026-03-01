@@ -204,7 +204,7 @@ export const classicTheme: Theme = {
 
 export const midnightTheme: Theme = {
   layout: {
-    body: 'min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-950 to-sky-950/20 font-sans',
+    body: 'min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-950 to-sky-950 font-sans',
   },
   navbar: {
     wrapper: 'flex items-center justify-between border-b border-zinc-800 bg-zinc-900/70 px-4 py-3 backdrop-blur-sm sm:px-6',

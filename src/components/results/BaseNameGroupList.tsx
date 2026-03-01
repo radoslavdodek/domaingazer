@@ -187,7 +187,7 @@ export function BaseNameGroupList({
       {showWorkingRow && (
         <div className={theme.baseNameGroupList.workingRow}>
           <div className="flex items-center gap-2">
-            <span className="relative inline-block h-2 w-2">
+            <span className="relative inline-flex h-2 w-2">
               <span className={theme.baseNameGroupList.workingPing} />
               <span className={theme.baseNameGroupList.workingDot} />
             </span>
