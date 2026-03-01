@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
-
 export function UserMenu() {
   const { theme } = useTheme()
   const router = useRouter()
@@ -48,6 +47,7 @@ export function UserMenu() {
   const name = (user.user_metadata?.full_name ?? user.user_metadata?.name ?? user.email ?? '') as string
   const email = user.email ?? ''
   const initial = name.charAt(0).toUpperCase() || email.charAt(0).toUpperCase() || '?'
+  const isAdmin = user.app_metadata?.is_admin === true
 
   return (
     <div className="relative" ref={menuRef}>
@@ -82,6 +82,18 @@ export function UserMenu() {
             <p className="truncate text-sm font-medium text-gray-900">{name}</p>
             <p className="truncate text-xs text-gray-500">{email}</p>
           </div>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => { setOpen(false); router.push('/admin') }}
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path fillRule="evenodd" d="M2.5 3A1.5 1.5 0 0 0 1 4.5v4A1.5 1.5 0 0 0 2.5 10h6A1.5 1.5 0 0 0 10 8.5v-4A1.5 1.5 0 0 0 8.5 3h-6Zm11 2A1.5 1.5 0 0 0 12 6.5v7a1.5 1.5 0 0 0 1.5 1.5h3a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 16.5 5h-3Zm-10 7A1.5 1.5 0 0 0 2 13.5v1A1.5 1.5 0 0 0 3.5 16h6a1.5 1.5 0 0 0 1.5-1.5v-1A1.5 1.5 0 0 0 9.5 12h-6Z" clipRule="evenodd" />
+              </svg>
+              Admin Dashboard
+            </button>
+          )}
           <button
             type="button"
             onClick={handleSignOut}

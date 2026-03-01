@@ -16,7 +16,11 @@
     "model": "moonshotai/kimi-k2-instruct-0905"
   },
   "explain": {
-    "provider": "Groq",
-    "model": "moonshotai/kimi-k2-instruct-0905"
+    "provider": "OpenAI",
+    "model": "gpt-4.1"
+  },
+  "modelPricing": {
+    "gpt-4.1": { "promptPer1M": 2.00, "completionPer1M": 8.00 },
+    "moonshotai/kimi-k2-instruct-0905": { "promptPer1M": 1.00, "completionPer1M": 3.00 }
   }
 }
