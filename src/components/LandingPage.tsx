@@ -216,12 +216,6 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
               )}
             </div>
             <p className="text-sm text-zinc-500">No credit card required</p>
-            {!isSignedIn && (
-              <p className="mt-3 max-w-xl text-xs leading-5 text-zinc-500">
-                Continuing with Google uses essential authentication cookies. Optional theme and draft-search storage is
-                controlled separately for EU users. See <Link href="/privacy" className="underline underline-offset-2">Privacy</Link> and <Link href="/terms" className="underline underline-offset-2">Terms</Link>.
-              </p>
-            )}
           </div>
 
           {/* App preview mockup */}
@@ -434,10 +428,6 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
                 </button>
               )}
               <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
-              <p className="mt-3 text-xs leading-5 text-zinc-500">
-                Essential authentication cookies are required for sign-in. Optional browser storage is only enabled when
-                your settings allow it.
-              </p>
             </div>
           </div>
         </div>
