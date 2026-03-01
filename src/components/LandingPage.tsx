@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 function GlobeIcon({ className }: { className?: string }) {
@@ -127,6 +129,13 @@ const ACCENT_CLASSES: Record<string, { icon: string; bg: string; border: string 
 }
 
 export function LandingPage() {
+  const [isSignedIn, setIsSignedIn] = useState(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => setIsSignedIn(!!user))
+  }, [])
+
   const handleSignIn = async () => {
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
@@ -135,6 +144,12 @@ export function LandingPage() {
         redirectTo: `${window.location.origin}/auth/callback?next=/`,
       },
     })
+  }
+
+  const handleSignOut = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    setIsSignedIn(false)
   }
 
   return (
@@ -153,14 +168,32 @@ export function LandingPage() {
             <GlobeIcon className="h-7 w-7 text-blue-400" />
             <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
           </div>
-          <button
-            type="button"
-            onClick={handleSignIn}
-            className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
-          >
-            <GoogleIcon />
-            Sign in
-          </button>
+          {isSignedIn ? (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/"
+                className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+              >
+                Go to Dashboard
+              </Link>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-600 hover:bg-zinc-800 hover:text-red-400"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSignIn}
+              className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+            >
+              <GoogleIcon />
+              Sign in
+            </button>
+          )}
         </div>
       </nav>
 
@@ -197,14 +230,23 @@ export function LandingPage() {
             </div>
 
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              <button
-                type="button"
-                onClick={handleSignIn}
-                className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
-              >
-                <GoogleIcon />
-                Get started free
-              </button>
+              {isSignedIn ? (
+                <Link
+                  href="/"
+                  className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSignIn}
+                  className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
+                >
+                  <GoogleIcon />
+                  Get started free
+                </button>
+              )}
               <p className="text-sm text-zinc-500">No credit card required</p>
             </div>
           </div>
@@ -387,14 +429,23 @@ export function LandingPage() {
                 Join founders who&apos;ve found their perfect domain with Domain Gazer.
                 Sign in with Google and start searching in seconds.
               </p>
-              <button
-                type="button"
-                onClick={handleSignIn}
-                className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50"
-              >
-                <GoogleIcon />
-                Get started free
-              </button>
+              {isSignedIn ? (
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSignIn}
+                  className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50"
+                >
+                  <GoogleIcon />
+                  Get started free
+                </button>
+              )}
               <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
             </div>
           </div>
