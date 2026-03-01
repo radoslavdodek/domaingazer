@@ -40,7 +40,7 @@ const STEPS = [
   {
     number: '02',
     title: 'AI Generates Names',
-    description: 'GPT-4.1 creates dozens of creative, brandable domain candidates tailored to your description — names that actually sound like real companies.',
+    description: 'AI creates dozens of creative, brandable domain candidates tailored to your description — names that actually sound like real companies.',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
@@ -50,7 +50,7 @@ const STEPS = [
   {
     number: '03',
     title: 'Check Availability Live',
-    description: 'Every candidate is checked against real DNS records in real time via AWS Route 53 — across all your chosen TLDs simultaneously.',
+    description: 'Every domain candidate is checked for availability instantly, so you’ll know right away whether you can use the domain name or if it’s already taken',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -61,8 +61,8 @@ const STEPS = [
 
 const FEATURES = [
   {
-    title: 'GPT-4.1 Powered',
-    description: 'State-of-the-art language model generates creative, brandable names — not generic keyword combinations.',
+    title: 'AI Powered',
+    description: 'State-of-the-art language models generates creative, brandable names — not generic keyword combinations.',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
@@ -72,7 +72,7 @@ const FEATURES = [
   },
   {
     title: 'Real-Time Availability',
-    description: 'Live checks via AWS Route 53, not a cached database. You always get fresh, accurate results.',
+    description: 'Live checks the availability of your domain, giving you fresh and accurate results every time',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
@@ -81,44 +81,14 @@ const FEATURES = [
     accent: 'yellow',
   },
   {
-    title: '8 TLDs Supported',
-    description: 'Search across .com, .io, .ai, .co, .net, .shop, .store, and .de simultaneously — mix and match freely.',
+    title: 'Multiple TLDs Supported',
+    description: 'Search across .com, .io, .ai, .co, .net, .shop, .store, and .de — mix and match freely.',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
       </svg>
     ),
     accent: 'blue',
-  },
-  {
-    title: 'Smart Multi-Round Search',
-    description: 'If round 1 finds nothing available, the AI automatically generates new variations and tries again — up to 5 rounds.',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-      </svg>
-    ),
-    accent: 'cyan',
-  },
-  {
-    title: 'Search History',
-    description: 'Every search is saved to your account automatically. Resume any past search and pick up where you left off.',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    accent: 'emerald',
-  },
-  {
-    title: 'CSV Export',
-    description: 'Download all results as a CSV file to share with your team or do further analysis in a spreadsheet.',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-      </svg>
-    ),
-    accent: 'orange',
   },
 ]
 
@@ -470,7 +440,7 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
             <GlobeIcon className="h-5 w-5" />
             <span className="text-sm font-semibold text-zinc-400">Domain Gazer</span>
           </div>
-          <p className="text-sm text-zinc-600">© 2025 Domain Gazer · Find your perfect domain name with AI</p>
+          <p className="text-sm text-zinc-600">© 2026 Domain Gazer · Find your perfect domain name with AI</p>
         </div>
       </footer>
     </div>

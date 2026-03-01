@@ -301,7 +301,7 @@ export function AppPage() {
           />
 
           <footer className={theme.footer.wrapper}>
-            <p className={theme.footer.text}>© 2025 Domain Gazer · Find your perfect domain name with AI</p>
+            <p className={theme.footer.text}>© 2026 Domain Gazer · Find your perfect domain name with AI</p>
           </footer>
         </div>
       </main>
