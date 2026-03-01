@@ -96,7 +96,7 @@ export function BillingPlans({
               <span className="pb-1 text-sm font-medium text-zinc-400">/month</span>
             </div>
           )}
-          <p className="mt-2 text-sm text-zinc-400">Unlimited searches and explanations. Cancel anytime.</p>
+          <p className="mt-2 text-sm text-zinc-400">Unlimited searches. Cancel anytime.</p>
           <div className="mt-auto pt-8">
             <button
               type="button"
