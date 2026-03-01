@@ -25,8 +25,8 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
-  // Allow auth-related paths through
-  if (pathname.startsWith('/login') || pathname.startsWith('/auth')) {
+  // Allow auth-related paths and root (landing page) through
+  if (pathname === '/' || pathname.startsWith('/login') || pathname.startsWith('/auth')) {
     return supabaseResponse
   }
 
