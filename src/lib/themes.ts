@@ -111,7 +111,7 @@ export const classicTheme: Theme = {
   page: {
     title: 'mb-3 text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent sm:text-4xl',
     subtitle: 'mx-auto max-w-2xl text-sm text-gray-500',
-    searchCard: 'mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6',
+    searchCard: 'mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 text-gray-900',
     heroBadge: 'mb-4 inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600',
   },
   searchForm: {
@@ -219,7 +219,7 @@ export const midnightTheme: Theme = {
   page: {
     title: 'mb-3 text-3xl font-extrabold bg-gradient-to-r from-sky-400 to-violet-400 bg-clip-text text-transparent sm:text-4xl',
     subtitle: 'mx-auto max-w-2xl text-sm text-zinc-500',
-    searchCard: 'mb-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 shadow-lg shadow-black/20 sm:p-6',
+    searchCard: 'mb-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 shadow-lg shadow-black/20 sm:p-6 text-zinc-100',
     heroBadge: 'mb-4 inline-flex items-center gap-1.5 rounded-full border border-sky-800 bg-sky-950/50 px-3 py-1 text-xs font-semibold text-sky-400',
   },
   searchForm: {
