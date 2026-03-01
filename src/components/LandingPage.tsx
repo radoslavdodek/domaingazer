@@ -169,7 +169,8 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
         <div className="mx-auto max-w-6xl">
           {/* Heading block */}
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-sm font-medium text-blue-300">
+            <div
+                className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-sm font-medium text-blue-300">
               <span className="text-blue-400">✦</span>
               AI-powered
             </div>
@@ -190,7 +191,8 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
             {/* TLD pills */}
             <div className="mb-10 flex flex-wrap justify-center gap-2">
               {['.com', '.io', '.ai', '.co', '.net', '.shop', '.store', '.de'].map((tld) => (
-                <span key={tld} className="rounded-md border border-zinc-700/60 bg-zinc-800/60 px-2.5 py-1 text-xs font-mono font-medium text-zinc-400">
+                  <span key={tld}
+                        className="rounded-md border border-zinc-700/60 bg-zinc-800/60 px-2.5 py-1 text-xs font-mono font-medium text-zinc-400">
                   {tld}
                 </span>
               ))}
@@ -198,24 +200,26 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
 
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               {isSignedIn ? (
-                <Link
-                  href="/"
-                  className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
-                >
-                  Go to Dashboard
-                </Link>
+                  <Link
+                      href="/"
+                      className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
+                  >
+                    Go to Dashboard
+                  </Link>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => { void handleSignIn() }}
-                  className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
-                >
-                  <GoogleIcon />
-                  Get started free
-                </button>
+                  <button
+                      type="button"
+                      onClick={() => {
+                        void handleSignIn()
+                      }}
+                      className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
+                  >
+                    <GoogleIcon/>
+                    Get started free
+                  </button>
               )}
             </div>
-            <p className="text-sm text-zinc-500">No credit card required</p>
+            <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
           </div>
 
           {/* App preview mockup */}
