@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { signInWithGoogle } from '@/lib/auth-client'
+import { openBillingPortal, startCheckout } from '@/lib/billing-client'
 import { createClient } from '@/lib/supabase/client'
+import { useBillingStatus } from '@/hooks/useBillingStatus'
 
 function GlobeIcon({ className }: { className?: string }) {
   return (
@@ -130,20 +133,17 @@ const ACCENT_CLASSES: Record<string, { icon: string; bg: string; border: string 
 
 export function LandingPage() {
   const [isSignedIn, setIsSignedIn] = useState(false)
+  const { billing, isLoading: isBillingLoading, error: billingError } = useBillingStatus(isSignedIn)
+  const [pricingAction, setPricingAction] = useState<'month' | 'year' | 'portal' | null>(null)
+  const [pricingError, setPricingError] = useState<string | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
     supabase.auth.getUser().then(({ data: { user } }) => setIsSignedIn(!!user))
   }, [])
 
-  const handleSignIn = async () => {
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/`,
-      },
-    })
+  const handleSignIn = async (nextPath = '/') => {
+    await signInWithGoogle(nextPath)
   }
 
   const handleSignOut = async () => {
@@ -151,6 +151,34 @@ export function LandingPage() {
     await supabase.auth.signOut()
     setIsSignedIn(false)
   }
+
+  const handlePricing = async (interval: 'month' | 'year') => {
+    setPricingError(null)
+
+    if (!isSignedIn) {
+      await handleSignIn(`/billing?checkout=${interval}`)
+      return
+    }
+
+    if (isBillingLoading && !billing) return
+
+    const action = billing?.isSubscribed ? 'portal' : interval
+    setPricingAction(action)
+
+    try {
+      if (billing?.isSubscribed) {
+        await openBillingPortal()
+      } else {
+        await startCheckout(interval)
+      }
+    } catch (err) {
+      setPricingAction(null)
+      setPricingError(err instanceof Error ? err.message : 'Failed to open billing')
+    }
+  }
+
+  const pricingDisabled = pricingAction !== null || (isSignedIn && isBillingLoading && !billing)
+  const pricingNotice = pricingError ?? billingError
 
   return (
     <div className="min-h-screen bg-zinc-950 font-sans text-white antialiased">
@@ -187,7 +215,7 @@ export function LandingPage() {
           ) : (
             <button
               type="button"
-              onClick={handleSignIn}
+              onClick={() => { void handleSignIn() }}
               className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
             >
               <GoogleIcon />
@@ -212,7 +240,7 @@ export function LandingPage() {
               <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">
                 domain name
               </span>
-              {' '}— instantly
+              {' '}instantly
             </h1>
 
             <p className="mx-auto mb-4 max-w-xl text-lg leading-relaxed text-zinc-400 sm:text-xl">
@@ -240,7 +268,7 @@ export function LandingPage() {
               ) : (
                 <button
                   type="button"
-                  onClick={handleSignIn}
+                  onClick={() => { void handleSignIn() }}
                   className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
                 >
                   <GoogleIcon />
@@ -409,6 +437,89 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* ── Pricing ── */}
+      <section id="pricing" className="relative z-10 px-4 py-24 sm:px-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-16 text-center">
+            <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">Simple pricing</h2>
+            <p className="text-zinc-400">
+              Start with one-time free credits, then unlock unlimited usage with a monthly or yearly subscription.
+            </p>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-3">
+            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/70 p-7">
+              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-zinc-500">Free</p>
+              <h3 className="mt-4 text-3xl font-bold">Starter</h3>
+              <p className="mt-3 text-sm leading-relaxed text-zinc-400">
+                One-time free credits for trying domain generation and name explanations before you pay.
+              </p>
+              <div className="mt-8">
+                {isSignedIn ? (
+                  <Link
+                    href="/"
+                    className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+                  >
+                    Open Dashboard
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => { void handleSignIn() }}
+                    className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+                  >
+                    Start Free
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-blue-500/30 bg-gradient-to-b from-blue-500/10 to-zinc-900/80 p-7 shadow-lg shadow-blue-600/10">
+              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Pro Monthly</p>
+              <h3 className="mt-4 text-3xl font-bold">Monthly</h3>
+              <p className="mt-2 text-sm text-zinc-400">Unlimited searches and explanations. Cancel anytime.</p>
+              <div className="mt-8">
+                <button
+                  type="button"
+                  onClick={() => { void handlePricing('month') }}
+                  disabled={pricingDisabled}
+                  className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {billing?.isSubscribed ? 'Manage Billing' : 'Choose Monthly'}
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-cyan-500/30 bg-gradient-to-b from-cyan-500/10 to-zinc-900/80 p-7 shadow-lg shadow-cyan-600/10">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">Pro Yearly</p>
+                <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-200">
+                  Best Value
+                </span>
+              </div>
+              <h3 className="mt-4 text-3xl font-bold">Yearly</h3>
+              <p className="mt-2 text-sm text-zinc-400">The same unlimited access with discounted annual billing.</p>
+              <div className="mt-8">
+                <button
+                  type="button"
+                  onClick={() => { void handlePricing('year') }}
+                  disabled={pricingDisabled}
+                  className="inline-flex w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-colors hover:bg-cyan-400/15 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {billing?.isSubscribed ? 'Manage Billing' : 'Choose Yearly'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {pricingNotice && (
+            <p className="mx-auto mt-6 max-w-3xl rounded-2xl border border-red-900/60 bg-red-950/30 px-4 py-3 text-sm text-red-200">
+              {pricingNotice}
+            </p>
+          )}
+        </div>
+      </section>
+
       {/* ── Final CTA ── */}
       <section className="relative z-10 px-4 py-24 sm:px-6">
         <div className="mx-auto max-w-2xl">
@@ -439,7 +550,7 @@ export function LandingPage() {
               ) : (
                 <button
                   type="button"
-                  onClick={handleSignIn}
+                  onClick={() => { void handleSignIn() }}
                   className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50"
                 >
                   <GoogleIcon />

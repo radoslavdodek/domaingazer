@@ -6,7 +6,22 @@ import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
-export function UserMenu() {
+
+interface UserMenuProps {
+  planLabel?: string
+  isSubscribed?: boolean
+  billingDisabled?: boolean
+  onUpgrade?: () => void
+  onManageBilling?: () => void
+}
+
+export function UserMenu({
+  planLabel,
+  isSubscribed = false,
+  billingDisabled = false,
+  onUpgrade,
+  onManageBilling,
+}: UserMenuProps) {
   const { theme } = useTheme()
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
@@ -81,7 +96,39 @@ export function UserMenu() {
           <div className="border-b border-gray-100 px-4 py-3">
             <p className="truncate text-sm font-medium text-gray-900">{name}</p>
             <p className="truncate text-xs text-gray-500">{email}</p>
+            {planLabel && (
+              <p className="mt-2 inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+                {planLabel}
+              </p>
+            )}
           </div>
+          {isSubscribed && onManageBilling && (
+            <button
+              type="button"
+              onClick={() => { setOpen(false); onManageBilling() }}
+              disabled={billingDisabled}
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path d="M10 2a2.5 2.5 0 0 0-2.2 1.316l-.18.34-.38.06a2.5 2.5 0 0 0-2.038 1.7l-.12.37-.36.15a2.5 2.5 0 0 0-1.422 3.25l.14.36-.24.31a2.5 2.5 0 0 0 0 3.087l.24.31-.14.36a2.5 2.5 0 0 0 1.422 3.25l.36.15.12.37a2.5 2.5 0 0 0 2.038 1.7l.38.06.18.34a2.5 2.5 0 0 0 4.4 0l.18-.34.38-.06a2.5 2.5 0 0 0 2.038-1.7l.12-.37.36-.15a2.5 2.5 0 0 0 1.422-3.25l-.14-.36.24-.31a2.5 2.5 0 0 0 0-3.087l-.24-.31.14-.36a2.5 2.5 0 0 0-1.422-3.25l-.36-.15-.12-.37a2.5 2.5 0 0 0-2.038-1.7l-.38-.06-.18-.34A2.5 2.5 0 0 0 10 2Zm2.03 7.03a.75.75 0 0 1 0 1.06l-2.5 2.5a.75.75 0 0 1-1.06 0l-1.25-1.25a.75.75 0 1 1 1.06-1.06L9 10.94l1.97-1.97a.75.75 0 0 1 1.06 0Z" />
+              </svg>
+              Manage Billing
+            </button>
+          )}
+          {!isSubscribed && onUpgrade && (
+            <button
+              type="button"
+              onClick={() => { setOpen(false); onUpgrade() }}
+              disabled={billingDisabled}
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path d="M10 2.5a.75.75 0 0 1 .75.75v6.69l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 0 1 1.06-1.06l1.72 1.72V3.25A.75.75 0 0 1 10 2.5Z" />
+                <path d="M3.5 11.75a.75.75 0 0 1 .75.75v1.75c0 .69.56 1.25 1.25 1.25h9c.69 0 1.25-.56 1.25-1.25V12.5a.75.75 0 0 1 1.5 0v1.75A2.75 2.75 0 0 1 14.5 17h-9a2.75 2.75 0 0 1-2.75-2.75V12.5a.75.75 0 0 1 .75-.75Z" />
+              </svg>
+              Upgrade to Pro
+            </button>
+          )}
           {isAdmin && (
             <button
               type="button"

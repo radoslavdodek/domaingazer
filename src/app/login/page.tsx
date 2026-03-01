@@ -2,19 +2,14 @@
 
 import Link from 'next/link'
 import { useTheme } from '@/contexts/ThemeContext'
-import { createClient } from '@/lib/supabase/client'
+import { signInWithGoogle } from '@/lib/auth-client'
 
 export default function LoginPage() {
   const { theme } = useTheme()
 
   const handleGoogleSignIn = async () => {
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/`,
-      },
-    })
+    const next = new URLSearchParams(window.location.search).get('next') ?? '/'
+    await signInWithGoogle(next)
   }
 
   return (

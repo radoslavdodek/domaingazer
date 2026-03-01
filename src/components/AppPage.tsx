@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { startCheckout, openBillingPortal } from '@/lib/billing-client'
 import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { UserMenu } from '@/components/UserMenu'
+import { useBillingStatus } from '@/hooks/useBillingStatus'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { TLD } from '@/lib/types'
@@ -20,6 +22,7 @@ interface SearchHistoryEntry {
 export function AppPage() {
   const { theme } = useTheme()
   const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
+  const { billing, isLoading: isBillingLoading, error: billingError, refresh: refreshBilling } = useBillingStatus()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
   const [searchDescription, setSearchDescription] = useState('')
   const [isTldSelectionLocked, setIsTldSelectionLocked] = useState(false)
@@ -27,6 +30,8 @@ export function AppPage() {
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([])
   const [initialDescription, setInitialDescription] = useState<string | undefined>(undefined)
   const [initialTlds, setInitialTlds] = useState<TLD[] | undefined>(undefined)
+  const [billingAction, setBillingAction] = useState<'month' | 'year' | 'portal' | null>(null)
+  const [billingActionError, setBillingActionError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/search-history')
@@ -45,7 +50,9 @@ export function AppPage() {
     setSelectedTlds(tlds)
     setSearchDescription(description)
     setIsTldSelectionLocked(true)
-    search(description, tlds)
+    void search(description, tlds).finally(() => {
+      void refreshBilling()
+    })
 
     // Fire-and-forget save + optimistic prepend (skip if description already in history)
     setSearchHistory((prev) => {
@@ -66,7 +73,9 @@ export function AppPage() {
 
   const handleGenerateMore = (hint: string) => {
     const baseNames = Array.from(new Set(results.map((r) => r.baseName)))
-    generateMore(baseNames, hint || undefined)
+    void generateMore(baseNames, hint || undefined).finally(() => {
+      void refreshBilling()
+    })
   }
 
   const handleDeleteHistory = (id: string) => {
@@ -85,6 +94,39 @@ export function AppPage() {
     setIsTldSelectionLocked(false)
   }
 
+  const handleCheckout = async (interval: 'month' | 'year') => {
+    setBillingAction(interval)
+    setBillingActionError(null)
+
+    try {
+      await startCheckout(interval)
+    } catch (err) {
+      setBillingAction(null)
+      setBillingActionError(err instanceof Error ? err.message : 'Failed to start checkout')
+    }
+  }
+
+  const handleManageBilling = async () => {
+    setBillingAction('portal')
+    setBillingActionError(null)
+
+    try {
+      await openBillingPortal()
+    } catch (err) {
+      setBillingAction(null)
+      setBillingActionError(err instanceof Error ? err.message : 'Failed to open billing portal')
+    }
+  }
+
+  const planLabel = billing?.isSubscribed
+    ? billing.planInterval === 'year' ? 'Pro Yearly' : 'Pro Monthly'
+    : 'Free'
+  const isCreditsExhausted = Boolean(billing && !billing.isSubscribed && billing.freeCreditsRemaining <= 0)
+  const billingNotice = billingActionError ?? billingError
+  const renewalDate = billing?.currentPeriodEnd
+    ? new Date(billing.currentPeriodEnd).toLocaleDateString()
+    : null
+
   return (
     <div className={theme.layout.body}>
       <main className="mx-auto w-full max-w-4xl">
@@ -97,7 +139,13 @@ export function AppPage() {
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <UserMenu />
+            <UserMenu
+              planLabel={planLabel}
+              isSubscribed={billing?.isSubscribed}
+              billingDisabled={billingAction !== null}
+              onUpgrade={() => { void handleCheckout('month') }}
+              onManageBilling={() => { void handleManageBilling() }}
+            />
           </div>
         </nav>
 
@@ -111,6 +159,101 @@ export function AppPage() {
               Describe your project, pick your TLDs, and get AI-generated domain names with live availability checks.
             </p>
           </div>
+
+          <section className="mb-8 overflow-hidden rounded-3xl border border-gray-200/80 bg-white/95 shadow-sm dark:border-gray-700/70 dark:bg-gray-900/80">
+            <div className="border-b border-gray-100/80 px-5 py-4 dark:border-gray-800">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-300">Billing</p>
+                  <h2 className="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {isBillingLoading && !billing ? 'Loading usage' : `${planLabel} plan`}
+                  </h2>
+                </div>
+                {billing?.isSubscribed ? (
+                  <button
+                    type="button"
+                    onClick={() => { void handleManageBilling() }}
+                    disabled={billingAction !== null}
+                    className="inline-flex items-center justify-center rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
+                  >
+                    Manage Billing
+                  </button>
+                ) : (
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <button
+                      type="button"
+                      onClick={() => { void handleCheckout('month') }}
+                      disabled={billingAction !== null}
+                      className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      Upgrade Monthly
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { void handleCheckout('year') }}
+                      disabled={billingAction !== null}
+                      className="inline-flex items-center justify-center rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-blue-500/40 dark:text-blue-200 dark:hover:bg-blue-900/20"
+                    >
+                      Upgrade Yearly
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-4 px-5 py-5">
+              {billing?.isSubscribed ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 dark:border-emerald-900/60 dark:bg-emerald-950/30">
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
+                    Unlimited AI usage is active.
+                  </p>
+                  <p className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/80">
+                    {billing.cancelAtPeriodEnd && renewalDate
+                      ? `Your subscription will end on ${renewalDate}.`
+                      : renewalDate
+                        ? `Your current billing period renews on ${renewalDate}.`
+                        : 'You can update your plan, payment method, or cancellation settings in the billing portal.'}
+                  </p>
+                </div>
+              ) : billing ? (
+                <div className={`rounded-2xl border px-4 py-4 ${isCreditsExhausted
+                  ? 'border-red-200 bg-red-50 dark:border-red-900/60 dark:bg-red-950/30'
+                  : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/70'}`}>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {billing.freeCreditsUsed} / {billing.freeCreditsTotal} free credits used
+                      </p>
+                      <p className={`mt-1 text-sm ${isCreditsExhausted ? 'text-red-700 dark:text-red-200' : 'text-gray-600 dark:text-gray-300'}`}>
+                        {isCreditsExhausted
+                          ? 'Your free credits are exhausted. Upgrade to continue using AI features.'
+                          : `${billing.freeCreditsRemaining} free credits remaining before a subscription is required.`}
+                      </p>
+                    </div>
+                    <p className={`text-2xl font-semibold ${isCreditsExhausted ? 'text-red-700 dark:text-red-200' : 'text-gray-900 dark:text-gray-100'}`}>
+                      {billing.usagePercent}%
+                    </p>
+                  </div>
+                  <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                    <div
+                      className={`h-full rounded-full transition-all ${isCreditsExhausted ? 'bg-red-500' : 'bg-blue-600'}`}
+                      style={{ width: `${billing.usagePercent}%` }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Billing status will appear here once it loads.
+                </p>
+              )}
+
+              {billingNotice && (
+                <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200">
+                  {billingNotice}
+                </p>
+              )}
+            </div>
+          </section>
 
           <div className={theme.page.searchCard}>
             <SearchForm
@@ -139,6 +282,9 @@ export function AppPage() {
             onGenerateMore={handleGenerateMore}
             onCheckCustom={checkCustom}
             onAddTldForBase={handleAddTldForBase}
+            onBillableActionCompleted={() => {
+              void refreshBilling()
+            }}
           />
 
           <ClearResultsModal

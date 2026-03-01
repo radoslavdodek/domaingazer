@@ -1,0 +1,69 @@
+export const runtime = 'nodejs'
+
+import { NextResponse } from 'next/server'
+import type { BillingInterval } from '@/lib/billing-types'
+import {
+  getStoredStripeCustomerId,
+  getUserBillingState,
+  upsertBillingCustomer,
+} from '@/lib/billing'
+import { createStripeCheckoutSession, createStripeCustomer } from '@/lib/stripe'
+import { createClient } from '@/lib/supabase/server'
+
+function isBillingInterval(value: unknown): value is BillingInterval {
+  return value === 'month' || value === 'year'
+}
+
+export async function POST(request: Request) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const body = await request.json().catch(() => null) as { interval?: unknown } | null
+  const interval = body?.interval
+
+  if (!isBillingInterval(interval)) {
+    return NextResponse.json({ error: 'interval must be "month" or "year"' }, { status: 400 })
+  }
+
+  try {
+    const billing = await getUserBillingState(user.id)
+    if (billing.isSubscribed) {
+      return NextResponse.json(
+        { error: 'You already have an active subscription. Use the billing portal to manage it.' },
+        { status: 409 }
+      )
+    }
+
+    let stripeCustomerId = await getStoredStripeCustomerId(user.id)
+
+    if (!stripeCustomerId) {
+      const customer = await createStripeCustomer({
+        email: user.email,
+        userId: user.id,
+      })
+      stripeCustomerId = customer.id
+      await upsertBillingCustomer(user.id, stripeCustomerId)
+    }
+
+    const origin = new URL(request.url).origin
+    const session = await createStripeCheckoutSession({
+      customerId: stripeCustomerId,
+      interval,
+      userId: user.id,
+      origin,
+    })
+
+    if (!session.url) {
+      return NextResponse.json({ error: 'Stripe checkout session did not return a URL' }, { status: 502 })
+    }
+
+    return NextResponse.json({ url: session.url })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to create checkout session'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}

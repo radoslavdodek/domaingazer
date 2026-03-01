@@ -25,8 +25,16 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
-  // Allow auth-related paths and root (landing page) through
-  if (pathname === '/' || pathname.startsWith('/landing') || pathname.startsWith('/login') || pathname.startsWith('/auth')) {
+  // Allow auth-related paths and public redirects through
+  if (
+    pathname === '/'
+    || pathname.startsWith('/landing')
+    || pathname.startsWith('/login')
+    || pathname.startsWith('/auth')
+    || pathname.startsWith('/billing/success')
+    || pathname.startsWith('/billing/cancel')
+    || pathname.startsWith('/api/stripe/webhook')
+  ) {
     return supabaseResponse
   }
 

@@ -1,5 +1,11 @@
 export const runtime = 'nodejs'
 
+import {
+  recordCreditUsage,
+  requireEntitlement,
+  SubscriptionRequiredError,
+} from '@/lib/billing'
+import type { BillingStatusResponse } from '@/lib/billing-types'
 import { generateDomainNames } from '@/lib/openai'
 import { checkDomain } from '@/lib/route53'
 import { createClient } from '@/lib/supabase/server'
@@ -58,6 +64,28 @@ export async function POST(request: Request) {
     return new Response(
       JSON.stringify({ error: 'Description must be at least 5 characters' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  let billingState: BillingStatusResponse
+  try {
+    billingState = await requireEntitlement(user.id, 'search')
+  } catch (err) {
+    if (err instanceof SubscriptionRequiredError) {
+      return new Response(
+        JSON.stringify({
+          error: err.message,
+          code: err.code,
+          billing: err.billing,
+        }),
+        { status: err.status, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const message = err instanceof Error ? err.message : 'Failed to validate billing access'
+    return new Response(
+      JSON.stringify({ error: message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     )
   }
 
@@ -131,7 +159,15 @@ export async function POST(request: Request) {
           )
         )
 
-        if (!signal.aborted) emit({ type: 'done' })
+        if (!signal.aborted) {
+          try {
+            await recordCreditUsage(user.id, 'search', billingState)
+          } catch (creditError) {
+            console.error('[credit_usage.error]', creditError)
+          }
+
+          emit({ type: 'done' })
+        }
       } catch (err) {
         if (signal.aborted) return
         const message = err instanceof Error ? err.message : 'Unknown error'

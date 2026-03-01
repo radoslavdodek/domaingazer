@@ -1,5 +1,11 @@
 export const runtime = 'nodejs'
 
+import {
+  recordCreditUsage,
+  requireEntitlement,
+  SubscriptionRequiredError,
+} from '@/lib/billing'
+import type { BillingStatusResponse } from '@/lib/billing-types'
 import { explainDomainName } from '@/lib/openai'
 import { createClient } from '@/lib/supabase/server'
 import { trackUsage } from '@/lib/track-usage'
@@ -35,6 +41,28 @@ export async function POST(request: Request) {
     )
   }
 
+  let billingState: BillingStatusResponse
+  try {
+    billingState = await requireEntitlement(user.id, 'explain')
+  } catch (err) {
+    if (err instanceof SubscriptionRequiredError) {
+      return new Response(
+        JSON.stringify({
+          error: err.message,
+          code: err.code,
+          billing: err.billing,
+        }),
+        { status: err.status, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const message = err instanceof Error ? err.message : 'Failed to validate billing access'
+    return new Response(
+      JSON.stringify({ error: message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
   try {
     const { explanation, usage } = await explainDomainName(description, baseName)
     trackUsage(user.id, user.email ?? '', 'explain', usage)
@@ -43,6 +71,12 @@ export async function POST(request: Request) {
         JSON.stringify({ error: 'AI did not return an explanation' }),
         { status: 502, headers: { 'Content-Type': 'application/json' } }
       )
+    }
+
+    try {
+      await recordCreditUsage(user.id, 'explain', billingState)
+    } catch (creditError) {
+      console.error('[credit_usage.error]', creditError)
     }
 
     return new Response(

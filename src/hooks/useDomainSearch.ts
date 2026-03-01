@@ -84,10 +84,19 @@ export function useDomainSearch() {
       if (!response.ok || !response.body) {
         const text = await response.text()
         if (isStale()) return
+        let message = text || 'Request failed'
+        try {
+          const payload = JSON.parse(text) as { error?: unknown }
+          if (typeof payload.error === 'string') {
+            message = payload.error
+          }
+        } catch {
+          // Keep the raw response body when it is not JSON.
+        }
         setState((prev) => ({
           ...prev,
           status: 'error',
-          errorMessage: text || 'Request failed',
+          errorMessage: message,
         }))
         return
       }

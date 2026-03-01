@@ -21,6 +21,7 @@ interface ResultsPanelProps {
   onGenerateMore?: (hint: string) => void
   onCheckCustom?: (baseName: string) => void
   onAddTldForBase?: (baseName: string, tld: TLD) => void
+  onBillableActionCompleted?: () => void
 }
 
 interface BaseNameExplanation {
@@ -48,6 +49,7 @@ export function ResultsPanel({
   onGenerateMore,
   onCheckCustom,
   onAddTldForBase,
+  onBillableActionCompleted,
 }: ResultsPanelProps) {
   const { theme } = useTheme()
   const [showAvailableOnly, setShowAvailableOnly] = useState(false)
@@ -271,6 +273,7 @@ export function ResultsPanel({
         ...prev,
         [baseName]: { text: explanation, isLoading: false, error: null },
       }))
+      onBillableActionCompleted?.()
     } catch (err) {
       setExplanationsByBaseName((prev) => ({
         ...prev,
