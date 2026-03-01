@@ -64,7 +64,7 @@ export function BillingPlans({
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-zinc-500">Free</p>
             <h3 className="mt-4 text-3xl font-bold">Starter</h3>
             <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-              One-time free credits for trying domain generation and name explanations before you pay.
+              One-time free credits for trying domain generation and verification before you pay.
             </p>
             <div className="mt-auto pt-8">
               {isSignedIn ? (
