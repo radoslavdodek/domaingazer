@@ -5,11 +5,17 @@ import type { TLD } from '@/lib/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getOptionalItem, setOptionalItem } from '@/lib/privacy/optional-storage'
 import { TldSelector } from './TldSelector'
+import { ExamplesDialog } from './ExamplesDialog'
 import { HistoryDialog } from './HistoryDialog'
 
 const LS_DESCRIPTION = 'domainerio_description'
 const LS_TLDS = 'domainerio_tlds'
 const DEFAULT_TLDS: TLD[] = ['.com']
+const DESCRIPTION_EXAMPLES = [
+  'AI customer research platform that helps product teams capture interviews, surface insights, and turn feedback into smarter roadmap decisions. The name should feel credible, memorable, and strong enough for a category-defining SaaS company.',
+  'Finance platform designed for ecommerce operators to track revenue, ad spend, inventory risk, and cash flow—all in one dashboard. The name should be polished, easy to pronounce, and appealing to ambitious online brands. Use real words when possible.',
+  'Digital healthcare platform that lets private clinics manage online booking, patient intake forms, reminders, and daily operations. The name should inspire trust, feel easy to remember, and work well across marketing and word-of-mouth referrals.',
+]
 
 interface SearchHistoryEntry {
   id: string
@@ -44,9 +50,10 @@ export function SearchForm({
   onDeleteHistory,
   onClearAllHistory,
 }: SearchFormProps) {
-  const { theme } = useTheme()
+  const { theme, themeName } = useTheme()
   const [description, setDescription] = useState('')
   const [tlds, setTlds] = useState<TLD[]>(DEFAULT_TLDS)
+  const [isExamplesOpen, setIsExamplesOpen] = useState(false)
   const dbLoadApplied = useRef(false)
 
   // Fast initial load from localStorage
@@ -102,10 +109,19 @@ export function SearchForm({
 
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const hasHistory = (searchHistory?.length ?? 0) > 0
+  const isMidnightTheme = themeName === 'midnight'
+  const utilityButtonClass = isMidnightTheme
+    ? 'flex items-center gap-1 rounded-lg border border-zinc-700 bg-zinc-800/70 px-2.5 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-600 hover:bg-zinc-800 hover:text-zinc-100'
+    : 'flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800'
 
   const handleHistorySelect = (entry: SearchHistoryEntry) => {
     handleHistoryClick(entry)
     setIsHistoryOpen(false)
+  }
+
+  const handleExampleSelect = (example: string) => {
+    setDescription(example)
+    setIsExamplesOpen(false)
   }
 
   return (
@@ -116,18 +132,29 @@ export function SearchForm({
           <label className={theme.searchForm.label}>
             Describe your project
           </label>
-          {hasHistory && (
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setIsHistoryOpen(true)}
-              className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/60 dark:hover:text-gray-200"
+              onClick={() => setIsExamplesOpen(true)}
+              className={utilityButtonClass}
+              aria-expanded={isExamplesOpen}
+              aria-haspopup="dialog"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3.5">
-                <path fillRule="evenodd" d="M1 8a7 7 0 1 1 14 0A7 7 0 0 1 1 8Zm7.75-4.25a.75.75 0 0 0-1.5 0V8c0 .414.336.75.75.75h3.25a.75.75 0 0 0 0-1.5h-2.5v-3.5Z" clipRule="evenodd" />
-              </svg>
-              History
+              Examples
             </button>
-          )}
+            {hasHistory && (
+              <button
+                type="button"
+                onClick={() => setIsHistoryOpen(true)}
+                className={utilityButtonClass}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="size-3.5">
+                  <path fillRule="evenodd" d="M1 8a7 7 0 1 1 14 0A7 7 0 0 1 1 8Zm7.75-4.25a.75.75 0 0 0-1.5 0V8c0 .414.336.75.75.75h3.25a.75.75 0 0 0 0-1.5h-2.5v-3.5Z" clipRule="evenodd" />
+                </svg>
+                History
+              </button>
+            )}
+          </div>
         </div>
         <textarea
           value={description}
@@ -197,6 +224,12 @@ export function SearchForm({
         setIsHistoryOpen(false)
       }}
       onClose={() => setIsHistoryOpen(false)}
+    />
+    <ExamplesDialog
+      isOpen={isExamplesOpen}
+      examples={DESCRIPTION_EXAMPLES}
+      onSelect={handleExampleSelect}
+      onClose={() => setIsExamplesOpen(false)}
     />
     </>
   )
