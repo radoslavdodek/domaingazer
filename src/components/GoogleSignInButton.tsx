@@ -53,7 +53,7 @@ type GoogleButtonSize = 'large' | 'medium' | 'small'
 type GoogleButtonText = 'signin_with' | 'signup_with' | 'continue_with' | 'signin'
 type GoogleButtonShape = 'rectangular' | 'pill' | 'circle' | 'square'
 type GoogleButtonAlignment = 'left' | 'center'
-type GoogleButtonVariant = 'default' | 'landing'
+type GoogleButtonVariant = 'default' | 'landing-nav' | 'landing-cta'
 
 let googleButtonSequence = 0
 let isGoogleScriptReady = false
@@ -134,9 +134,9 @@ function getGoogleButtonLabel(text: GoogleButtonText) {
   }
 }
 
-function GoogleMark() {
+function GoogleMark({ className = 'h-4 w-4 shrink-0' }: { className?: string }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 18 18" className="h-4 w-4 shrink-0">
+    <svg aria-hidden="true" viewBox="0 0 18 18" className={className}>
       <path
         fill="#EA4335"
         d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.56 2.68-3.86 2.68-6.62Z"
@@ -162,6 +162,7 @@ interface GoogleSignInButtonProps {
   className?: string
   buttonClassName?: string
   messageClassName?: string
+  label?: string
   theme?: GoogleButtonTheme
   size?: GoogleButtonSize
   text?: GoogleButtonText
@@ -177,6 +178,7 @@ export function GoogleSignInButton({
   className,
   buttonClassName = 'min-h-[44px] w-full',
   messageClassName = 'mt-3 text-center text-xs text-red-600',
+  label,
   theme = 'outline',
   size = 'large',
   text = 'continue_with',
@@ -198,8 +200,17 @@ export function GoogleSignInButton({
 
   const buttonId = buttonIdRef.current!
   const normalizedNextPath = normalizeNextPath(nextPath)
-  const isLandingVariant = variant === 'landing'
-  const buttonLabel = getGoogleButtonLabel(text)
+  const isLandingVariant = variant === 'landing-nav' || variant === 'landing-cta'
+  const buttonLabel = label ?? getGoogleButtonLabel(text)
+  const landingButtonClassName =
+    variant === 'landing-cta'
+      ? 'pointer-events-none flex min-h-[inherit] w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)]'
+      : 'pointer-events-none flex min-h-[inherit] w-full items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm'
+  const landingErrorClassName =
+    variant === 'landing-cta'
+      ? 'border border-red-500/60 bg-red-500/10 shadow-red-950/30'
+      : 'border-red-500/60 bg-red-500/10 shadow-red-950/30'
+  const iconClassName = variant === 'landing-cta' ? 'h-5 w-5 shrink-0' : 'h-4 w-4 shrink-0'
 
   useEffect(() => {
     const handleGoogleReady = () => {
@@ -290,16 +301,12 @@ export function GoogleSignInButton({
         <div className={`relative inline-flex flex-col ${buttonClassName}`}>
           <div
             aria-hidden="true"
-            className={`pointer-events-none flex min-h-[inherit] w-full items-center justify-center gap-3 rounded-xl border px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all ${
-              errorMessage
-                ? 'border-red-500/60 bg-red-500/10 shadow-red-950/30'
-                : 'border-blue-500/30 bg-zinc-900/90 shadow-blue-950/30'
-            } ${isReady ? 'shadow-blue-950/40' : 'opacity-90'} `}
+            className={`${landingButtonClassName} ${
+              errorMessage ? landingErrorClassName : ''
+            } ${isReady ? '' : 'opacity-90'} `}
             style={width ? { minWidth: `${width}px` } : undefined}
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-sm shadow-black/20">
-              <GoogleMark />
-            </span>
+            <GoogleMark className={iconClassName} />
             <span>{buttonLabel}</span>
           </div>
           <div ref={buttonContainerRef} className={`absolute inset-0 z-10 ${isReady ? 'opacity-0' : 'pointer-events-none opacity-0'}`} />

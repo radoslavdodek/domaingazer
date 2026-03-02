@@ -139,10 +139,11 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
           ) : (
             <GoogleSignInButton
               className="w-full sm:w-auto"
-              buttonClassName="min-h-[44px] w-full sm:w-auto"
-              text="signin_with"
-              variant="landing"
-              width={240}
+              buttonClassName="min-h-[38px] w-full sm:w-auto"
+              label="Sign in"
+              text="signin"
+              variant="landing-nav"
+              width={132}
             />
           )}
         </div>
@@ -193,10 +194,11 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
               ) : (
                   <GoogleSignInButton
                       className="w-full sm:w-auto"
-                      buttonClassName="min-h-[48px] w-full sm:w-auto"
-                      text="continue_with"
-                      variant="landing"
-                      width={260}
+                      buttonClassName="min-h-[54px] w-full sm:w-auto"
+                      label="Get started free"
+                      text="signin"
+                      variant="landing-cta"
+                      width={208}
                   />
               )}
             </div>
@@ -405,10 +407,11 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
               ) : (
                 <GoogleSignInButton
                   className="w-full sm:w-auto"
-                  buttonClassName="min-h-[48px] w-full sm:w-auto"
-                  text="continue_with"
-                  variant="landing"
-                  width={260}
+                  buttonClassName="min-h-[54px] w-full sm:w-auto"
+                  label="Get started free"
+                  text="signin"
+                  variant="landing-cta"
+                  width={208}
                 />
               )}
               <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
