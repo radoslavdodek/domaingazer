@@ -110,7 +110,7 @@ export default function OGImage() {
             fontSize: 20,
           }}
         >
-          domaingazer.app
+          domaingazer.com
         </div>
       </div>
     ),

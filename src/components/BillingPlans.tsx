@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useBillingStatus } from '@/hooks/useBillingStatus'
-import { signInWithGoogle } from '@/lib/auth-client'
 import { openBillingPortal, startCheckout } from '@/lib/billing-client'
 import type { BillingInterval, BillingPlanPricing } from '@/lib/billing-types'
 
@@ -23,18 +22,10 @@ export function BillingPlans({
   const { billing, isLoading: isBillingLoading, error: billingError } = useBillingStatus(isSignedIn)
   const [pricingAction, setPricingAction] = useState<'month' | 'year' | 'portal' | null>(null)
   const [pricingError, setPricingError] = useState<string | null>(null)
-
-  const handleSignIn = async (nextPath = '/') => {
-    await signInWithGoogle(nextPath)
-  }
+  const getLoginHref = (nextPath: string) => `/login?next=${encodeURIComponent(nextPath)}`
 
   const handlePricing = async (interval: BillingInterval) => {
     setPricingError(null)
-
-    if (!isSignedIn) {
-      await handleSignIn(`/billing?checkout=${interval}`)
-      return
-    }
 
     if (isBillingLoading && !billing) return
 
@@ -75,13 +66,12 @@ export function BillingPlans({
                   Open Dashboard
                 </Link>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => { void handleSignIn() }}
+                <Link
+                  href={getLoginHref('/')}
                   className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
                 >
-                  Start Free
-                </button>
+                  Choose Starter
+                </Link>
               )}
             </div>
           </div>
@@ -98,14 +88,23 @@ export function BillingPlans({
           )}
           <p className="mt-2 text-sm text-zinc-400">Unlimited searches. Cancel anytime.</p>
           <div className="mt-auto pt-8">
-            <button
-              type="button"
-              onClick={() => { void handlePricing('month') }}
-              disabled={pricingDisabled}
-              className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {billing?.isSubscribed ? 'Manage Billing' : 'Choose Monthly'}
-            </button>
+            {isSignedIn ? (
+              <button
+                type="button"
+                onClick={() => { void handlePricing('month') }}
+                disabled={pricingDisabled}
+                className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {billing?.isSubscribed ? 'Manage Billing' : 'Choose Monthly'}
+              </button>
+            ) : (
+              <Link
+                href={getLoginHref('/billing?checkout=month')}
+                className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                Choose Monthly
+              </Link>
+            )}
           </div>
         </div>
 
@@ -130,14 +129,23 @@ export function BillingPlans({
           )}
           <p className="mt-2 text-sm text-zinc-400">The same unlimited access with discounted annual billing.</p>
           <div className="mt-auto pt-8">
-            <button
-              type="button"
-              onClick={() => { void handlePricing('year') }}
-              disabled={pricingDisabled}
-              className="inline-flex w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-colors hover:bg-cyan-400/15 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {billing?.isSubscribed ? 'Manage Billing' : 'Choose Yearly'}
-            </button>
+            {isSignedIn ? (
+              <button
+                type="button"
+                onClick={() => { void handlePricing('year') }}
+                disabled={pricingDisabled}
+                className="inline-flex w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-colors hover:bg-cyan-400/15 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {billing?.isSubscribed ? 'Manage Billing' : 'Choose Yearly'}
+              </button>
+            ) : (
+              <Link
+                href={getLoginHref('/billing?checkout=year')}
+                className="inline-flex w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-colors hover:bg-cyan-400/15"
+              >
+                Choose Yearly
+              </Link>
+            )}
           </div>
         </div>
       </div>
