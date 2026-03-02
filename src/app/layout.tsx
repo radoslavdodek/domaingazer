@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 import { cookies } from 'next/headers'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { ConsentBanner } from '@/components/ConsentBanner'
@@ -111,6 +112,18 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen font-sans">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-CD28TVE1XL"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-CD28TVE1XL');
+          `}
+        </Script>
         <ThemeProvider>
           {children}
           <ConsentBanner initialRegion={initialRegion} />
