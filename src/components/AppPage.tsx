@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { openBillingPortal } from '@/lib/billing-client'
 import { SearchForm } from '@/components/SearchForm'
@@ -30,6 +30,7 @@ export function AppPage() {
   const [searchHistory, setSearchHistory] = useState<SearchHistoryEntry[]>([])
   const [initialDescription, setInitialDescription] = useState<string | undefined>(undefined)
   const [initialTlds, setInitialTlds] = useState<TLD[] | undefined>(undefined)
+  const resultsPanelRef = useRef<HTMLDivElement>(null)
   const [billingAction, setBillingAction] = useState<'portal' | null>(null)
   const [billingActionError, setBillingActionError] = useState<string | null>(null)
 
@@ -50,6 +51,9 @@ export function AppPage() {
     setSelectedTlds(tlds)
     setSearchDescription(description)
     setIsTldSelectionLocked(true)
+    setTimeout(() => {
+      resultsPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
     void search(description, tlds).finally(() => {
       void refreshBilling()
     })
@@ -288,6 +292,7 @@ export function AppPage() {
             />
           </div>
 
+          <div ref={resultsPanelRef}>
           <ResultsPanel
             results={results}
             nameBatches={nameBatches}
@@ -304,6 +309,7 @@ export function AppPage() {
               void refreshBilling()
             }}
           />
+          </div>
 
           <ClearResultsModal
             isOpen={isClearConfirmOpen}
