@@ -48,7 +48,7 @@ print_step "Installing dependencies"
 ssh_run "
   set -e
   cd ${APP_DIR}
-  npm ci --omit=dev --prefer-offline --silent
+  npm ci --silent
 "
 print_ok
 
@@ -57,6 +57,7 @@ print_step "Building application"
 ssh_run "
   set -e
   cd ${APP_DIR}
+  rm -rf .next
   npm run build
 "
 print_ok
