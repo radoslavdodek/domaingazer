@@ -191,7 +191,7 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
               {isSignedIn ? (
                   <Link
                       href="/"
-                      className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:opacity-90 sm:w-auto"
+                      className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
                   >
                     Go to Dashboard
                   </Link>
@@ -404,7 +404,7 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
               {isSignedIn ? (
                 <Link
                   href="/"
-                  className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-90 hover:shadow-blue-600/50 sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
                 >
                   Go to Dashboard
                 </Link>

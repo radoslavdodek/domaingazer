@@ -204,7 +204,7 @@ export function GoogleSignInButton({
   const buttonLabel = label ?? getGoogleButtonLabel(text)
   const landingButtonClassName =
     variant === 'landing-cta'
-      ? 'pointer-events-none flex min-h-[inherit] w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)]'
+      ? 'pointer-events-none flex min-h-[inherit] w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)]'
       : 'pointer-events-none flex min-h-[inherit] w-full items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm'
   const landingErrorClassName =
     variant === 'landing-cta'
