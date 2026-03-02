@@ -53,11 +53,10 @@ ssh_run "
 print_ok
 
 # ---------------------------------------------------------------------------
-print_step "Building application"
+print_step "Building application (existing build stays live until restart)"
 ssh_run "
   set -e
   cd ${APP_DIR}
-  rm -rf .next
   npm run build
 "
 print_ok
