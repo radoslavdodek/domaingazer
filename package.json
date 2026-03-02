@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "api:smoke": "bash scripts/api-smoke.sh"
   },
   "dependencies": {
     "@aws-sdk/client-route-53-domains": "^3.734.0",
