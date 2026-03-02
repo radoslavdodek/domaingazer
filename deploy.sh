@@ -18,11 +18,13 @@ print_ok()   { echo -e "\033[1;32m    OK\033[0m"; }
 print_err()  { echo -e "\033[1;31m    ERROR: $1\033[0m" >&2; exit 1; }
 
 SSH_OPTS="-p ${SSH_PORT} -o StrictHostKeyChecking=accept-new"
-[[ -n "$SSH_KEY" ]] && SSH_OPTS="$SSH_OPTS -i $SSH_KEY"
+[[ -n "$SSH_KEY" ]] && SSH_OPTS="$SSH_OPTS -o IdentitiesOnly=yes -i $SSH_KEY"
+
+NVM_INIT='export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"'
 
 ssh_run() {
-  # Run a command on the remote server
-  ssh $SSH_OPTS "${SSH_USER}@${SSH_HOST}" "$@"
+  # Run a command on the remote server (sources nvm so node/npm are available)
+  ssh $SSH_OPTS "${SSH_USER}@${SSH_HOST}" "${NVM_INIT}; $@"
 }
 
 # ---------------------------------------------------------------------------
