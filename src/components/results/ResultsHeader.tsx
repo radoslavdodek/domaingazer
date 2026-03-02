@@ -51,7 +51,7 @@ export function ResultsHeader({
           </span>
         )}
         {status === 'error' && (
-          <span className={theme.resultsHeader.errorText}>Error: {errorMessage}</span>
+          <span className={theme.resultsHeader.errorText}>{errorMessage}</span>
         )}
       </div>
 
