@@ -3,10 +3,15 @@
 import { useEffect, useRef } from 'react'
 import { useTheme } from '@/contexts/ThemeContext'
 
+interface Example {
+  title: string
+  description: string
+}
+
 interface ExamplesDialogProps {
   isOpen: boolean
-  examples: string[]
-  onSelect: (example: string) => void
+  examples: Example[]
+  onSelect: (description: string) => void
   onClose: () => void
 }
 
@@ -97,12 +102,15 @@ export function ExamplesDialog({ isOpen, examples, onSelect, onClose }: Examples
         <div className={listClass}>
           {examples.map((example) => (
             <button
-              key={example}
+              key={example.title}
               type="button"
-              onClick={() => onSelect(example)}
+              onClick={() => onSelect(example.description)}
               className={exampleButtonClass}
             >
-              {example}
+              <span className={`block text-xs font-semibold mb-1.5 ${isMidnightTheme ? 'text-zinc-400' : 'text-gray-500'}`}>
+                {example.title}
+              </span>
+              {example.description}
             </button>
           ))}
         </div>
