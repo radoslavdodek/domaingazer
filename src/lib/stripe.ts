@@ -144,10 +144,11 @@ async function stripeRequest<T>(
   return response.json() as Promise<T>
 }
 
-export function getStripePriceId(interval: BillingInterval) {
+export function getStripePriceId(interval: BillingInterval, currency: 'eur' | 'usd') {
+  const suffix = currency === 'eur' ? 'EUR' : 'USD'
   return interval === 'month'
-    ? getRequiredEnv('STRIPE_PRICE_MONTHLY_ID')
-    : getRequiredEnv('STRIPE_PRICE_YEARLY_ID')
+    ? getRequiredEnv(`STRIPE_PRICE_MONTHLY_${suffix}_ID`)
+    : getRequiredEnv(`STRIPE_PRICE_YEARLY_${suffix}_ID`)
 }
 
 export async function getStripePrice(priceId: string) {
@@ -176,6 +177,7 @@ export async function getStripeCustomer(customerId: string) {
 export async function createStripeCheckoutSession(params: {
   customerId: string
   interval: BillingInterval
+  currency: 'eur' | 'usd'
   userId: string
   origin: string
 }) {
@@ -189,7 +191,7 @@ export async function createStripeCheckoutSession(params: {
       cancel_url: `${params.origin}/billing/cancel`,
       line_items: [
         {
-          price: getStripePriceId(params.interval),
+          price: getStripePriceId(params.interval, params.currency),
           quantity: 1,
         },
       ],

@@ -45,8 +45,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
-STRIPE_PRICE_MONTHLY_ID=
-STRIPE_PRICE_YEARLY_ID=
+STRIPE_PRICE_MONTHLY_EUR_ID=
+STRIPE_PRICE_YEARLY_EUR_ID=
+STRIPE_PRICE_MONTHLY_USD_ID=
+STRIPE_PRICE_YEARLY_USD_ID=
 FREE_CREDIT_IDENTITY_SALT=
 FREE_CREDITS_TOTAL=
 FREE_CREDITS_COST_SEARCH=
@@ -61,7 +63,7 @@ Notes:
 - `SUPABASE_SERVICE_ROLE_KEY` is required for server-side billing sync and Stripe webhook writes.
 - `STRIPE_SECRET_KEY` must be a secret key (`sk_test_...` locally, `sk_live_...` in production).
 - `STRIPE_WEBHOOK_SECRET` is the signing secret for the Stripe endpoint that points to `/api/stripe/webhook`.
-- `STRIPE_PRICE_MONTHLY_ID` and `STRIPE_PRICE_YEARLY_ID` must be recurring Stripe Price IDs, not Product IDs.
+- `STRIPE_PRICE_MONTHLY_EUR_ID`, `STRIPE_PRICE_YEARLY_EUR_ID`, `STRIPE_PRICE_MONTHLY_USD_ID`, and `STRIPE_PRICE_YEARLY_USD_ID` must be recurring Stripe Price IDs, not Product IDs. EUR prices are shown to EU visitors, USD prices to everyone else.
 - `FREE_CREDIT_IDENTITY_SALT` is a server-only secret used to hash account identifiers for durable free-credit enforcement after account deletion.
 - `FREE_CREDITS_TOTAL` is a one-time lifetime allowance. It does not reset.
 - `FREE_CREDITS_COST_SEARCH` and `FREE_CREDITS_COST_EXPLAIN` define how many credits each successful action consumes.
@@ -117,20 +119,26 @@ In the Stripe Dashboard:
 
 1. Open `Product catalog`.
 2. Create one product for your paid plan, for example `Domain Gazer Pro`.
-3. Create two recurring prices on that product:
-   - one monthly recurring price
-   - one yearly recurring price
+3. Create four recurring prices on that product:
+   - one monthly recurring price in EUR
+   - one yearly recurring price in EUR
+   - one monthly recurring price in USD
+   - one yearly recurring price in USD
 
-Use one product with two prices. The app determines monthly vs yearly access from the selected recurring price.
+Use one product with four prices. The app determines monthly vs yearly access from the selected recurring price, and EUR vs USD from the visitor's region.
 
 ### 2. Capture the recurring price IDs
 
-After creating the prices, copy the two Stripe Price IDs:
+After creating the prices, copy the four Stripe Price IDs (two per currency):
 
-- monthly price ID -> `STRIPE_PRICE_MONTHLY_ID`
-- yearly price ID -> `STRIPE_PRICE_YEARLY_ID`
+- EUR monthly price ID -> `STRIPE_PRICE_MONTHLY_EUR_ID`
+- EUR yearly price ID -> `STRIPE_PRICE_YEARLY_EUR_ID`
+- USD monthly price ID -> `STRIPE_PRICE_MONTHLY_USD_ID`
+- USD yearly price ID -> `STRIPE_PRICE_YEARLY_USD_ID`
 
 Do not use the product ID (`prod_...`). The app expects the recurring price IDs (`price_...`).
+
+The app selects EUR or USD based on the visitor's `dg_region` cookie (set by middleware). EU visitors see EUR prices, everyone else sees USD.
 
 ### 3. Set Stripe keys in `.env.local`
 
@@ -138,8 +146,10 @@ Example:
 
 ```bash
 STRIPE_SECRET_KEY=sk_test_...
-STRIPE_PRICE_MONTHLY_ID=price_...
-STRIPE_PRICE_YEARLY_ID=price_...
+STRIPE_PRICE_MONTHLY_EUR_ID=price_...
+STRIPE_PRICE_YEARLY_EUR_ID=price_...
+STRIPE_PRICE_MONTHLY_USD_ID=price_...
+STRIPE_PRICE_YEARLY_USD_ID=price_...
 ```
 
 For local development, use test-mode keys and test-mode prices. For production, use live-mode keys and live-mode prices.

@@ -1,6 +1,6 @@
 import 'server-only'
 
-import type { BillingPlanPricing } from '@/lib/billing-types'
+import type { BillingPlanPricing, CurrencyPricing } from '@/lib/billing-types'
 import { getStripePrice, type StripePrice } from '@/lib/stripe'
 
 function getBillingMonths(price: StripePrice) {
@@ -25,35 +25,51 @@ function formatCurrency(amountInMinorUnits: number, currency: string) {
   }).format(amount)
 }
 
-export async function getBillingPlanPricing(): Promise<BillingPlanPricing | null> {
-  const monthlyPriceId = process.env.STRIPE_PRICE_MONTHLY_ID
-  const yearlyPriceId = process.env.STRIPE_PRICE_YEARLY_ID
+function buildCurrencyPricing(
+  monthlyPrice: StripePrice,
+  yearlyPrice: StripePrice,
+): CurrencyPricing | null {
+  const monthlyBillingMonths = getBillingMonths(monthlyPrice)
+  const yearlyBillingMonths = getBillingMonths(yearlyPrice)
 
-  if (!monthlyPriceId || !yearlyPriceId) return null
+  if (
+    monthlyPrice.unit_amount === null
+    || yearlyPrice.unit_amount === null
+    || !monthlyBillingMonths
+    || !yearlyBillingMonths
+  ) {
+    return null
+  }
+
+  return {
+    monthly: formatCurrency(monthlyPrice.unit_amount / monthlyBillingMonths, monthlyPrice.currency),
+    yearlyPerMonth: formatCurrency(yearlyPrice.unit_amount / yearlyBillingMonths, yearlyPrice.currency),
+    yearlyBillingNote: `${formatCurrency(yearlyPrice.unit_amount, yearlyPrice.currency)} billed yearly`,
+  }
+}
+
+export async function getBillingPlanPricing(): Promise<BillingPlanPricing | null> {
+  const monthlyEurId = process.env.STRIPE_PRICE_MONTHLY_EUR_ID
+  const yearlyEurId = process.env.STRIPE_PRICE_YEARLY_EUR_ID
+  const monthlyUsdId = process.env.STRIPE_PRICE_MONTHLY_USD_ID
+  const yearlyUsdId = process.env.STRIPE_PRICE_YEARLY_USD_ID
+
+  if (!monthlyEurId || !yearlyEurId || !monthlyUsdId || !yearlyUsdId) return null
 
   try {
-    const [monthlyPrice, yearlyPrice] = await Promise.all([
-      getStripePrice(monthlyPriceId),
-      getStripePrice(yearlyPriceId),
+    const [monthlyEur, yearlyEur, monthlyUsd, yearlyUsd] = await Promise.all([
+      getStripePrice(monthlyEurId),
+      getStripePrice(yearlyEurId),
+      getStripePrice(monthlyUsdId),
+      getStripePrice(yearlyUsdId),
     ])
 
-    const monthlyBillingMonths = getBillingMonths(monthlyPrice)
-    const yearlyBillingMonths = getBillingMonths(yearlyPrice)
+    const eur = buildCurrencyPricing(monthlyEur, yearlyEur)
+    const usd = buildCurrencyPricing(monthlyUsd, yearlyUsd)
 
-    if (
-      monthlyPrice.unit_amount === null
-      || yearlyPrice.unit_amount === null
-      || !monthlyBillingMonths
-      || !yearlyBillingMonths
-    ) {
-      return null
-    }
+    if (!eur || !usd) return null
 
-    return {
-      monthly: formatCurrency(monthlyPrice.unit_amount / monthlyBillingMonths, monthlyPrice.currency),
-      yearlyPerMonth: formatCurrency(yearlyPrice.unit_amount / yearlyBillingMonths, yearlyPrice.currency),
-      yearlyBillingNote: `${formatCurrency(yearlyPrice.unit_amount, yearlyPrice.currency)} billed yearly`,
-    }
+    return { eur, usd }
   } catch {
     return null
   }

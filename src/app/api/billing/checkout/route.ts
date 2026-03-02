@@ -13,6 +13,13 @@ function isBillingInterval(value: unknown): value is BillingInterval {
   return value === 'month' || value === 'year'
 }
 
+function getCurrencyFromRequest(request: Request): 'eur' | 'usd' {
+  const cookieHeader = request.headers.get('cookie') ?? ''
+  const match = cookieHeader.match(/(?:^|;\s*)dg_region=([^;]*)/)
+  const region = match?.[1]
+  return region === 'non-eu' ? 'usd' : 'eur'
+}
+
 export async function POST(request: Request) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -38,6 +45,7 @@ export async function POST(request: Request) {
     }
 
     const stripeCustomerId = await getOrCreateStripeCustomerId(user.id, user.email)
+    const currency = getCurrencyFromRequest(request)
 
     const forwardedProto = request.headers.get('x-forwarded-proto') || 'http'
     const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || new URL(request.url).host
@@ -45,6 +53,7 @@ export async function POST(request: Request) {
     const session = await createStripeCheckoutSession({
       customerId: stripeCustomerId,
       interval,
+      currency,
       userId: user.id,
       origin,
     })

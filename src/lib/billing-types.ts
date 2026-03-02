@@ -1,9 +1,16 @@
 export type BillingInterval = 'month' | 'year'
 
-export interface BillingPlanPricing {
+export type BillingCurrency = 'eur' | 'usd'
+
+export interface CurrencyPricing {
   monthly: string | null
   yearlyPerMonth: string | null
   yearlyBillingNote: string | null
+}
+
+export interface BillingPlanPricing {
+  eur: CurrencyPricing
+  usd: CurrencyPricing
 }
 
 export interface BillingStatusResponse {

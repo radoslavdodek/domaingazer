@@ -47,6 +47,7 @@ No test suite is configured.
 - **Lazy client init**: `OpenAI` and `Route53DomainsClient` are module-level singletons initialized on first use, not at import time, to avoid build-time errors when env vars are absent.
 - **`next.config.mjs`**: Uses `experimental.serverComponentsExternalPackages` (Next.js 14 key; `serverExternalPackages` is Next.js 15+).
 - **AWS region**: Route 53 Domains API only works in `us-east-1` regardless of `AWS_REGION`.
+- **README.md**: Always keep this file up-to-date.
 
 ## Environment variables
 
@@ -55,4 +56,8 @@ OPENAI_API_KEY=
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_REGION=us-east-1
+STRIPE_PRICE_MONTHLY_EUR_ID=
+STRIPE_PRICE_YEARLY_EUR_ID=
+STRIPE_PRICE_MONTHLY_USD_ID=
+STRIPE_PRICE_YEARLY_USD_ID=
 ```

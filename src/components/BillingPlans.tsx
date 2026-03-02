@@ -1,10 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useBillingStatus } from '@/hooks/useBillingStatus'
 import { openBillingPortal, startCheckout } from '@/lib/billing-client'
-import type { BillingInterval, BillingPlanPricing } from '@/lib/billing-types'
+import type { BillingCurrency, BillingInterval, BillingPlanPricing, CurrencyPricing } from '@/lib/billing-types'
+
+function getCurrencyFromCookie(): BillingCurrency {
+  if (typeof document === 'undefined') return 'eur'
+  const match = document.cookie.match(/(?:^|;\s*)dg_region=([^;]*)/)
+  const region = match?.[1]
+  return region === 'non-eu' ? 'usd' : 'eur'
+}
 
 interface BillingPlansProps {
   pricing: BillingPlanPricing | null
@@ -23,6 +30,12 @@ export function BillingPlans({
   const [pricingAction, setPricingAction] = useState<'month' | 'year' | 'portal' | null>(null)
   const [pricingError, setPricingError] = useState<string | null>(null)
   const getLoginHref = (nextPath: string) => `/login?next=${encodeURIComponent(nextPath)}`
+
+  const currencyPricing: CurrencyPricing | null = useMemo(() => {
+    if (!pricing) return null
+    const currency = getCurrencyFromCookie()
+    return pricing[currency]
+  }, [pricing])
 
   const handlePricing = async (interval: BillingInterval) => {
     setPricingError(null)
@@ -80,9 +93,9 @@ export function BillingPlans({
         <div className="flex h-full flex-col rounded-3xl border border-blue-500/30 bg-gradient-to-b from-blue-500/10 to-zinc-900/80 p-7 shadow-lg shadow-blue-600/10">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Pro Monthly</p>
           <h3 className="mt-4 text-3xl font-bold">Monthly</h3>
-          {pricing?.monthly && (
+          {currencyPricing?.monthly && (
             <div className="mt-6 flex items-end gap-2">
-              <span className="text-5xl font-black tracking-tight">{pricing.monthly}</span>
+              <span className="text-5xl font-black tracking-tight">{currencyPricing.monthly}</span>
               <span className="pb-1 text-sm font-medium text-zinc-400">/month</span>
             </div>
           )}
@@ -116,15 +129,15 @@ export function BillingPlans({
             </span>
           </div>
           <h3 className="mt-4 text-3xl font-bold">Yearly</h3>
-          {pricing?.yearlyPerMonth && (
+          {currencyPricing?.yearlyPerMonth && (
             <div className="mt-6 flex items-end gap-2">
-              <span className="text-5xl font-black tracking-tight">{pricing.yearlyPerMonth}</span>
+              <span className="text-5xl font-black tracking-tight">{currencyPricing.yearlyPerMonth}</span>
               <span className="pb-1 text-sm font-medium text-zinc-400">/month</span>
             </div>
           )}
-          {pricing?.yearlyBillingNote && (
+          {currencyPricing?.yearlyBillingNote && (
             <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-cyan-200/80">
-              {pricing.yearlyBillingNote}
+              {currencyPricing.yearlyBillingNote}
             </p>
           )}
           <p className="mt-2 text-sm text-zinc-400">The same unlimited access with discounted annual billing.</p>
