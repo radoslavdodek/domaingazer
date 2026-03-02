@@ -81,7 +81,7 @@ print_ok
 print_step "Verifying nginx config and reloading if changed"
 ssh_run "
   set -e
-  nginx -t 2>&1 && sudo systemctl reload nginx
+  sudo nginx -t 2>&1 && sudo systemctl reload nginx
 "
 print_ok
 

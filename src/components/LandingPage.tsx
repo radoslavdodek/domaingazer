@@ -7,10 +7,14 @@ import { createClient } from '@/lib/supabase/client'
 import { BillingPlans } from '@/components/BillingPlans'
 import type { BillingPlanPricing } from '@/lib/billing-types'
 
-function GlobeIcon({ className }: { className?: string }) {
+function AppIcon({ className }: { className?: string }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className={className}>
+      <defs><linearGradient id="landing-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6366f1"/><stop offset="100%" stopColor="#8b5cf6"/></linearGradient></defs>
+      <circle cx="16" cy="16" r="15" fill="url(#landing-g)"/>
+      <path d="M6 16 C6 16, 11 9, 16 9 C21 9, 26 16, 26 16 C26 16, 21 23, 16 23 C11 23, 6 16, 6 16Z" fill="none" stroke="white" strokeWidth="1.8" strokeLinejoin="round"/>
+      <circle cx="16" cy="16" r="4" fill="white"/>
+      <circle cx="16" cy="16" r="1.8" fill="#6366f1"/>
     </svg>
   )
 }
@@ -117,7 +121,7 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
       <nav className="relative z-10 border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="flex items-center gap-2.5">
-            <GlobeIcon className="h-7 w-7 text-blue-400" />
+            <AppIcon className="h-7 w-7 text-blue-400" />
             <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
           </div>
           {isSignedIn ? (
@@ -424,7 +428,7 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
       <footer className="relative z-10 border-t border-zinc-800/60 px-4 py-8 sm:px-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2.5 text-zinc-500">
-            <GlobeIcon className="h-5 w-5" />
+            <AppIcon className="h-5 w-5" />
             <span className="text-sm font-semibold text-zinc-400">Domain Gazer</span>
           </div>
           <div className="flex flex-col items-center gap-3 sm:items-end">
