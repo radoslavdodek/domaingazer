@@ -39,7 +39,9 @@ export async function POST(request: Request) {
 
     const stripeCustomerId = await getOrCreateStripeCustomerId(user.id, user.email)
 
-    const origin = new URL(request.url).origin
+    const forwardedProto = request.headers.get('x-forwarded-proto') || 'http'
+    const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || new URL(request.url).host
+    const origin = `${forwardedProto}://${forwardedHost}`
     const session = await createStripeCheckoutSession({
       customerId: stripeCustomerId,
       interval,
