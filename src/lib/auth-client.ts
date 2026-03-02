@@ -15,7 +15,7 @@ function getRequiredGoogleClientId() {
 }
 
 function encodeBytesAsBase64(bytes: Uint8Array) {
-  return btoa(String.fromCharCode(...bytes))
+  return btoa(String.fromCharCode(...Array.from(bytes)))
 }
 
 async function sha256Hex(value: string) {
