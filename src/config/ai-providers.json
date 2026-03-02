@@ -13,14 +13,28 @@
   ],
   "generateDomains": {
     "provider": "Groq",
-    "model": "moonshotai/kimi-k2-instruct-0905"
+    "model": "llama-3.3-70b-versatile"
   },
   "explain": {
-    "provider": "OpenAI",
-    "model": "gpt-4.1"
+    "provider": "Groq",
+    "model": "llama-3.1-8b-instant"
   },
   "modelPricing": {
-    "gpt-4.1": { "promptPer1M": 2.00, "completionPer1M": 8.00 },
-    "moonshotai/kimi-k2-instruct-0905": { "promptPer1M": 1.00, "completionPer1M": 3.00 }
+    "gpt-4.1": {
+      "promptPer1M": 2.00,
+      "completionPer1M": 8.00
+    },
+    "moonshotai/kimi-k2-instruct-0905": {
+      "promptPer1M": 1.00,
+      "completionPer1M": 3.00
+    },
+    "llama-3.3-70b-versatile": {
+      "promptPer1M": 0.59,
+      "completionPer1M": 0.79
+    },
+    "llama-3.1-8b-instant": {
+      "promptPer1M": 0.05,
+      "completionPer1M": 0.08
+    }
   }
 }
