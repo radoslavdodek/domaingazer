@@ -13,7 +13,7 @@
   ],
   "generateDomains": {
     "provider": "Groq",
-    "model": "llama-3.3-70b-versatile"
+    "model": "moonshotai/kimi-k2-instruct-0905"
   },
   "explain": {
     "provider": "Groq",
@@ -35,6 +35,10 @@
     "llama-3.1-8b-instant": {
       "promptPer1M": 0.05,
       "completionPer1M": 0.08
+    },
+    "openai/gpt-oss-120b": {
+      "promptPer1M": 0.15,
+      "completionPer1M": 0.60
     }
   }
 }
