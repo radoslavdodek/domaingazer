@@ -125,8 +125,7 @@ export default function PrivacySettingsPage() {
             <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${mutedLabelClassName}`}>Export</p>
             <h2 className="mt-2 text-xl font-semibold">Download my data</h2>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
-              Export includes your profile summary, search history, credit usage, billing linkage, and AI usage records
-              stored by Domain Gazer.
+              Export includes your search history stored by Domain Gazer.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
