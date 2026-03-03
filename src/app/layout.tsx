@@ -70,31 +70,6 @@ export const metadata: Metadata = {
   },
 }
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: 'Domain Gazer',
-  url: siteUrl,
-  description:
-    'AI-powered domain name finder. Describe your project in plain English and instantly discover available, brandable domain names across multiple TLDs.',
-  applicationCategory: 'BusinessApplication',
-  operatingSystem: 'Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-    availability: 'https://schema.org/InStock',
-  },
-  featureList: [
-    'AI-powered domain name generation using GPT-4.1',
-    'Real-time domain availability checking via AWS Route 53',
-    'Multi-TLD search (.com, .io, .ai, .co, .net, .shop, .store, .de)',
-    'Smart multi-round search up to 5 rounds',
-    'Search history',
-    'CSV export',
-  ],
-}
-
 export default function RootLayout({
   children,
 }: {
@@ -107,10 +82,6 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <head>
         <meta name="impact-site-verification" content="e0e806fe-1f3f-42c4-9ece-cf49ac5b79f3" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
       </head>
       <body className="min-h-screen font-sans">
         <Script

@@ -6,6 +6,7 @@ import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 import { createClient } from '@/lib/supabase/client'
 import { BillingPlans } from '@/components/BillingPlans'
 import type { BillingPlanPricing } from '@/lib/billing-types'
+import { HOW_IT_WORKS_FAQS } from '@/lib/structuredData'
 
 function AppIcon({ className }: { className?: string }) {
   return (
@@ -335,6 +336,25 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
                 <p className="text-sm leading-relaxed text-zinc-400">{step.description}</p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-16">
+            <div className="mx-auto mb-8 max-w-2xl text-center">
+              <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">Common questions</h3>
+              <p className="mt-3 text-zinc-400">The same details covered in the workflow, in plain language.</p>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-3">
+              {HOW_IT_WORKS_FAQS.map((item) => (
+                <article
+                  key={item.question}
+                  className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6"
+                >
+                  <h4 className="text-lg font-semibold text-zinc-100">{item.question}</h4>
+                  <p className="mt-3 text-sm leading-relaxed text-zinc-400">{item.answer}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
