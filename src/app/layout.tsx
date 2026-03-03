@@ -18,11 +18,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Domain Gazer — AI Domain Name Finder',
+    default: 'AI Domain Name Generator: Brandable Domains + Real-Time Availability',
     template: '%s | Domain Gazer',
   },
   description:
-    'Describe your project in plain English and instantly find available domain names. AI-powered by GPT-4.1 with real-time availability checks across .com, .io, .ai, .co, .net and more.',
+    'Describe your project in plain English. Our AI instantly generates brandable domain ideas and checks real-time availability across .com, .io, .ai & 10+ TLDs. Free to try. No tab-hopping.',
   keywords: [
     'domain name finder',
     'AI domain generator',

@@ -166,11 +166,11 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
             </div>
 
             <h1 className="mb-6 text-4xl font-black leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
-              Find your perfect{' '}
+              Find Your Perfect{' '}
               <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">
-                domain name
+                Domain Name with AI
               </span>
-              {' '}instantly
+              {' '}Instantly
             </h1>
 
             <p className="mx-auto mb-4 max-w-xl text-lg leading-relaxed text-zinc-400 sm:text-xl">
