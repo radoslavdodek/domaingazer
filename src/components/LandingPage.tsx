@@ -2,22 +2,19 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { AppIcon } from '@/components/AppIcon'
 import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 import { createClient } from '@/lib/supabase/client'
 import { BillingPlans } from '@/components/BillingPlans'
 import type { BillingPlanPricing } from '@/lib/billing-types'
 import { HOW_IT_WORKS_FAQS } from '@/lib/structuredData'
 
-function AppIcon({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className={className}>
-      <defs><linearGradient id="landing-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6366f1"/><stop offset="100%" stopColor="#8b5cf6"/></linearGradient></defs>
-      <circle cx="16" cy="16" r="15" fill="url(#landing-g)"/>
-      <path d="M6 16 C6 16, 11 9, 16 9 C21 9, 26 16, 26 16 C26 16, 21 23, 16 23 C11 23, 6 16, 6 16Z" fill="none" stroke="white" strokeWidth="1.8" strokeLinejoin="round"/>
-      <circle cx="16" cy="16" r="4" fill="white"/>
-      <circle cx="16" cy="16" r="1.8" fill="#6366f1"/>
-    </svg>
-  )
+type FeaturedBlogPost = {
+  slug: string
+  title: string
+  description: string
+  category: string
+  readTime: string
 }
 
 const STEPS = [
@@ -95,7 +92,13 @@ const ACCENT_CLASSES: Record<string, { icon: string; bg: string; border: string 
   orange: { icon: 'text-orange-400', bg: 'bg-orange-950/50', border: 'border-orange-900/50' },
 }
 
-export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null }) {
+export function LandingPage({
+  pricing,
+  featuredPosts,
+}: {
+  pricing: BillingPlanPricing | null
+  featuredPosts: FeaturedBlogPost[]
+}) {
   const [isSignedIn, setIsSignedIn] = useState(false)
 
   useEffect(() => {
@@ -125,32 +128,40 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
             <AppIcon className="h-7 w-7 text-blue-400" />
             <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
           </div>
-          {isSignedIn ? (
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-              <Link
-                href="/"
-                className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
-              >
-                Go to Dashboard
-              </Link>
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-600 hover:bg-zinc-800 hover:text-red-400 sm:w-auto"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <GoogleSignInButton
-              className="w-full sm:w-auto"
-              buttonClassName="min-h-[38px] w-full sm:w-auto"
-              label="Sign in"
-              text="signin"
-              variant="landing-nav"
-              width={132}
-            />
-          )}
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <Link
+              href="/blog"
+              className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+            >
+              Blog
+            </Link>
+            {isSignedIn ? (
+              <>
+                <Link
+                  href="/"
+                  className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+                >
+                  Go to Dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-600 hover:bg-zinc-800 hover:text-red-400 sm:w-auto"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <GoogleSignInButton
+                className="w-full sm:w-auto"
+                buttonClassName="min-h-[38px] w-full sm:w-auto"
+                label="Sign in"
+                text="signin"
+                variant="landing-nav"
+                width={132}
+              />
+            )}
+          </div>
         </div>
       </nav>
 
@@ -387,6 +398,49 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
         </div>
       </section>
 
+      <section className="relative z-10 px-4 py-24 sm:px-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300/80">SEO Content Hub</p>
+              <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Fresh articles for founders choosing a domain</h2>
+              <p className="mt-4 text-zinc-400">
+                Browse practical guides built around the exact search intent Domain Gazer solves: naming, domain availability,
+                and picking the right extension for a new brand.
+              </p>
+            </div>
+            <Link
+              href="/blog"
+              className="inline-flex items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 px-5 py-3 text-sm font-semibold text-zinc-100 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+            >
+              Explore the blog
+            </Link>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {featuredPosts.map((post) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="group rounded-3xl border border-zinc-800 bg-zinc-900/70 p-6 transition-all hover:border-cyan-500/40 hover:bg-zinc-900"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
+                    {post.category}
+                  </span>
+                  <span className="text-xs font-medium text-zinc-500">{post.readTime}</span>
+                </div>
+                <h3 className="mt-5 text-xl font-semibold text-zinc-100 transition-colors group-hover:text-cyan-200">
+                  {post.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-zinc-400">{post.description}</p>
+                <span className="mt-5 inline-flex text-sm font-semibold text-cyan-300">Read article →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Pricing ── */}
       <section id="pricing" className="relative z-10 px-4 py-24 sm:px-6">
         <div className="mx-auto max-w-6xl">
@@ -453,6 +507,9 @@ export function LandingPage({ pricing }: { pricing: BillingPlanPricing | null })
           </div>
           <div className="flex flex-col items-center gap-3 sm:items-end">
             <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-zinc-500">
+              <Link href="/blog" className="underline underline-offset-2">
+                Blog
+              </Link>
               <Link href="/privacy" className="underline underline-offset-2">
                 Privacy
               </Link>

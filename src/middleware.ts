@@ -50,6 +50,7 @@ export async function middleware(request: NextRequest) {
   if (
     pathname === '/'
     || pathname.startsWith('/landing')
+    || pathname.startsWith('/blog')
     || pathname.startsWith('/login')
     || pathname.startsWith('/privacy')
     || pathname.startsWith('/cookies')

@@ -4,6 +4,7 @@ import { AppPage } from '@/components/AppPage'
 import { LandingPage } from '@/components/LandingPage'
 import { StructuredDataScripts } from '@/components/StructuredDataScripts'
 import { getBillingPlanPricing } from '@/lib/billing-pricing'
+import { getFeaturedBlogPostSummaries } from '@/lib/blog'
 
 export const metadata: Metadata = {
   alternates: {
@@ -25,11 +26,12 @@ export default async function Home() {
   }
 
   const pricing = await getBillingPlanPricing()
+  const featuredPosts = getFeaturedBlogPostSummaries()
 
   return (
     <>
       <StructuredDataScripts includeHowItWorks />
-      <LandingPage pricing={pricing} />
+      <LandingPage pricing={pricing} featuredPosts={featuredPosts} />
     </>
   )
 }
