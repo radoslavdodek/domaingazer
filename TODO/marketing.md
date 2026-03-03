@@ -7,7 +7,7 @@ Expect: 3–6 months of consistent execution → top-10 rankings for 50+ long-ta
 ### 1. Technical SEO Quick Wins (Do These in the Next 7 Days – Highest Leverage)
 These determine whether Google can even crawl and understand your interactive tool pages.
 
-- **Claim Google Search Console + Bing Webmaster Tools** → Submit XML sitemap (generate via Next.js/Vercel or free tools like xml-sitemaps.com). Monitor indexing daily.
+- **Claim Google Search Console + Bing Webmaster Tools** → DONE. Submit XML sitemap (generate via Next.js/Vercel or free tools like xml-sitemaps.com). Monitor indexing daily.
 - **Core Web Vitals** (LCP <2.5s, INP <200ms, CLS <0.1):
     - Use SSR/SSG for the results page.
     - Compress hero images/screenshots to WebP/AVIF.
@@ -22,7 +22,7 @@ These determine whether Google can even crawl and understand your interactive to
 - **Mobile-First + Security**: Ensure responsive (test on real devices), full HTTPS, HSTS header, no mixed content.
 - **URL & Canonical Cleanup**: Clean, keyword-rich URLs (e.g., /ai-domain-name-generator). Self-referencing canonicals everywhere.
 
-**Quick audit tools** (free): Screaming Frog (up to 500 URLs), GSC Coverage report, PageSpeed Insights.
+**Quick audit tools** (free): DONE. Screaming Frog (up to 500 URLs), GSC Coverage report, PageSpeed Insights.
 
 ### 2. On-Page Optimization (Immediate 1–2 Hour Wins)
 Current homepage title (“Domain Gazer — AI Domain Name Finder”) is decent but misses volume keywords.
