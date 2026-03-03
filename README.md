@@ -92,6 +92,7 @@ Run all migrations in the `supabase/migrations/` folder, including the billing m
 - `20260302_model_usage_cost.sql`
 - `20260303_billing.sql`
 - `20260304_free_credit_entitlements.sql`
+- `20260305_free_credit_entitlements_rls.sql`
 
 You can apply them with the Supabase CLI or by running the SQL in the Supabase SQL editor.
 
