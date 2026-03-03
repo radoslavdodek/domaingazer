@@ -65,9 +65,6 @@ export const metadata: Metadata = {
     description:
       'Describe your project and instantly find available, brandable domain names. AI-powered by GPT-4.1.',
   },
-  alternates: {
-    canonical: siteUrl,
-  },
 }
 
 export default function RootLayout({

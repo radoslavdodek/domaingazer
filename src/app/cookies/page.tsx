@@ -1,4 +1,11 @@
+import type { Metadata } from 'next'
 import { LegalPageLayout } from '@/components/LegalPageLayout'
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/cookies',
+  },
+}
 
 export default function CookiesPage() {
   return (
