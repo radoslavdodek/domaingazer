@@ -47,6 +47,7 @@ export function RefinementCard({
                 }
               }}
               placeholder="e.g. shorter, more playful, finance-focused"
+              maxLength={200}
               disabled={status === 'searching'}
               className={theme.refinementCard.input}
             />

@@ -34,9 +34,23 @@ export async function POST(request: Request) {
     )
   }
 
+  if (description.length > 1000) {
+    return new Response(
+      JSON.stringify({ error: 'Description must be at most 1000 characters' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
   if (!baseName) {
     return new Response(
       JSON.stringify({ error: 'baseName is required' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  if (baseName.length > 63) {
+    return new Response(
+      JSON.stringify({ error: 'baseName must be at most 63 characters' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
     )
   }

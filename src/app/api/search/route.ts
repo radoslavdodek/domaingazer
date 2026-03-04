@@ -74,6 +74,13 @@ export async function POST(request: Request) {
     )
   }
 
+  if (hint && hint.length > 200) {
+    return new Response(
+      JSON.stringify({ error: 'Hint must be at most 200 characters' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
   let billingState: BillingStatusResponse
   try {
     billingState = await requireEntitlement(user, 'search')
