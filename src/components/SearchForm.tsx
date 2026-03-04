@@ -186,11 +186,15 @@ export function SearchForm({
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="e.g. Web and mobile app for helping early-stage teams generate, evaluate, and buy brandable startup domains"
                         rows={4}
+                        maxLength={1000}
                         disabled={isSearching}
                         className={theme.searchForm.textarea}
                     />
                     {description.length > 0 && description.trim().length < 5 && (
                         <p className="mt-1 text-xs text-gray-400">{description.trim().length} characters (minimum 5)</p>
+                    )}
+                    {description.length >= 950 && (
+                        <p className="mt-1 text-xs text-gray-400">{description.length}/1000 characters</p>
                     )}
                     {tlds.length === 0 && (
                         <p className={theme.searchForm.validationText}>Select a TLD</p>

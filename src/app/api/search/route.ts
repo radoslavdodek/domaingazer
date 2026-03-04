@@ -67,6 +67,13 @@ export async function POST(request: Request) {
     )
   }
 
+  if (description.length > 1000) {
+    return new Response(
+      JSON.stringify({ error: 'Description must be at most 1000 characters' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
   let billingState: BillingStatusResponse
   try {
     billingState = await requireEntitlement(user, 'search')
