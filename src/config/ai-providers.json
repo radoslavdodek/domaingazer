@@ -13,11 +13,19 @@
   ],
   "generateDomains": {
     "provider": "Groq",
-    "model": "moonshotai/kimi-k2-instruct-0905"
+    "model": "moonshotai/kimi-k2-instruct-0905",
+    "backup": {
+      "provider": "OpenAI",
+      "model": "gpt-4.1"
+    }
   },
   "explain": {
     "provider": "Groq",
-    "model": "llama-3.1-8b-instant"
+    "model": "llama-3.1-8b-instant",
+    "backup": {
+      "provider": "OpenAI",
+      "model": "gpt-4o-mini"
+    }
   },
   "modelPricing": {
     "gpt-4.1": {
