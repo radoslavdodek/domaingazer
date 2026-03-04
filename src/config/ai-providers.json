@@ -28,6 +28,10 @@
     }
   },
   "modelPricing": {
+    "gpt-4o-mini": {
+      "promptPer1M": 0.15,
+      "completionPer1M": 0.60
+    },
     "gpt-4.1": {
       "promptPer1M": 2.00,
       "completionPer1M": 8.00
