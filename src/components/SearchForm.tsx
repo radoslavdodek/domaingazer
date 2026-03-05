@@ -161,6 +161,7 @@ export function SearchForm({
                                 }
                                 aria-expanded={isExamplesOpen}
                                 aria-haspopup="dialog"
+                                title="See example project descriptions"
                             >
                                 Examples
                             </button>
@@ -168,6 +169,7 @@ export function SearchForm({
                                 <button
                                     type="button"
                                     onClick={() => setIsHistoryOpen(true)}
+                                    title="View your past searches"
                                     className={utilityButtonClass}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"

@@ -110,6 +110,7 @@ export function BaseNameGroupList({
                               type="button"
                               onClick={() => onTryVariation(baseName)}
                               disabled={status === 'searching'}
+                              title="Generate spelling variations of this name"
                               className={`${theme.baseNameGroupList.variationButton} w-full text-center sm:w-28`}
                             >
                               Try variations
@@ -120,6 +121,7 @@ export function BaseNameGroupList({
                               type="button"
                               onClick={() => onExplain(baseName)}
                               disabled={!canExplain || explanation?.isLoading || Boolean(explanation?.text && !explanation?.error)}
+                              title="Explain why this name might work for your project"
                               className={`${theme.baseNameGroupList.variationButton} w-full text-center sm:w-28`}
                             >
                               {explanation?.isLoading ? 'Explaining...' : 'Explain'}

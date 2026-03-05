@@ -33,6 +33,7 @@ function CopyButton({ domain }: { domain: string }) {
       type="button"
       onClick={handleCopy}
       aria-label={`Copy ${domain}`}
+      title={copied ? 'Copied!' : 'Copy domain name'}
       className="ml-1.5 rounded p-0.5 text-gray-400 opacity-100 transition-opacity hover:text-gray-600 sm:opacity-0 sm:group-hover:opacity-100"
     >
       {copied ? (
@@ -56,6 +57,7 @@ function BuyButton({ domain }: { domain: string }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`Buy ${domain}`}
+      title="Buy on Namecheap"
       className="ml-1 inline-flex items-center gap-0.5 rounded-full bg-green-600 px-2 py-0.5 text-[11px] font-medium text-white opacity-100 transition-opacity hover:bg-green-700 sm:opacity-0 sm:group-hover:opacity-100"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3">
