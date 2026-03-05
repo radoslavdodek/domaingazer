@@ -5,12 +5,15 @@ import type { DomainResult, DomainStatus, SseEvent, TLD } from '@/lib/types'
 
 type SearchStatus = 'idle' | 'searching' | 'done' | 'cancelled' | 'error'
 
+const MAX_ROUNDS = 20
+
 interface DomainSearchState {
   results: DomainResult[]
   nameBatches: string[][]
   status: SearchStatus
   errorMessage: string | null
   isWaitingForNewRows: boolean
+  roundCount: number
 }
 
 // A promise that resolves with { done: true } as soon as the given AbortSignal fires.
@@ -28,6 +31,7 @@ export function useDomainSearch() {
     status: 'idle',
     errorMessage: null,
     isWaitingForNewRows: false,
+    roundCount: 0,
   })
   const [isCheckingCustom, setIsCheckingCustom] = useState(false)
 
@@ -69,6 +73,7 @@ export function useDomainSearch() {
       status: 'searching',
       errorMessage: null,
       isWaitingForNewRows: true,
+      roundCount: appendResults ? prev.roundCount + 1 : 1,
     }))
 
     try {
@@ -403,9 +408,11 @@ export function useDomainSearch() {
     })
     pendingControllersRef.current.clear()
     lastBatchIndexRef.current = -1
-    setState({ results: [], nameBatches: [], status: 'idle', errorMessage: null, isWaitingForNewRows: false })
+    setState({ results: [], nameBatches: [], status: 'idle', errorMessage: null, isWaitingForNewRows: false, roundCount: 0 })
     setIsCheckingCustom(false)
   }, [])
 
-  return { ...state, isCheckingCustom, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds }
+  const hasReachedMaxRounds = state.roundCount >= MAX_ROUNDS
+
+  return { ...state, isCheckingCustom, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds }
 }

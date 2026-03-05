@@ -21,7 +21,7 @@ interface SearchHistoryEntry {
 
 export function AppPage() {
   const { theme, themeName } = useTheme()
-  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
+  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
   const { billing, isLoading: isBillingLoading, error: billingError, refresh: refreshBilling } = useBillingStatus()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
   const [searchDescription, setSearchDescription] = useState('')
@@ -302,7 +302,7 @@ export function AppPage() {
             searchDescription={searchDescription}
             isCheckingCustom={isCheckingCustom}
             isWaitingForNewRows={isWaitingForNewRows}
-            onGenerateMore={handleGenerateMore}
+            onGenerateMore={hasReachedMaxRounds ? undefined : handleGenerateMore}
             onCheckCustom={checkCustom}
             onAddTldForBase={handleAddTldForBase}
             onBillableActionCompleted={() => {
