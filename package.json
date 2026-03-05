@@ -13,6 +13,7 @@
     "@aws-sdk/client-route-53-domains": "^3.734.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.98.0",
+    "fast-xml-parser": "^5.4.2",
     "next": "14.2.29",
     "openai": "^4.86.0",
     "react": "^18",

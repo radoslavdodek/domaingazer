@@ -6,39 +6,13 @@ import {
   SubscriptionRequiredError,
 } from '@/lib/billing'
 import type { BillingStatusResponse } from '@/lib/billing-types'
+import { checkDomains } from '@/lib/domain-checker'
 import { generateDomainNames } from '@/lib/openai'
-import { checkDomain } from '@/lib/route53'
 import { createClient } from '@/lib/supabase/server'
 import { trackUsage } from '@/lib/track-usage'
 import type { DomainResult, SseEvent, TLD } from '@/lib/types'
 
 const DEFAULT_SEARCH_TLDS: TLD[] = ['.com', '.io']
-
-function createLimiter(concurrency: number) {
-  let running = 0
-  const queue: (() => void)[] = []
-
-  return function limit<T>(fn: () => Promise<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const run = async () => {
-        running++
-        try {
-          resolve(await fn())
-        } catch (err) {
-          reject(err)
-        } finally {
-          running--
-          if (queue.length > 0) queue.shift()!()
-        }
-      }
-      if (running < concurrency) {
-        run()
-      } else {
-        queue.push(run)
-      }
-    })
-  }
-}
 
 function encodeEvent(event: SseEvent): string {
   return `data: ${JSON.stringify(event)}\n\n`
@@ -114,7 +88,6 @@ export async function POST(request: Request) {
         controller.enqueue(encoder.encode(encodeEvent(event)))
       }
 
-      const limit = createLimiter(3)
       const normalizedExclude = Array.from(new Set(exclude.map((name) => name.trim().toLowerCase()).filter(Boolean)))
       const seenNames = new Set(normalizedExclude)
       const generatedNames: string[] = []
@@ -160,18 +133,14 @@ export async function POST(request: Request) {
           emit({ type: 'domain_result', data: result })
         }
 
-        // Check all domains in parallel with concurrency limit
-        await Promise.all(
-          pairs.map((pair) =>
-            limit(async () => {
-              if (signal.aborted) return
-              const status = await checkDomain(pair.fullDomain, signal)
-              if (signal.aborted) return
-              const result: DomainResult = { ...pair, status }
-              emit({ type: 'domain_result', data: result })
-            })
-          )
-        )
+        // Check all domains via Namecheap (primary) with Route53 fallback
+        const pairMap = new Map(pairs.map((p) => [p.fullDomain, p]))
+        await checkDomains(pairs, signal, (domain, status) => {
+          const pair = pairMap.get(domain)
+          if (pair && !signal.aborted) {
+            emit({ type: 'domain_result', data: { ...pair, status } })
+          }
+        })
 
         if (!signal.aborted) {
           try {
