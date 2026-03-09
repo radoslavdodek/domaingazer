@@ -15,7 +15,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://www.googletagmanager.com https://www.clarity.ms",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://www.googletagmanager.com https://www.clarity.ms https://*.clarity.ms",
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "img-src 'self' data: https://lh3.googleusercontent.com https://www.clarity.ms",
               "font-src 'self'",
