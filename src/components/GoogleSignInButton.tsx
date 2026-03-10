@@ -309,7 +309,7 @@ export function GoogleSignInButton({
             <GoogleMark className={iconClassName} />
             <span>{buttonLabel}</span>
           </div>
-          <div ref={buttonContainerRef} className={`absolute inset-0 z-10 ${isReady ? 'opacity-0' : 'pointer-events-none opacity-0'}`} />
+          <div ref={buttonContainerRef} className={`absolute inset-0 z-10 ${isReady ? 'opacity-[0.01]' : 'pointer-events-none opacity-0'}`} />
         </div>
       ) : (
         <div ref={buttonContainerRef} className={buttonClassName} />
