@@ -25,6 +25,7 @@ export function GitHubSignInButton({ nextPath = '/' }: GitHubSignInButtonProps) 
 
     try {
       const supabase = createClient()
+      console.log('ABC: window.location.origin:' , window.location.origin);
       const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
 
       const { error } = await supabase.auth.signInWithOAuth({
