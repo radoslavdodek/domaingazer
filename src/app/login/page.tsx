@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { GoogleSignInButton } from '@/components/GoogleSignInButton'
@@ -10,6 +11,30 @@ import { AppIcon } from '@/components/AppIcon'
 export default function LoginPage() {
   const searchParams = useSearchParams()
   const nextPath = searchParams.get('next') ?? '/'
+  const [authError, setAuthError] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Check query param (set by /auth/callback on failure)
+    const queryError = searchParams.get('auth_error')
+    if (queryError) {
+      setAuthError(queryError)
+      // Clean the error param from the URL
+      const url = new URL(window.location.href)
+      url.searchParams.delete('auth_error')
+      window.history.replaceState(null, '', url.pathname + (url.search || ''))
+      return
+    }
+
+    // Check hash fragment (Supabase may redirect errors as hash params)
+    const hash = window.location.hash.slice(1)
+    if (!hash) return
+    const hashParams = new URLSearchParams(hash)
+    const errorDescription = hashParams.get('error_description')
+    if (errorDescription) {
+      setAuthError(decodeURIComponent(errorDescription).replace(/\+/g, ' '))
+      window.history.replaceState(null, '', window.location.pathname + window.location.search)
+    }
+  }, [searchParams])
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-zinc-950 px-4 text-white antialiased">
@@ -47,6 +72,13 @@ export default function LoginPage() {
               Sign in to find your perfect domain name
             </p>
           </div>
+
+          {authError && (
+            <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              <p className="font-medium">Sign-in failed</p>
+              <p className="mt-1 text-red-400/80">{authError}</p>
+            </div>
+          )}
 
           <div className="space-y-3">
             <GoogleSignInButton

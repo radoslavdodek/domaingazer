@@ -13,6 +13,14 @@ export async function GET(request: Request) {
   const requestedNext = searchParams.get('next') ?? '/'
   const next = requestedNext.startsWith('/') && !requestedNext.startsWith('//') ? requestedNext : '/'
 
+  const error = searchParams.get('error')
+  const errorDescription = searchParams.get('error_description')
+  if (error) {
+    const loginUrl = new URL('/login', origin)
+    loginUrl.searchParams.set('auth_error', errorDescription ?? error)
+    return NextResponse.redirect(loginUrl)
+  }
+
   if (code) {
     const cookieStore = cookies()
     const supabase = createServerClient(
@@ -25,7 +33,12 @@ export async function GET(request: Request) {
         },
       }
     )
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+    if (exchangeError) {
+      const loginUrl = new URL('/login', origin)
+      loginUrl.searchParams.set('auth_error', exchangeError.message)
+      return NextResponse.redirect(loginUrl)
+    }
   }
 
   return NextResponse.redirect(new URL(next, origin))
