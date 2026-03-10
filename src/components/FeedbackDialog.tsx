@@ -161,6 +161,12 @@ export function FeedbackDialog({ isOpen, onClose, searchContext }: FeedbackDialo
       formData.append('search_context', JSON.stringify(searchContext))
     }
 
+    const commitId = process.env.NEXT_PUBLIC_APP_COMMIT_ID
+    const commitDate = process.env.NEXT_PUBLIC_APP_COMMIT_DATE
+    if (commitId && commitId !== 'unknown') {
+      formData.append('app_version', `${commitId} (${commitDate})`)
+    }
+
     for (const file of files) {
       formData.append('attachments', file)
     }

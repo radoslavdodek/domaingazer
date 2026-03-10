@@ -29,6 +29,7 @@ export async function POST(req: Request) {
   const page_url = (formData.get('page_url') as string) || null
   const user_agent = (formData.get('user_agent') as string) || null
   const screen_info = (formData.get('screen_info') as string) || null
+  const app_version = (formData.get('app_version') as string) || null
 
   let search_context = null
   const searchContextRaw = formData.get('search_context') as string | null
@@ -85,6 +86,7 @@ export async function POST(req: Request) {
     screen_info,
     attachments: attachmentPaths.length > 0 ? attachmentPaths : null,
     search_context,
+    app_version,
   }).select('id').single()
 
   if (error) {
@@ -107,6 +109,7 @@ export async function POST(req: Request) {
       title ? `*${title}*` : null,
       message.length > 500 ? message.slice(0, 500) + '...' : message,
       searchLine || null,
+      app_version ? `Version: ${app_version}` : null,
       category ? `Category: ${category}` : null,
       attachmentPaths.length > 0 ? `${attachmentPaths.length} attachment(s)` : null,
     ].filter(Boolean).join('\n')

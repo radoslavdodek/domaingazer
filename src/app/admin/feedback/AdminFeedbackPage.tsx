@@ -18,6 +18,7 @@ type FeedbackEntry = {
   screen_info: string | null
   attachments: string[] | null
   attachment_urls?: string[]
+  app_version: string | null
   search_context: { query: string; results: { fullDomain: string; status: string }[] } | null
 }
 
@@ -142,6 +143,9 @@ export function AdminFeedbackPage() {
                         </p>
                         {isExpanded && (
                           <div className="mt-3 space-y-2">
+                            {entry.app_version && (
+                              <p className="text-xs text-gray-400 dark:text-zinc-500">Version: {entry.app_version}</p>
+                            )}
                             {entry.category && (
                               <p className="text-xs text-gray-400 dark:text-zinc-500">Category: {entry.category}</p>
                             )}

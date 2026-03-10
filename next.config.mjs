@@ -1,5 +1,14 @@
+import { execSync } from 'child_process'
+
+const commitId = (() => { try { return execSync('git rev-parse --short HEAD').toString().trim() } catch { return 'unknown' } })()
+const commitDate = (() => { try { return execSync('git log -1 --format=%ci').toString().trim() } catch { return 'unknown' } })()
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    NEXT_PUBLIC_APP_COMMIT_ID: commitId,
+    NEXT_PUBLIC_APP_COMMIT_DATE: commitDate,
+  },
   experimental: {
     serverComponentsExternalPackages: ['@aws-sdk/client-route-53-domains'],
   },
