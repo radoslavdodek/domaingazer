@@ -335,18 +335,6 @@ export function FeedbackDialog({ isOpen, onClose, searchContext }: FeedbackDialo
                 )}
               </div>
 
-              {/* Search context notice */}
-              {searchContext && (
-                <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 dark:border-blue-900/50 dark:bg-blue-950/20">
-                  <p className="text-xs font-medium text-blue-700 dark:text-blue-300">
-                    Your last search will be included with this feedback:
-                  </p>
-                  <p className="mt-0.5 truncate text-xs text-blue-600 dark:text-blue-400">
-                    &ldquo;{searchContext.query}&rdquo; — {searchContext.results.length} result{searchContext.results.length !== 1 ? 's' : ''}
-                  </p>
-                </div>
-              )}
-
               {/* Error */}
               {error && (
                 <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950/30 dark:text-red-300">
