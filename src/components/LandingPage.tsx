@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AppIcon } from '@/components/AppIcon'
-import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 import { createClient } from '@/lib/supabase/client'
 import { BillingPlans } from '@/components/BillingPlans'
 import type { BillingPlanPricing } from '@/lib/billing-types'
@@ -152,14 +151,12 @@ export function LandingPage({
                 </button>
               </>
             ) : (
-              <GoogleSignInButton
-                className="w-full sm:w-auto"
-                buttonClassName="min-h-[38px] w-full sm:w-auto"
-                label="Sign in"
-                text="signin"
-                variant="landing-nav"
-                width={132}
-              />
+              <Link
+                href="/login"
+                className="flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm transition-colors hover:bg-white/[0.08]"
+              >
+                Sign in
+              </Link>
             )}
           </div>
         </div>
@@ -208,14 +205,12 @@ export function LandingPage({
                     Go to Dashboard
                   </Link>
               ) : (
-                  <GoogleSignInButton
-                      className="w-full sm:w-auto"
-                      buttonClassName="min-h-[54px] w-full sm:w-auto"
-                      label="Get started free"
-                      text="signin"
-                      variant="landing-cta"
-                      width={208}
-                  />
+                  <Link
+                      href="/login"
+                      className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
+                  >
+                      Get started free
+                  </Link>
               )}
             </div>
             <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
@@ -473,7 +468,7 @@ export function LandingPage({
               </h2>
               <p className="mb-8 text-zinc-400">
                 Join founders who&apos;ve found their perfect domain with Domain Gazer.
-                Sign in with Google and start searching in seconds.
+                Sign in and start searching in seconds.
               </p>
               {isSignedIn ? (
                 <Link
@@ -483,14 +478,12 @@ export function LandingPage({
                   Go to Dashboard
                 </Link>
               ) : (
-                <GoogleSignInButton
-                  className="w-full sm:w-auto"
-                  buttonClassName="min-h-[54px] w-full sm:w-auto"
-                  label="Get started free"
-                  text="signin"
-                  variant="landing-cta"
-                  width={208}
-                />
+                <Link
+                  href="/login"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
+                >
+                  Get started free
+                </Link>
               )}
               <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
             </div>

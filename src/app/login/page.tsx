@@ -3,55 +3,93 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { GoogleSignInButton } from '@/components/GoogleSignInButton'
-import { useTheme } from '@/contexts/ThemeContext'
+import { GitHubSignInButton } from '@/components/GitHubSignInButton'
+import { MagicLinkForm } from '@/components/MagicLinkForm'
+import { AppIcon } from '@/components/AppIcon'
 
 export default function LoginPage() {
-  const { theme } = useTheme()
   const searchParams = useSearchParams()
   const nextPath = searchParams.get('next') ?? '/'
 
   return (
-    <div className={theme.layout.body}>
-      <main className="mx-auto w-full max-w-4xl">
-        <nav className={theme.navbar.wrapper}>
-          <Link href="/landing" className={theme.navbar.brand}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={theme.navbar.icon}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-            </svg>
-            <span>Domain Gazer</span>
-          </Link>
-        </nav>
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-zinc-950 px-4 text-white antialiased">
+      {/* Ambient background glows — matching landing page */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-32 left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-blue-600/10 blur-[140px]" />
+        <div className="absolute top-1/2 -right-64 h-[500px] w-[500px] rounded-full bg-cyan-600/8 blur-[120px]" />
+        <div className="absolute bottom-0 -left-32 h-[400px] w-[400px] rounded-full bg-violet-600/8 blur-[100px]" />
+      </div>
 
-        <div className="flex min-h-[calc(100vh-57px)] items-center justify-center px-4">
-          <div className={`w-full max-w-sm ${theme.page.searchCard}`}>
-            <div className="mb-6 text-center">
-              <span className={theme.page.heroBadge}>✦ AI-Powered</span>
-              <h1 className="text-xl font-bold">Sign in to Domain Gazer</h1>
-              <p className={`mt-2 text-sm ${theme.page.subtitle}`}>
-                Find your perfect domain name with AI-powered suggestions.
-              </p>
-            </div>
+      {/* Logo */}
+      <Link
+        href="/landing"
+        className="relative mb-10 flex items-center gap-2.5 text-zinc-200 transition-colors hover:text-blue-400"
+      >
+        <AppIcon className="h-7 w-7 text-blue-400" />
+        <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
+      </Link>
 
-            <GoogleSignInButton nextPath={nextPath} showLoadingMessage />
-
-            <p className={`mt-4 text-xs leading-5 ${theme.page.subtitle}`}>
-              Continuing uses essential authentication cookies. Optional browser storage for theme and draft searches is
-              controlled separately, with opt-in required for EU users.
-            </p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-gray-500 dark:text-zinc-400">
-              <Link href="/privacy" className="underline underline-offset-2">
-                Privacy
-              </Link>
-              <Link href="/cookies" className="underline underline-offset-2">
-                Cookies
-              </Link>
-              <Link href="/terms" className="underline underline-offset-2">
-                Terms
-              </Link>
-            </div>
-          </div>
+      {/* Card */}
+      <div className="relative w-full max-w-[420px] overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm">
+        {/* Inner glow */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <div className="absolute -top-24 left-1/2 h-[250px] w-[250px] -translate-x-1/2 rounded-full bg-blue-600/10 blur-[80px]" />
         </div>
-      </main>
+
+        <div className="relative px-8 pb-8 pt-10">
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300">
+              <span className="text-blue-400">✦</span>
+              AI-powered
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">Welcome back</h1>
+            <p className="mt-2 text-sm text-zinc-400">
+              Sign in to find your perfect domain name
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <GoogleSignInButton
+              nextPath={nextPath}
+              showLoadingMessage
+              theme="filled_black"
+              variant="landing-nav"
+              buttonClassName="min-h-[44px] w-full"
+            />
+            <GitHubSignInButton nextPath={nextPath} />
+          </div>
+
+          <div className="my-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-zinc-800" />
+            <span className="text-xs font-medium text-zinc-500">or</span>
+            <div className="h-px flex-1 bg-zinc-800" />
+          </div>
+
+          <MagicLinkForm nextPath={nextPath} />
+
+          <p className="mt-8 text-center text-[11px] leading-4 text-zinc-500">
+            By continuing, you agree to our{' '}
+            <Link href="/terms" className="underline underline-offset-2 hover:text-zinc-300">Terms</Link>
+            {' '}and{' '}
+            <Link href="/privacy" className="underline underline-offset-2 hover:text-zinc-300">Privacy Policy</Link>.
+          </p>
+        </div>
+      </div>
+
+      {/* Footer links */}
+      <div className="relative mt-8 flex items-center gap-4 text-xs text-zinc-500">
+        <Link href="/privacy" className="transition-colors hover:text-zinc-300">
+          Privacy
+        </Link>
+        <span className="text-zinc-700">&middot;</span>
+        <Link href="/cookies" className="transition-colors hover:text-zinc-300">
+          Cookies
+        </Link>
+        <span className="text-zinc-700">&middot;</span>
+        <Link href="/terms" className="transition-colors hover:text-zinc-300">
+          Terms
+        </Link>
+      </div>
     </div>
   )
 }

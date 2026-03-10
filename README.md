@@ -78,7 +78,9 @@ The app now depends on Supabase Auth plus the billing tables in `supabase/migrat
 
 ### Required auth configuration
 
-- Enable Google sign-in in Supabase Auth if you want to use the current login flow.
+- Enable **Google** sign-in in Supabase Auth → Providers (requires Google OAuth client ID/secret).
+- Enable **GitHub** sign-in in Supabase Auth → Providers (requires a GitHub OAuth App client ID/secret — create one at https://github.com/settings/developers).
+- **Email/OTP (magic link)** is enabled by default in Supabase — verify that email templates are configured in Auth → Email Templates.
 - Set the site URL and redirect URLs so Supabase can return users to:
   - `http://localhost:3000/auth/callback` for local development
   - `https://your-domain.com/auth/callback` for production
