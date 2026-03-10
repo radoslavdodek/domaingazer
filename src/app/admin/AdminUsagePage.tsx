@@ -514,6 +514,14 @@ export function AdminUsagePage() {
           </>
         )}
       </main>
+
+      <footer className="border-t border-gray-200 px-6 py-4 dark:border-gray-700">
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+          {process.env.NEXT_PUBLIC_APP_COMMIT_ID && process.env.NEXT_PUBLIC_APP_COMMIT_ID !== 'unknown'
+            ? `Version: ${process.env.NEXT_PUBLIC_APP_COMMIT_ID} (${process.env.NEXT_PUBLIC_APP_COMMIT_DATE})`
+            : 'Version: dev'}
+        </p>
+      </footer>
     </div>
   )
 }
