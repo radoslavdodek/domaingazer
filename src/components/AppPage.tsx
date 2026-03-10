@@ -8,6 +8,8 @@ import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { UserMenu } from '@/components/UserMenu'
+import { FeedbackDialog } from '@/components/FeedbackDialog'
+import type { SearchContext } from '@/components/FeedbackDialog'
 import { useBillingStatus } from '@/hooks/useBillingStatus'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -33,6 +35,7 @@ export function AppPage() {
   const resultsPanelRef = useRef<HTMLDivElement>(null)
   const [billingAction, setBillingAction] = useState<'portal' | null>(null)
   const [billingActionError, setBillingActionError] = useState<string | null>(null)
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
 
   useEffect(() => {
     fetch('/api/search-history')
@@ -166,6 +169,7 @@ export function AppPage() {
               onManageBilling={billing?.isSubscribed
                 ? () => { void handleManageBilling() }
                 : undefined}
+              onFeedbackClick={() => setIsFeedbackOpen(true)}
             />
           </div>
         </nav>
@@ -319,6 +323,33 @@ export function AppPage() {
               handleClear()
             }}
           />
+
+          <FeedbackDialog
+            isOpen={isFeedbackOpen}
+            onClose={() => setIsFeedbackOpen(false)}
+            searchContext={searchDescription && results.length > 0 ? {
+              query: searchDescription,
+              results: results.map((r) => ({ fullDomain: r.fullDomain, status: r.status })),
+            } satisfies SearchContext : null}
+          />
+
+          {billing && (
+            <button
+              type="button"
+              onClick={() => setIsFeedbackOpen(true)}
+              className={`fixed bottom-5 right-5 z-40 flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium shadow-lg transition-colors ${
+                isMidnightTheme
+                  ? 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+              }`}
+              aria-label="Share your feedback"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path fillRule="evenodd" d="M10 2c-2.236 0-4.43.18-6.57.524C1.993 2.755 1 4.014 1 5.426v5.148c0 1.413.993 2.67 2.43 2.902 1.168.188 2.352.327 3.55.414.28.02.521.18.642.413l1.713 3.293a.75.75 0 0 0 1.33 0l1.713-3.293a.783.783 0 0 1 .642-.413 41.102 41.102 0 0 0 3.55-.414c1.437-.231 2.43-1.49 2.43-2.902V5.426c0-1.413-.993-2.67-2.43-2.902A41.289 41.289 0 0 0 10 2ZM6.75 6a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 2.5a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Z" clipRule="evenodd" />
+              </svg>
+              Share your feedback
+            </button>
+          )}
 
           <footer className={theme.footer.wrapper}>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">

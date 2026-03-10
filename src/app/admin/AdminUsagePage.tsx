@@ -204,7 +204,12 @@ export function AdminUsagePage() {
             </svg>
             Domain Gazer
           </Link>
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Admin — Usage</span>
+          <div className="flex items-center gap-4">
+            <Link href="/admin/feedback" className="text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
+              Feedback
+            </Link>
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Admin — Usage</span>
+          </div>
         </div>
       </nav>
 
