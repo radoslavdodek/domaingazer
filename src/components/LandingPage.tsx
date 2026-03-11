@@ -525,7 +525,7 @@ export function LandingPage({
                 </a>
               </div>
             </div>
-            <p className="text-sm text-zinc-600">© 2026 Domain Gazer · Find your perfect domain name with AI</p>
+            <p className="text-sm text-zinc-600">© 2026 Domain Gazer · Find your perfect domain name with AI with the best AI domain name generator in 2026</p>
           </div>
         </div>
       </footer>
