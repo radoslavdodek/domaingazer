@@ -17,6 +17,18 @@ type BreadcrumbItem = {
   url: string
 }
 
+type CollectionPageItem = {
+  name: string
+  url: string
+}
+
+type CollectionPageOptions = {
+  name: string
+  description: string
+  url?: string
+  items: ReadonlyArray<CollectionPageItem>
+}
+
 export const HOW_IT_WORKS_FAQS = [
   {
     question: 'How do I find domain name ideas with Domain Gazer?',
@@ -123,5 +135,24 @@ export function getBreadcrumbListJsonLd(items: ReadonlyArray<BreadcrumbItem>) {
       name: item.name,
       item: item.url,
     })),
+  }
+}
+
+export function getCollectionPageJsonLd(options: CollectionPageOptions) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: options.name,
+    description: options.description,
+    url: options.url ?? siteUrl,
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: options.items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        url: item.url,
+      })),
+    },
   }
 }

@@ -136,6 +136,12 @@ export function LandingPage({
             >
               Blog
             </Link>
+            <Link
+              href="/domain-name-ideas"
+              className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+            >
+              Industry Guides
+            </Link>
             {isSignedIn ? (
               <>
                 <Link

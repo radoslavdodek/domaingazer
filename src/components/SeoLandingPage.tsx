@@ -195,6 +195,17 @@ export function SeoLandingPage({ page, relatedPages }: SeoLandingPageProps) {
                     Read domain naming guides
                   </SeoTrackedLink>
                   <SeoTrackedLink
+                    href="/domain-name-ideas"
+                    eventName="seo_internal_link_click"
+                    linkLabel="Browse industry naming ideas"
+                    linkType="continue_research"
+                    pageSlug={page.slug}
+                    primaryKeyword={page.primaryKeyword}
+                    className="block rounded-2xl border border-zinc-800 bg-zinc-950/60 px-4 py-3 text-sm font-medium text-zinc-200 transition-colors hover:border-cyan-500/30 hover:text-cyan-200"
+                  >
+                    Browse industry naming ideas
+                  </SeoTrackedLink>
+                  <SeoTrackedLink
                     href="/"
                     eventName="seo_internal_link_click"
                     linkLabel="Visit the main landing page"

@@ -353,10 +353,36 @@ If you want both flows to use the same setup, keep both sections identical:
 ## Commands
 
 ```bash
-npm run dev      # Start dev server at localhost:3000
-npm run build    # Production build
-npm run lint     # ESLint via next lint
+npm run dev                      # Start dev server at localhost:3000
+npm run generate:industry-pages  # Rebuild generated industry SEO pages
+npm run build                    # Production build
+npm run lint                     # ESLint via next lint
 ```
+
+## Industry SEO pages
+
+The app includes a programmatic SEO cluster under `/domain-name-ideas` for pages such as:
+
+- `/domain-name-ideas`
+- `/domain-name-ideas/saas`
+- `/domain-name-ideas/fintech`
+
+The workflow is:
+
+1. Edit the seed data in `src/data/industry-seeds.json`.
+2. Run `npm run generate:industry-pages`.
+3. Commit the updated generated artifact in `src/generated/industry-pages.ts`.
+
+The generator script lives in `scripts/build-industry-pages.mjs`. It validates each generated page shape, rejects duplicate or overly similar content, and emits the static data consumed by the app route layer.
+
+To add a new industry page:
+
+1. Add a new seed object with a unique `slug`.
+2. Fill in the audience, offer, tone, term sets, recommended TLDs, and avoid-patterns.
+3. Run `npm run generate:industry-pages`.
+4. Open `/domain-name-ideas/<slug>` locally to review the page.
+
+The generated routes are wired automatically into the hub page, middleware allowlist, static params, and sitemap.
 
 ## Tech stack
 

@@ -47,6 +47,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
   const isPublicSeoPage = SEO_PAGE_SLUGS.some((slug) => pathname === `/${slug}`)
+  const isPublicIndustryPage = pathname === '/domain-name-ideas' || pathname.startsWith('/domain-name-ideas/')
 
   // Allow auth-related paths and public redirects through
   if (
@@ -62,6 +63,7 @@ export async function middleware(request: NextRequest) {
     || pathname.startsWith('/billing/cancel')
     || pathname.startsWith('/api/stripe/webhook')
     || isPublicSeoPage
+    || isPublicIndustryPage
   ) {
     return supabaseResponse
   }
