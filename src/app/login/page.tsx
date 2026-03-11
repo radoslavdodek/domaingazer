@@ -67,7 +67,7 @@ export default function LoginPage() {
               <span className="text-blue-400">✦</span>
               AI-powered
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">Welcome back</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-100">Welcome</h1>
             <p className="mt-2 text-sm text-zinc-400">
               Sign in to find your perfect domain name
             </p>
