@@ -41,7 +41,7 @@ export default function OGImage() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            marginBottom: 36,
+            marginBottom: 28,
             padding: '10px 24px',
             borderRadius: 999,
             border: '1px solid rgba(59, 130, 246, 0.35)',
@@ -59,33 +59,33 @@ export default function OGImage() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            fontSize: 72,
+            fontSize: 68,
             fontWeight: 900,
             textAlign: 'center',
             lineHeight: 1.1,
             color: '#ffffff',
-            marginBottom: 28,
+            marginBottom: 32,
           }}
         >
           <div>Find your perfect</div>
           <div style={{ color: '#60a5fa' }}>domain name</div>
-          <div>- instantly</div>
+          <div>instantly</div>
         </div>
 
         {/* Subtitle */}
         <div
           style={{
-            fontSize: 26,
+            fontSize: 24,
             color: '#a1a1aa',
             textAlign: 'center',
-            marginBottom: 52,
+            marginBottom: 60,
           }}
         >
           AI-powered generation | Real-time availability | Multiple TLDs
         </div>
 
         {/* TLD pills */}
-        <div style={{ display: 'flex', gap: 14 }}>
+        <div style={{ display: 'flex', gap: 14, marginBottom: 96 }}>
           {['.com', '.io', '.ai', '.co', '.net'].map((tld) => (
             <div
               key={tld}
@@ -107,7 +107,7 @@ export default function OGImage() {
         <div
           style={{
             position: 'absolute',
-            bottom: 44,
+            bottom: 28,
             color: '#52525b',
             fontSize: 20,
           }}
