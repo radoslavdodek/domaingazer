@@ -30,7 +30,7 @@ export function LegalPageLayout({ title, description, children }: LegalPageLayou
         <section className="rounded-3xl border border-zinc-200 bg-white px-6 py-8 shadow-sm sm:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Legal</p>
           <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
-          <p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-600">{description}</p>
+          <p className="mt-4 max-w-2xl whitespace-pre-line text-sm leading-6 text-zinc-600">{description}</p>
           <div className="mt-8 space-y-8 text-sm leading-7 text-zinc-700">
             {children}
           </div>
