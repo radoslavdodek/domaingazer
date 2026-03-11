@@ -1,5 +1,22 @@
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
 
+type SoftwareApplicationOptions = {
+  description?: string
+  featureList?: string[]
+  name?: string
+  url?: string
+}
+
+type FaqItem = {
+  question: string
+  answer: string
+}
+
+type BreadcrumbItem = {
+  name: string
+  url: string
+}
+
 export const HOW_IT_WORKS_FAQS = [
   {
     question: 'How do I find domain name ideas with Domain Gazer?',
@@ -18,15 +35,16 @@ export const HOW_IT_WORKS_FAQS = [
   },
 ] as const
 
-export function getSoftwareApplicationJsonLd() {
+export function getSoftwareApplicationJsonLd(options: SoftwareApplicationOptions = {}) {
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'Domain Gazer',
-    url: siteUrl,
+    name: options.name ?? 'Domain Gazer',
+    url: options.url ?? siteUrl,
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     description:
+      options.description ??
       'AI-powered domain name finder that generates brandable domain ideas from a project description and checks live availability across multiple TLDs.',
     offers: {
       '@type': 'Offer',
@@ -34,20 +52,21 @@ export function getSoftwareApplicationJsonLd() {
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
     },
-    featureList: [
-      'AI-powered domain name generation',
-      'Real-time domain availability checks',
-      'Multi-TLD search across .com, .io, .ai, .co, .net, .shop, .store, and .de',
-      'Search history and follow-up refinement',
-    ],
+    featureList:
+      options.featureList ?? [
+        'AI-powered domain name generation',
+        'Real-time domain availability checks',
+        'Multi-TLD search across .com, .io, .ai, .co, .net, .shop, .store, and .de',
+        'Search history and follow-up refinement',
+      ],
   }
 }
 
-export function getFaqPageJsonLd() {
+export function getFaqPageJsonLd(items: ReadonlyArray<FaqItem> = HOW_IT_WORKS_FAQS) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: HOW_IT_WORKS_FAQS.map((item) => ({
+    mainEntity: items.map((item) => ({
       '@type': 'Question',
       name: item.question,
       acceptedAnswer: {
@@ -91,5 +110,18 @@ export function getHowToJsonLd() {
           'Check which generated domains are available right now and keep refining until you find a strong option.',
       },
     ],
+  }
+}
+
+export function getBreadcrumbListJsonLd(items: ReadonlyArray<BreadcrumbItem>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
   }
 }

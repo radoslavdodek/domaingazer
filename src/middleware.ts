@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { PRIVACY_REGION_COOKIE } from '@/lib/privacy/constants'
 import { getCountryHeaderName, getDefaultRegion, getRegionFromCountryCode } from '@/lib/privacy/region'
+import { SEO_PAGE_SLUGS } from '@/lib/seo-pages'
 
 export async function middleware(request: NextRequest) {
   const countryCode = request.geo?.country
@@ -45,6 +46,7 @@ export async function middleware(request: NextRequest) {
   // IMPORTANT: Do not call getSession() — use getUser() for security (validates JWT server-side)
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
+  const isPublicSeoPage = SEO_PAGE_SLUGS.some((slug) => pathname === `/${slug}`)
 
   // Allow auth-related paths and public redirects through
   if (
@@ -59,6 +61,7 @@ export async function middleware(request: NextRequest) {
     || pathname.startsWith('/billing/success')
     || pathname.startsWith('/billing/cancel')
     || pathname.startsWith('/api/stripe/webhook')
+    || isPublicSeoPage
   ) {
     return supabaseResponse
   }

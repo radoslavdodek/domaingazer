@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { BillingPlans } from '@/components/BillingPlans'
 import type { BillingPlanPricing } from '@/lib/billing-types'
 import { HOW_IT_WORKS_FAQS } from '@/lib/structuredData'
+import { getAllSeoPages } from '@/lib/seo-pages'
 
 type FeaturedBlogPost = {
   slug: string
@@ -99,6 +100,7 @@ export function LandingPage({
   featuredPosts: FeaturedBlogPost[]
 }) {
   const [isSignedIn, setIsSignedIn] = useState(false)
+  const seoPages = getAllSeoPages()
 
   useEffect(() => {
     const supabase = createClient()
@@ -430,6 +432,42 @@ export function LandingPage({
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-zinc-400">{post.description}</p>
                 <span className="mt-5 inline-flex text-sm font-semibold text-cyan-300">Read article →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 py-24 sm:px-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">Search Intent Pages</p>
+              <h2 className="mt-3 text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
+                Dedicated guides for the exact searches founders make
+              </h2>
+              <p className="mt-4 text-zinc-400">
+                These pages break down the main workflows behind Domain Gazer, from AI naming to live availability
+                checks and comparison-driven research.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            {seoPages.map((page) => (
+              <Link
+                key={page.slug}
+                href={`/${page.slug}`}
+                className="group rounded-3xl border border-zinc-800 bg-zinc-900/70 p-6 transition-all hover:border-cyan-500/40 hover:bg-zinc-900"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200/90">
+                  {page.primaryKeyword}
+                </p>
+                <h3 className="mt-4 text-2xl font-semibold text-zinc-100 transition-colors group-hover:text-cyan-200">
+                  {page.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-zinc-400">{page.description}</p>
+                <span className="mt-5 inline-flex text-sm font-semibold text-cyan-300">Open page →</span>
               </Link>
             ))}
           </div>
