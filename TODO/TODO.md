@@ -1,5 +1,6 @@
 # List of TODOs
 
+- [ ] Add "Improve project description" feature, which will try to improve user's prompt
 - [ ] Use seomachine to improve SEO https://github.com/TheCraigHewitt/seomachine
 - [ ] Use Langfuse for observability instead of implementing it
   ourselves (https://langfuse.com/watch-demo?tab=observability)
