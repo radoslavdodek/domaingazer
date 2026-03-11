@@ -67,9 +67,9 @@ export default function OGImage() {
             marginBottom: 32,
           }}
         >
-          <div>Find your perfect</div>
-          <div style={{ color: '#60a5fa' }}>domain name</div>
-          <div>instantly</div>
+          <div>Find Your Perfect</div>
+          <div style={{ color: '#60a5fa' }}>Domain Name with AI</div>
+          <div>Instantly</div>
         </div>
 
         {/* Subtitle */}
