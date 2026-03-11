@@ -86,7 +86,7 @@ export default function OGImage() {
 
         {/* TLD pills */}
         <div style={{ display: 'flex', gap: 14, marginBottom: 96 }}>
-          {['.com', '.io', '.ai', '.co', '.net'].map((tld) => (
+          {['.com', '.io', '.ai', '.net', '.shop', '.store'].map((tld) => (
             <div
               key={tld}
               style={{
