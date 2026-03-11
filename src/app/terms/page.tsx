@@ -11,8 +11,8 @@ export default function TermsPage() {
   return (
     <LegalPageLayout
       title="Terms of Service"
-      description="These terms govern access to Domain Gazer. This service is run by Indek s.r.o.<br/>
-                Address: Lichardova 26, 01001 Zilina, Slovakia, European Union.<br/>
+      description="These terms govern access to Domain Gazer. This service is run by Indek s.r.o.\n
+                Address: Lichardova 26, 01001 Zilina, Slovakia, European Union.\n
                 Company ID: 46942955."
     >
       <section>
