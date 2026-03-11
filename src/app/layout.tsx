@@ -74,6 +74,12 @@ export default function RootLayout({
         <meta name="impact-site-verification" content="e0e806fe-1f3f-42c4-9ece-cf49ac5b79f3" />
       </head>
       <body className="min-h-screen font-sans">
+        <a
+          href="#main-content"
+          className="sr-only absolute left-4 top-4 z-[100] rounded-md bg-white px-4 py-2 text-sm font-semibold text-zinc-950 shadow-lg focus:not-sr-only focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2"
+        >
+          Skip to main content
+        </a>
         {children}
         <AnalyticsScripts
           gaMeasurementId="G-CD28TVE1XL"

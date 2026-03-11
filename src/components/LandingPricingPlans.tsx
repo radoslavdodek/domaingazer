@@ -18,6 +18,8 @@ export function LandingPricingPlans({
 }: {
   pricing: BillingPlanPricing | null
 }) {
+  const focusRingClassName = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950'
+
   const currencyPricing: CurrencyPricing | null = useMemo(() => {
     if (!pricing) return null
     return pricing[getCurrencyFromCookie()]
@@ -26,7 +28,7 @@ export function LandingPricingPlans({
   return (
     <div className="grid gap-5 lg:grid-cols-3">
       <div className="flex h-full flex-col rounded-3xl border border-zinc-800 bg-zinc-900/70 p-7">
-        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-zinc-500">Free</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-zinc-300">Free</p>
         <h3 className="mt-4 text-3xl font-bold">Starter</h3>
         <p className="mt-3 text-sm leading-relaxed text-zinc-400">
           One-time free credits for trying domain generation and verification before you pay.
@@ -34,7 +36,7 @@ export function LandingPricingPlans({
         <div className="mt-auto pt-8">
           <Link
             href="/app"
-            className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+            className={`inline-flex w-full items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800 ${focusRingClassName}`}
           >
             Choose Starter
           </Link>
@@ -54,7 +56,7 @@ export function LandingPricingPlans({
         <div className="mt-auto pt-8">
           <Link
             href="/login?next=%2Fbilling%3Fcheckout%3Dmonth"
-            className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            className={`inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 ${focusRingClassName}`}
           >
             Choose Monthly
           </Link>
@@ -84,7 +86,7 @@ export function LandingPricingPlans({
         <div className="mt-auto pt-8">
           <Link
             href="/login?next=%2Fbilling%3Fcheckout%3Dyear"
-            className="inline-flex w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-colors hover:bg-cyan-400/15"
+            className={`inline-flex w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-colors hover:bg-cyan-400/15 ${focusRingClassName}`}
           >
             Choose Yearly
           </Link>
