@@ -209,7 +209,7 @@ export function LandingPage({
                       href="/login"
                       className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
                   >
-                      Get started free
+                    Search for free
                   </Link>
               )}
             </div>
@@ -482,7 +482,7 @@ export function LandingPage({
                   href="/login"
                   className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
                 >
-                  Get started free
+                  Search for free
                 </Link>
               )}
               <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
