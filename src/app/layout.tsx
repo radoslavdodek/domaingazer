@@ -79,6 +79,10 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <head>
         <meta name="impact-site-verification" content="e0e806fe-1f3f-42c4-9ece-cf49ac5b79f3" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.clarity.ms" />
+        <link rel="dns-prefetch" href="https://www.clarity.ms" />
       </head>
       <body className="min-h-screen font-sans">
         <Script
