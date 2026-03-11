@@ -41,7 +41,6 @@ export default function OGImage() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
             marginBottom: 36,
             padding: '10px 24px',
             borderRadius: 999,
@@ -51,12 +50,15 @@ export default function OGImage() {
             fontSize: 20,
           }}
         >
-          ✦ Powered by AI
+          Powered by AI
         </div>
 
         {/* Main heading */}
         <div
           style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
             fontSize: 72,
             fontWeight: 900,
             textAlign: 'center',
@@ -65,9 +67,9 @@ export default function OGImage() {
             marginBottom: 28,
           }}
         >
-          Find your perfect{' '}
-          <span style={{ color: '#60a5fa' }}>domain name</span>
-          {' '}— instantly
+          <div>Find your perfect</div>
+          <div style={{ color: '#60a5fa' }}>domain name</div>
+          <div>- instantly</div>
         </div>
 
         {/* Subtitle */}
@@ -79,7 +81,7 @@ export default function OGImage() {
             marginBottom: 52,
           }}
         >
-          AI-powered generation · Real-time availability · Multiple TLDs
+          AI-powered generation | Real-time availability | Multiple TLDs
         </div>
 
         {/* TLD pills */}
