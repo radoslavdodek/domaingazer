@@ -48,6 +48,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isPublicSeoPage = SEO_PAGE_SLUGS.some((slug) => pathname === `/${slug}`)
   const isPublicIndustryPage = pathname === '/domain-name-ideas' || pathname.startsWith('/domain-name-ideas/')
+  const isMetadataImageRoute = pathname === '/opengraph-image'
+    || pathname.endsWith('/opengraph-image')
+    || pathname === '/twitter-image'
+    || pathname.endsWith('/twitter-image')
 
   // Allow auth-related paths and public redirects through
   if (
@@ -64,6 +68,7 @@ export async function middleware(request: NextRequest) {
     || pathname.startsWith('/api/stripe/webhook')
     || isPublicSeoPage
     || isPublicIndustryPage
+    || isMetadataImageRoute
   ) {
     return supabaseResponse
   }
