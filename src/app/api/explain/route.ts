@@ -8,11 +8,12 @@ import {
 import type { BillingStatusResponse } from '@/lib/billing-types'
 import { explainDomainName } from '@/lib/openai'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 import { trackUsage } from '@/lib/track-usage'
 
 export async function POST(request: Request) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user } = await getEffectiveUser(supabase)
   if (!user) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,

@@ -283,6 +283,26 @@ Before considering billing fully configured, verify all of the following:
 - User is charged but still blocked by free-credit limits
   - The checkout succeeded, but the webhook did not sync the subscription into Supabase.
 
+## Admin: User impersonation
+
+Admins can view the app as any non-admin user to debug issues, verify billing state, or reproduce problems.
+
+### How to use
+
+1. Sign in as an admin (`is_admin: true` in Supabase Auth `app_metadata`).
+2. Go to `/admin/users`.
+3. Search for a user by email or name.
+4. Click **Impersonate** on the target row — you'll be redirected to `/` with an amber banner showing the impersonated user's email.
+5. The app now behaves as that user: search history, billing status, usage stats, and all API calls resolve against the impersonated user's data.
+6. Click **Stop Impersonating** in the banner to return to your own admin view.
+
+### Restrictions
+
+- Cannot impersonate yourself or another admin.
+- Account deletion is blocked while impersonating.
+- Non-admins with a manually set cookie are silently ignored (the cookie is only trusted after server-side admin validation).
+- Admin routes (`/api/admin/*`) always use the real admin identity, never the impersonated user.
+
 ## AI provider config
 
 Provider/model selection lives in [`src/config/ai-providers.json`](src/config/ai-providers.json):

@@ -5,7 +5,14 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { createClient } from '@/lib/supabase/client'
+import { IMPERSONATE_INFO_COOKIE } from '@/lib/impersonation-constants'
 import type { User } from '@supabase/supabase-js'
+
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`))
+  return match ? decodeURIComponent(match[1]) : null
+}
 
 interface UserMenuProps {
   planLabel?: string
@@ -27,6 +34,7 @@ export function UserMenu({
   const { theme } = useTheme()
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
+  const [impersonatedInfo, setImpersonatedInfo] = useState<{ email?: string; name?: string | null } | null>(null)
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -38,6 +46,12 @@ export function UserMenu({
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
+
+    // Check for impersonation cookie
+    const raw = getCookie(IMPERSONATE_INFO_COOKIE)
+    if (raw) {
+      try { setImpersonatedInfo(JSON.parse(raw)) } catch { /* ignore */ }
+    }
 
     return () => subscription.unsubscribe()
   }, [])
@@ -60,11 +74,14 @@ export function UserMenu({
 
   if (!user) return null
 
-  const avatarUrl = user.user_metadata?.avatar_url as string | undefined
-  const name = (user.user_metadata?.full_name ?? user.user_metadata?.name ?? user.email ?? '') as string
-  const email = user.email ?? ''
+  const isImpersonating = impersonatedInfo !== null
+  const avatarUrl = isImpersonating ? undefined : (user.user_metadata?.avatar_url as string | undefined)
+  const name = isImpersonating
+    ? (impersonatedInfo.name ?? impersonatedInfo.email ?? '')
+    : (user.user_metadata?.full_name ?? user.user_metadata?.name ?? user.email ?? '') as string
+  const email = isImpersonating ? (impersonatedInfo.email ?? '') : (user.email ?? '')
   const initial = name.charAt(0).toUpperCase() || email.charAt(0).toUpperCase() || '?'
-  const isAdmin = user.app_metadata?.is_admin === true
+  const isAdmin = !isImpersonating && user.app_metadata?.is_admin === true
 
   return (
     <div className="relative" ref={menuRef}>

@@ -9,6 +9,7 @@ import type { BillingStatusResponse } from '@/lib/billing-types'
 import { generateDomainNames } from '@/lib/openai'
 import { checkDomain } from '@/lib/route53'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 import { trackUsage } from '@/lib/track-usage'
 import type { DomainResult, SseEvent, TLD } from '@/lib/types'
 
@@ -46,7 +47,7 @@ function encodeEvent(event: SseEvent): string {
 
 export async function POST(request: Request) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user } = await getEffectiveUser(supabase)
   if (!user) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,

@@ -2,6 +2,7 @@ export const runtime = 'nodejs'
 
 import {checkDomain} from '@/lib/route53'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 import type {DomainResult, SseEvent, TLD} from '@/lib/types'
 
 function createLimiter(concurrency: number) {
@@ -36,7 +37,7 @@ function encodeEvent(event: SseEvent): string {
 
 export async function POST(request: Request) {
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { user } = await getEffectiveUser(supabase)
     if (!user) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,

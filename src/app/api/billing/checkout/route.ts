@@ -8,6 +8,7 @@ import {
 } from '@/lib/billing'
 import { createStripeCheckoutSession } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 
 function isBillingInterval(value: unknown): value is BillingInterval {
   return value === 'month' || value === 'year'
@@ -22,7 +23,7 @@ function getCurrencyFromRequest(request: Request): 'eur' | 'usd' {
 
 export async function POST(request: Request) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user } = await getEffectiveUser(supabase)
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

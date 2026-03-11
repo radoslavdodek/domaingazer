@@ -205,6 +205,9 @@ export function AdminUsagePage() {
             Domain Gazer
           </Link>
           <div className="flex items-center gap-4">
+            <Link href="/admin/users" className="text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
+              Users
+            </Link>
             <Link href="/admin/feedback" className="text-xs font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
               Feedback
             </Link>

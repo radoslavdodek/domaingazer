@@ -8,6 +8,7 @@ import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { UserMenu } from '@/components/UserMenu'
+import { ImpersonationBanner } from '@/components/ImpersonationBanner'
 import { FeedbackDialog } from '@/components/FeedbackDialog'
 import type { SearchContext } from '@/components/FeedbackDialog'
 import { useBillingStatus } from '@/hooks/useBillingStatus'
@@ -136,6 +137,7 @@ export function AppPage() {
 
   return (
     <div className={theme.layout.body}>
+      <ImpersonationBanner />
       <main className="mx-auto w-full max-w-4xl">
         <nav className={`${theme.navbar.wrapper} gap-3`}>
           <Link href="/landing" className={`${theme.navbar.brand} min-w-0`}>

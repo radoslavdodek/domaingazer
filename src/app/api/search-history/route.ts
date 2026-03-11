@@ -2,14 +2,15 @@ export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 import type { TLD } from '@/lib/types'
 
 export async function GET() {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('search_history')
     .select('id, description, selected_tlds, created_at')
     .eq('user_id', user.id)
@@ -23,13 +24,13 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { description, selected_tlds } = await req.json() as { description: string; selected_tlds: TLD[] }
 
   // Dedup: skip if most recent entry is identical
-  const { data: recent } = await supabase
+  const { data: recent } = await supabaseClient
     .from('search_history')
     .select('description, selected_tlds')
     .eq('user_id', user.id)
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     }
   }
 
-  await supabase.from('search_history').insert({
+  await supabaseClient.from('search_history').insert({
     user_id: user.id,
     description,
     selected_tlds,
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   let payload: { id?: string } = {}
@@ -67,7 +68,7 @@ export async function DELETE(req: Request) {
     payload = {}
   }
 
-  const query = supabase
+  const query = supabaseClient
     .from('search_history')
     .delete()
     .eq('user_id', user.id)

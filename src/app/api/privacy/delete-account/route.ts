@@ -1,6 +1,7 @@
 export const runtime = 'nodejs'
 
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getUserBillingState, markFreeCreditEntitlementDeleted } from '@/lib/billing'
 
@@ -17,10 +18,14 @@ function throwIfError(error: { message: string } | null) {
 
 export async function POST(request: Request) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, isImpersonating } = await getEffectiveUser(supabase)
 
   if (!user) {
     return jsonError('Unauthorized', 401)
+  }
+
+  if (isImpersonating) {
+    return jsonError('Account deletion is not allowed while impersonating a user', 403)
   }
 
   let body: { confirm?: string }

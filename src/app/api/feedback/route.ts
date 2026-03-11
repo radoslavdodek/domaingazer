@@ -2,6 +2,7 @@ export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 const SLACK_WEBHOOK_URL = process.env.SLACK_FEEDBACK_WEBHOOK_URL
@@ -12,7 +13,7 @@ const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
 
 export async function POST(req: Request) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const formData = await req.formData()
@@ -61,7 +62,7 @@ export async function POST(req: Request) {
     const ext = file.name.split('.').pop() || 'png'
     const storagePath = `${user.id}/${crypto.randomUUID()}.${ext}`
 
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabaseClient.storage
       .from('feedback-attachments')
       .upload(storagePath, file, { contentType: file.type })
 
@@ -73,7 +74,7 @@ export async function POST(req: Request) {
     attachmentPaths.push(storagePath)
   }
 
-  const { data, error } = await supabase.from('user_feedback').insert({
+  const { data, error } = await supabaseClient.from('user_feedback').insert({
     user_id: user.id,
     user_email: user.email!,
     title,
