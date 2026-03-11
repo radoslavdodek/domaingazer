@@ -1,5 +1,6 @@
 # List of TODOs
 
+- [ ] Add more TLD options, maybe add "other" option where user can search for a TLD
 - [ ] Add "Improve project description" feature, which will try to improve user's prompt
 - [ ] Use seomachine to improve SEO https://github.com/TheCraigHewitt/seomachine
 - [ ] Use Langfuse for observability instead of implementing it
