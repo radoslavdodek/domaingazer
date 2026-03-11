@@ -1,10 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import Script from 'next/script'
-import { cookies } from 'next/headers'
-import { ThemeProvider } from '@/contexts/ThemeContext'
-import { ConsentBanner } from '@/components/ConsentBanner'
-import { PRIVACY_REGION_COOKIE, type RegionKind } from '@/lib/privacy/constants'
+import { AnalyticsScripts } from '@/components/AnalyticsScripts'
 import './globals.css'
 
 const inter = Inter({
@@ -72,46 +68,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const regionCookie = cookies().get(PRIVACY_REGION_COOKIE)?.value
-  const initialRegion: RegionKind = regionCookie === 'eu' ? 'eu' : 'non-eu'
-
   return (
     <html lang="en" className={inter.variable}>
       <head>
         <meta name="impact-site-verification" content="e0e806fe-1f3f-42c4-9ece-cf49ac5b79f3" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://www.clarity.ms" />
-        <link rel="dns-prefetch" href="https://www.clarity.ms" />
       </head>
       <body className="min-h-screen font-sans">
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-CD28TVE1XL"
-          strategy="afterInteractive"
+        {children}
+        <AnalyticsScripts
+          gaMeasurementId="G-CD28TVE1XL"
+          clarityProjectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID}
         />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-CD28TVE1XL');
-          `}
-        </Script>
-        {process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID && (
-          <Script id="microsoft-clarity" strategy="afterInteractive">
-            {`
-              (function(c,l,a,r,i,t,y){
-                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-              })(window,document,"clarity","script","${process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID}");
-            `}
-          </Script>
-        )}
-        <ThemeProvider>
-          {children}
-          <ConsentBanner initialRegion={initialRegion} />
-        </ThemeProvider>
       </body>
     </html>
   )

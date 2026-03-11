@@ -1,10 +1,7 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AppIcon } from '@/components/AppIcon'
-import { createClient } from '@/lib/supabase/client'
-import { BillingPlans } from '@/components/BillingPlans'
+import { LandingPricingPlans } from '@/components/LandingPricingPlans'
+import { MarketingAuthLink } from '@/components/MarketingAuthLink'
 import type { BillingPlanPricing } from '@/lib/billing-types'
 import { HOW_IT_WORKS_FAQS } from '@/lib/structuredData'
 import { getAllSeoPages } from '@/lib/seo-pages'
@@ -99,19 +96,7 @@ export function LandingPage({
   pricing: BillingPlanPricing | null
   featuredPosts: FeaturedBlogPost[]
 }) {
-  const [isSignedIn, setIsSignedIn] = useState(false)
   const seoPages = getAllSeoPages()
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => setIsSignedIn(!!user))
-  }, [])
-
-  const handleSignOut = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    setIsSignedIn(false)
-  }
 
   return (
     <div className="min-h-screen bg-zinc-950 font-sans text-white antialiased">
@@ -142,30 +127,9 @@ export function LandingPage({
             >
               Industry Guides
             </Link>
-            {isSignedIn ? (
-              <>
-                <Link
-                  href="/"
-                  className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
-                >
-                  Go to Dashboard
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-600 hover:bg-zinc-800 hover:text-red-400 sm:w-auto"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <Link
-                href="/login"
-                className="flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm transition-colors hover:bg-white/[0.08]"
-              >
-                Sign in
-              </Link>
-            )}
+            <MarketingAuthLink
+              className="flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm transition-colors hover:bg-white/[0.08]"
+            />
           </div>
         </div>
       </nav>
@@ -205,21 +169,12 @@ export function LandingPage({
             </div>
 
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              {isSignedIn ? (
-                  <Link
-                      href="/"
-                      className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
-                  >
-                    Go to Dashboard
-                  </Link>
-              ) : (
-                  <Link
-                      href="/login"
-                      className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
-                  >
-                    Search for free
-                  </Link>
-              )}
+              <Link
+                href="/app"
+                className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
+              >
+                Search for free
+              </Link>
             </div>
             <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
           </div>
@@ -490,7 +445,7 @@ export function LandingPage({
             </p>
           </div>
 
-          <BillingPlans pricing={pricing} isSignedIn={isSignedIn} showFreePlan />
+          <LandingPricingPlans pricing={pricing} />
         </div>
       </section>
 
@@ -514,21 +469,12 @@ export function LandingPage({
                 Join founders who&apos;ve found their perfect domain with Domain Gazer.
                 Sign in and start searching in seconds.
               </p>
-              {isSignedIn ? (
-                <Link
-                  href="/"
-                  className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
-                >
-                  Go to Dashboard
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
-                >
-                  Search for free
-                </Link>
-              )}
+              <Link
+                href="/app"
+                className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
+              >
+                Search for free
+              </Link>
               <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
             </div>
           </div>

@@ -10,8 +10,8 @@ export async function GET(request: Request) {
     ? `${forwardedProto}://${forwardedHost}`
     : new URL(request.url).origin
   const code = searchParams.get('code')
-  const requestedNext = searchParams.get('next') ?? '/'
-  const next = requestedNext.startsWith('/') && !requestedNext.startsWith('//') ? requestedNext : '/'
+  const requestedNext = searchParams.get('next') ?? '/app'
+  const next = requestedNext.startsWith('/') && !requestedNext.startsWith('//') ? requestedNext : '/app'
 
   const error = searchParams.get('error')
   const errorDescription = searchParams.get('error_description')

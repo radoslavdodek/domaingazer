@@ -5,6 +5,7 @@ import { getCountryHeaderName, getDefaultRegion, getRegionFromCountryCode } from
 import { SEO_PAGE_SLUGS } from '@/lib/seo-pages'
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
   const countryCode = request.geo?.country
     ?? request.headers.get('x-vercel-ip-country')
     ?? request.headers.get(getCountryHeaderName())
@@ -26,6 +27,32 @@ export async function middleware(request: NextRequest) {
 
   let supabaseResponse = applyRegionCookie(NextResponse.next({ request }))
 
+  const isPublicSeoPage = SEO_PAGE_SLUGS.some((slug) => pathname === `/${slug}`)
+  const isPublicIndustryPage = pathname === '/domain-name-ideas' || pathname.startsWith('/domain-name-ideas/')
+  const isMetadataImageRoute = pathname === '/opengraph-image'
+    || pathname.endsWith('/opengraph-image')
+    || pathname === '/twitter-image'
+    || pathname.endsWith('/twitter-image')
+
+  if (
+    pathname === '/'
+    || pathname.startsWith('/landing')
+    || pathname.startsWith('/blog')
+    || pathname.startsWith('/login')
+    || pathname.startsWith('/privacy')
+    || pathname.startsWith('/cookies')
+    || pathname.startsWith('/terms')
+    || pathname.startsWith('/auth')
+    || pathname.startsWith('/billing/success')
+    || pathname.startsWith('/billing/cancel')
+    || pathname.startsWith('/api/stripe/webhook')
+    || isPublicSeoPage
+    || isPublicIndustryPage
+    || isMetadataImageRoute
+  ) {
+    return supabaseResponse
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -45,33 +72,6 @@ export async function middleware(request: NextRequest) {
 
   // IMPORTANT: Do not call getSession() — use getUser() for security (validates JWT server-side)
   const { data: { user } } = await supabase.auth.getUser()
-  const { pathname } = request.nextUrl
-  const isPublicSeoPage = SEO_PAGE_SLUGS.some((slug) => pathname === `/${slug}`)
-  const isPublicIndustryPage = pathname === '/domain-name-ideas' || pathname.startsWith('/domain-name-ideas/')
-  const isMetadataImageRoute = pathname === '/opengraph-image'
-    || pathname.endsWith('/opengraph-image')
-    || pathname === '/twitter-image'
-    || pathname.endsWith('/twitter-image')
-
-  // Allow auth-related paths and public redirects through
-  if (
-    pathname === '/'
-    || pathname.startsWith('/landing')
-    || pathname.startsWith('/blog')
-    || pathname.startsWith('/login')
-    || pathname.startsWith('/privacy')
-    || pathname.startsWith('/cookies')
-    || pathname.startsWith('/terms')
-    || pathname.startsWith('/auth')
-    || pathname.startsWith('/billing/success')
-    || pathname.startsWith('/billing/cancel')
-    || pathname.startsWith('/api/stripe/webhook')
-    || isPublicSeoPage
-    || isPublicIndustryPage
-    || isMetadataImageRoute
-  ) {
-    return supabaseResponse
-  }
 
   if (!user) {
     // API routes: return 401

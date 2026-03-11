@@ -13,6 +13,8 @@ function getCurrencyFromCookie(): BillingCurrency {
   return region === 'non-eu' ? 'usd' : 'eur'
 }
 
+const DASHBOARD_PATH = '/app'
+
 interface BillingPlansProps {
   pricing: BillingPlanPricing | null
   isSignedIn: boolean
@@ -73,14 +75,14 @@ export function BillingPlans({
             <div className="mt-auto pt-8">
               {isSignedIn ? (
                 <Link
-                  href="/"
+                  href={DASHBOARD_PATH}
                   className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
                 >
                   Open Dashboard
                 </Link>
               ) : (
                 <Link
-                  href={getLoginHref('/')}
+                  href={getLoginHref(DASHBOARD_PATH)}
                   className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
                 >
                   Choose Starter

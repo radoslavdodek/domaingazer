@@ -9,7 +9,7 @@ interface MagicLinkFormProps {
   nextPath?: string
 }
 
-export function MagicLinkForm({ nextPath = '/' }: MagicLinkFormProps) {
+export function MagicLinkForm({ nextPath = '/app' }: MagicLinkFormProps) {
   const [email, setEmail] = useState('')
   const [state, setState] = useState<FormState>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)

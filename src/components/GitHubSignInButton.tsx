@@ -15,7 +15,7 @@ interface GitHubSignInButtonProps {
   nextPath?: string
 }
 
-export function GitHubSignInButton({ nextPath = '/' }: GitHubSignInButtonProps) {
+export function GitHubSignInButton({ nextPath = '/app' }: GitHubSignInButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 

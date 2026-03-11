@@ -174,7 +174,7 @@ interface GoogleSignInButtonProps {
 }
 
 export function GoogleSignInButton({
-  nextPath = '/',
+  nextPath = '/app',
   className,
   buttonClassName = 'min-h-[44px] w-full',
   messageClassName = 'mt-3 text-center text-xs text-red-600',

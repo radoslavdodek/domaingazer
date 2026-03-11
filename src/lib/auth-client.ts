@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/client'
 
 export function normalizeNextPath(nextPath: string) {
-  return nextPath.startsWith('/') && !nextPath.startsWith('//') ? nextPath : '/'
+  return nextPath.startsWith('/') && !nextPath.startsWith('//') ? nextPath : '/app'
 }
 
 function getRequiredGoogleClientId() {
@@ -31,7 +31,7 @@ export function getGoogleClientId() {
   return getRequiredGoogleClientId()
 }
 
-export async function signInWithGoogle(nextPath = '/') {
+export async function signInWithGoogle(nextPath = '/app') {
   const loginUrl = new URL('/login', window.location.origin)
   loginUrl.searchParams.set('next', normalizeNextPath(nextPath))
   window.location.assign(loginUrl.toString())

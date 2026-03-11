@@ -10,7 +10,7 @@ export default function BillingSuccessPage() {
           Your subscription is now active. If the dashboard still shows the free plan, wait a few seconds for the Stripe webhook to finish syncing and refresh the page.
         </p>
         <Link
-          href="/"
+          href="/app"
           className="mt-6 inline-flex rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition-opacity hover:opacity-90"
         >
           Return to dashboard
