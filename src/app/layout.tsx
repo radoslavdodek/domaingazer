@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: '%s | Domain Gazer',
   },
   description:
-    'Describe your project in plain English. Our AI instantly generates brandable domain ideas and checks real-time availability across .com, .io, .ai & 10+ TLDs. Free to try. No tab-hopping.',
+    'Describe your project in plain English. Our AI generates brandable domain candidates and checks real-time availability across multiple TLDs — all in one shot.',
   keywords: [
     'domain name finder',
     'AI domain generator',
@@ -57,13 +57,13 @@ export const metadata: Metadata = {
     siteName: 'Domain Gazer',
     title: 'Domain Gazer — AI Domain Name Finder',
     description:
-      'Describe your project in plain English and instantly find available domain names. AI-powered by GPT-4.1 with real-time availability checks across .com, .io, .ai, .co, .net and more.',
+      'Describe your project in plain English. Our AI generates brandable domain candidates and checks real-time availability across multiple TLDs — all in one shot.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Domain Gazer — AI Domain Name Finder',
     description:
-      'Describe your project and instantly find available, brandable domain names. AI-powered by GPT-4.1.',
+      'Describe your project in plain English. Our AI generates brandable domain candidates and checks real-time availability across multiple TLDs — all in one shot.',
   },
 }
 

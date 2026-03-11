@@ -21,7 +21,7 @@ No test suite is configured.
 1. `page.tsx` (`'use client'`) owns top-level state via `useDomainSearch` hook.
 2. User submits a description + selected TLDs through `SearchForm` / `TldSelector`.
 3. The hook POSTs to `/api/search`, which:
-   - Calls OpenAI (`gpt-4.1`) to generate 10 base names per round (up to 5 rounds, stopping early when any AVAILABLE domain is found).
+   - Calls kimi-k2 or OpenAI (`gpt-4.1`) to generate 10 base names per round (up to 5 rounds, stopping early when any AVAILABLE domain is found).
    - Concurrently checks each `(baseName, tld)` pair via Route 53 `CheckDomainAvailabilityCommand` (concurrency=3, exponential backoff on throttling).
    - Streams results back as SSE (`text/event-stream`).
 4. The hook reads the SSE stream, updating results in place (CHECKING → final status).

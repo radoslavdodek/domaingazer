@@ -51,7 +51,7 @@ export default function OGImage() {
             fontSize: 20,
           }}
         >
-          ✦ Powered by GPT-4.1 &amp; AWS Route 53
+          ✦ Powered by AI
         </div>
 
         {/* Main heading */}
