@@ -320,6 +320,8 @@ export function FeedbackDialog({ isOpen, onClose, searchContext }: FeedbackDialo
                   <div className="mt-2 flex gap-2">
                     {previews.map((url, i) => (
                       <div key={i} className="group relative">
+                        {/* Blob preview URLs are local and do not benefit from next/image optimization. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={url}
                           alt={`Attachment ${i + 1}`}

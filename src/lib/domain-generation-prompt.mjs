@@ -1,9 +1,27 @@
+/**
+ * @typedef {{ role: 'system' | 'user', content: string }} ChatMessage
+ * @typedef {{
+ *   targetCount: number
+ *   description: string
+ *   alreadySeen?: string[]
+ *   hint?: string
+ * }} GenerateMessagesInput
+ */
+
+/**
+ * @param {string[]} [alreadySeen=[]]
+ * @returns {string}
+ */
 export function buildSeenList(alreadySeen = []) {
   return alreadySeen.length > 0
     ? `\n\nAvoid these names (already generated): ${alreadySeen.join(', ')}`
     : ''
 }
 
+/**
+ * @param {GenerateMessagesInput} params
+ * @returns {ChatMessage[]}
+ */
 export function buildGenerateMessages({
   targetCount,
   description,
@@ -35,6 +53,10 @@ export function buildGenerateMessages({
   ]
 }
 
+/**
+ * @param {unknown[]} [rawNames=[]]
+ * @returns {string[]}
+ */
 export function sanitizeGeneratedBaseNames(rawNames = []) {
   return rawNames
     .filter((name) => typeof name === 'string')

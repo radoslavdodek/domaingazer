@@ -185,6 +185,8 @@ export function AdminFeedbackPage() {
                               <div className="flex gap-2 pt-1">
                                 {entry.attachment_urls.map((url, i) => (
                                   <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                                    {/* User-uploaded remote attachments are rendered as simple admin thumbnails. */}
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
                                       src={url}
                                       alt={`Attachment ${i + 1}`}
