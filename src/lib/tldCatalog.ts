@@ -1,5 +1,6 @@
 import { ListPricesCommand } from '@aws-sdk/client-route-53-domains'
 import { getRoute53Client } from './route53'
+import { getRoute53SupportedTldsSnapshot } from './route53SupportedTlds'
 import { getFeaturedTlds, normalizeTld, sortTldsByPriority, type SupportedTldCatalog } from './tlds'
 import type { TLD } from './types'
 
@@ -24,7 +25,7 @@ function buildCatalog(supportedTlds: TLD[], fetchedAt: string): SupportedTldCata
 }
 
 function getFallbackCatalog(): SupportedTldCatalog {
-  return buildCatalog(getFeaturedTlds(), new Date().toISOString())
+  return buildCatalog(getRoute53SupportedTldsSnapshot(), new Date().toISOString())
 }
 
 export async function listSupportedTlds(): Promise<TLD[]> {

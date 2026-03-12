@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { openBillingPortal } from '@/lib/billing-client'
 import { SearchForm } from '@/components/SearchForm'
@@ -15,7 +15,8 @@ import { useBillingStatus } from '@/hooks/useBillingStatus'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
 import { useSupportedTlds } from '@/hooks/useSupportedTlds'
 import { useTheme } from '@/contexts/ThemeContext'
-import type { TLD } from '@/lib/types'
+import { FEATURED_TLDS, type TLD } from '@/lib/types'
+import { normalizeTldList } from '@/lib/tlds'
 
 interface SearchHistoryEntry {
   id: string
@@ -23,12 +24,15 @@ interface SearchHistoryEntry {
   selected_tlds: TLD[]
 }
 
+const FEATURED_TLD_LIST: TLD[] = [...FEATURED_TLDS]
+
 export function AppPage() {
   const { theme, themeName } = useTheme()
   const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
   const { billing, isLoading: isBillingLoading, error: billingError, refresh: refreshBilling } = useBillingStatus()
   const { supportedTlds, isLoading: isLoadingSupportedTlds, error: supportedTldsError } = useSupportedTlds()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
+  const [customTldPills, setCustomTldPills] = useState<TLD[]>([])
   const [searchDescription, setSearchDescription] = useState('')
   const [isTldSelectionLocked, setIsTldSelectionLocked] = useState(false)
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
@@ -53,7 +57,18 @@ export function AppPage() {
       .catch(() => {/* ignore — user may not be logged in */})
   }, [])
 
+  const rememberCustomTld = useCallback((nextTld: TLD | undefined) => {
+    if (!nextTld || FEATURED_TLD_LIST.includes(nextTld)) return
+    setCustomTldPills((prev) => normalizeTldList([...prev, nextTld]))
+  }, [])
+
+  const forgetCustomTld = useCallback((tldToRemove: TLD) => {
+    setCustomTldPills((prev) => prev.filter((tld) => tld !== tldToRemove))
+    setSelectedTlds((prev) => prev.filter((tld) => tld !== tldToRemove))
+  }, [])
+
   const handleSearch = (description: string, tlds: TLD[]) => {
+    rememberCustomTld(tlds[0])
     setSelectedTlds(tlds)
     setSearchDescription(description)
     setIsTldSelectionLocked(true)
@@ -78,6 +93,8 @@ export function AppPage() {
   }
 
   const handleAddTldForBase = (baseName: string, tld: TLD) => {
+    rememberCustomTld(tld)
+    setSelectedTlds((prev) => normalizeTldList([...prev, tld]))
     checkNewTld(tld, [baseName])
   }
 
@@ -294,6 +311,9 @@ export function AppPage() {
               onClearResults={() => setIsClearConfirmOpen(true)}
               initialDescription={initialDescription}
               initialTlds={initialTlds}
+              extraTldPills={customTldPills}
+              onPinTld={rememberCustomTld}
+              onRemovePinnedTld={forgetCustomTld}
               supportedTlds={supportedTlds}
               isLoadingSupportedTlds={isLoadingSupportedTlds}
               supportedTldsError={supportedTldsError}

@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { DomainRow } from '@/components/DomainRow'
-import { TldSearchInput } from '@/components/TldSearchInput'
+import { TldLookupDialog } from '@/components/TldLookupDialog'
 import { useTheme } from '@/contexts/ThemeContext'
 import { createTldComparator } from '@/lib/tlds'
 import { FEATURED_TLDS, type DomainResult, type TLD } from '@/lib/types'
@@ -56,8 +57,12 @@ export function BaseNameGroupList({
 }: BaseNameGroupListProps) {
   const { theme } = useTheme()
   const compareTlds = createTldComparator(activeTlds)
+  const [lookupBaseName, setLookupBaseName] = useState<string | null>(null)
+  const [lookupExcludedTlds, setLookupExcludedTlds] = useState<TLD[]>([])
+  const [lookupResetKey, setLookupResetKey] = useState(0)
 
   return (
+    <>
     <div className="space-y-2 p-3 sm:p-4">
       {status === 'searching' && totalCount === 0 && (
         <div className="space-y-2">
@@ -166,33 +171,38 @@ export function BaseNameGroupList({
                       </div>
                       {onAddTldForBase && (
                         <div className="mt-3 space-y-2">
-                          {remainingFeaturedTlds.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-1.5">
-                              <span className="text-xs text-gray-500">Add featured TLD:</span>
-                              {remainingFeaturedTlds.map((tld) => (
-                                <button
-                                  key={`${baseName}-${tld}`}
-                                  type="button"
-                                  onClick={() => onAddTldForBase(baseName, tld)}
-                                  className={`rounded-full px-2 py-0.5 text-xs font-medium transition-all ${
-                                    theme.tldSelector.unselected
-                                  }`}
-                                >
-                                  {tld}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                          <TldSearchInput
-                            supportedTlds={supportedTlds}
-                            excludedTlds={searchableTldExclusions}
-                            onSelect={(tld) => onAddTldForBase(baseName, tld)}
-                            placeholder="Find another Route 53 TLD"
-                            label="Search other TLDs"
-                            isLoading={isLoadingSupportedTlds}
-                            error={supportedTldsError}
-                            size="sm"
-                          />
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {remainingFeaturedTlds.length > 0 && (
+                              <>
+                                <span className="text-xs text-gray-500">Add featured TLD:</span>
+                                {remainingFeaturedTlds.map((tld) => (
+                                  <button
+                                    key={`${baseName}-${tld}`}
+                                    type="button"
+                                    onClick={() => onAddTldForBase(baseName, tld)}
+                                    className={`rounded-full px-2 py-0.5 text-xs font-medium transition-all ${
+                                      theme.tldSelector.unselected
+                                    }`}
+                                  >
+                                    {tld}
+                                  </button>
+                                ))}
+                              </>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setLookupBaseName(baseName)
+                                setLookupExcludedTlds(searchableTldExclusions)
+                                setLookupResetKey((prev) => prev + 1)
+                              }}
+                              className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-all ${
+                                theme.tldSelector.unselected
+                              }`}
+                            >
+                              + More
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -224,5 +234,21 @@ export function BaseNameGroupList({
         </div>
       )}
     </div>
+      <TldLookupDialog
+        isOpen={lookupBaseName !== null}
+        supportedTlds={supportedTlds}
+        excludedTlds={lookupExcludedTlds}
+        isLoading={isLoadingSupportedTlds}
+        error={supportedTldsError}
+        resetKey={lookupResetKey}
+        title={lookupBaseName ? `Add another TLD for ${lookupBaseName}` : 'Add Another TLD'}
+        placeholder="What TLD to add"
+        onSelect={(tld) => {
+          if (!lookupBaseName) return
+          onAddTldForBase?.(lookupBaseName, tld)
+        }}
+        onClose={() => setLookupBaseName(null)}
+      />
+    </>
   )
 }

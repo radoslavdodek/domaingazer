@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type RefObject } from 'react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { searchTlds } from '@/lib/tlds'
 import type { TLD } from '@/lib/types'
@@ -10,6 +10,7 @@ interface TldSearchInputProps {
   excludedTlds?: TLD[]
   onSelect: (tld: TLD) => void
   placeholder: string
+  inputRef?: RefObject<HTMLInputElement>
   label?: string
   helperText?: string
   disabled?: boolean
@@ -17,6 +18,7 @@ interface TldSearchInputProps {
   error?: string | null
   emptyMessage?: string
   size?: 'md' | 'sm'
+  resetKey?: number
 }
 
 export function TldSearchInput({
@@ -24,6 +26,7 @@ export function TldSearchInput({
   excludedTlds = [],
   onSelect,
   placeholder,
+  inputRef,
   label,
   helperText,
   disabled = false,
@@ -31,6 +34,7 @@ export function TldSearchInput({
   error = null,
   emptyMessage = 'No matching Route 53 TLDs found.',
   size = 'md',
+  resetKey = 0,
 }: TldSearchInputProps) {
   const { theme, themeName } = useTheme()
   const [query, setQuery] = useState('')
@@ -38,6 +42,10 @@ export function TldSearchInput({
   const matches = useMemo(
     () => searchTlds(supportedTlds, query, excludedTlds),
     [excludedTlds, query, supportedTlds],
+  )
+  const excludedMatches = useMemo(
+    () => searchTlds(excludedTlds, query),
+    [excludedTlds, query],
   )
 
   const inputClassName = size === 'sm'
@@ -51,6 +59,9 @@ export function TldSearchInput({
   const suggestionButtonClass = size === 'sm'
     ? `rounded-full px-2 py-1 text-xs font-medium transition-all ${theme.tldSelector.unselected}`
     : `rounded-full px-3 py-1.5 text-sm font-medium transition-all ${theme.tldSelector.unselected}`
+  const excludedButtonClass = size === 'sm'
+    ? 'rounded-full border border-dashed px-2 py-1 text-xs font-medium opacity-70'
+    : 'rounded-full border border-dashed px-3 py-1.5 text-sm font-medium opacity-70'
 
   const infoTextClass = themeName === 'midnight' ? 'text-xs text-zinc-500' : 'text-xs text-gray-500'
   const errorTextClass = themeName === 'midnight' ? 'text-xs text-amber-300' : 'text-xs text-amber-700'
@@ -60,11 +71,16 @@ export function TldSearchInput({
     setQuery('')
   }
 
+  useEffect(() => {
+    setQuery('')
+  }, [resetKey])
+
   return (
     <div className="space-y-2">
       {label && <label className={theme.searchForm.label}>{label}</label>}
       {helperText && <p className={infoTextClass}>{helperText}</p>}
       <input
+        ref={inputRef}
         type="text"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
@@ -82,22 +98,42 @@ export function TldSearchInput({
         <div className="space-y-2">
           {isLoading ? (
             <p className={infoTextClass}>Loading Route 53 TLDs…</p>
-          ) : matches.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {matches.map((tld) => (
-                <button
-                  key={tld}
-                  type="button"
-                  onClick={() => handleSelect(tld)}
-                  disabled={disabled}
-                  className={suggestionButtonClass}
-                >
-                  {tld}
-                </button>
-              ))}
-            </div>
           ) : (
-            <p className={error ? errorTextClass : infoTextClass}>{error ?? emptyMessage}</p>
+            <>
+              {matches.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {matches.map((tld) => (
+                    <button
+                      key={tld}
+                      type="button"
+                      onClick={() => handleSelect(tld)}
+                      disabled={disabled}
+                      className={suggestionButtonClass}
+                    >
+                      {tld}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {excludedMatches.length > 0 && (
+                <div className="space-y-2">
+                  <p className={infoTextClass}>Already shown above:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {excludedMatches.map((tld) => (
+                      <span
+                        key={`excluded-${tld}`}
+                        className={`${excludedButtonClass} ${theme.tldSelector.unselected}`}
+                      >
+                        {tld}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {matches.length === 0 && excludedMatches.length === 0 && (
+                <p className={error ? errorTextClass : infoTextClass}>{error ?? emptyMessage}</p>
+              )}
+            </>
           )}
         </div>
       )}
