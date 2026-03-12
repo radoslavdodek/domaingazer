@@ -1,6 +1,8 @@
 import { DomainRow } from '@/components/DomainRow'
-import { ALL_TLDS, type DomainResult, type TLD } from '@/lib/types'
+import { TldSearchInput } from '@/components/TldSearchInput'
 import { useTheme } from '@/contexts/ThemeContext'
+import { createTldComparator } from '@/lib/tlds'
+import { FEATURED_TLDS, type DomainResult, type TLD } from '@/lib/types'
 import type { SearchStatus } from './types'
 
 interface BaseNameExplanation {
@@ -17,6 +19,10 @@ interface BaseNameGroupListProps {
   showAvailableOnly: boolean
   showWorkingRow: boolean
   resultMap: Map<string, DomainResult>
+  activeTlds: TLD[]
+  supportedTlds: TLD[]
+  supportedTldsError?: string | null
+  isLoadingSupportedTlds?: boolean
   onAddTldForBase?: (baseName: string, tld: TLD) => void
   onTryVariation?: (baseName: string) => void
   onExplain?: (baseName: string) => void
@@ -35,6 +41,10 @@ export function BaseNameGroupList({
   showAvailableOnly,
   showWorkingRow,
   resultMap,
+  activeTlds,
+  supportedTlds,
+  supportedTldsError,
+  isLoadingSupportedTlds,
   onAddTldForBase,
   onTryVariation,
   onExplain,
@@ -45,6 +55,7 @@ export function BaseNameGroupList({
   onBaseNameRowRef,
 }: BaseNameGroupListProps) {
   const { theme } = useTheme()
+  const compareTlds = createTldComparator(activeTlds)
 
   return (
     <div className="space-y-2 p-3 sm:p-4">
@@ -79,11 +90,12 @@ export function BaseNameGroupList({
                   const explanation = explanationByBaseName[baseName]
                   const hasExplanationState =
                     explanation && (explanation.isLoading || Boolean(explanation.error) || Boolean(explanation.text))
-                  const rowsForBase = ALL_TLDS
-                    .map((tld) => resultMap.get(`${baseName}${tld}`))
-                    .filter((row): row is DomainResult => Boolean(row))
+                  const rowsForBase = Array.from(resultMap.values())
+                    .filter((row) => row.baseName === baseName)
+                    .sort((a, b) => compareTlds(a.tld, b.tld))
                   const presentTlds = new Set(rowsForBase.map((row) => row.tld))
-                  const remainingTlds = ALL_TLDS.filter((tld) => !presentTlds.has(tld))
+                  const remainingFeaturedTlds = FEATURED_TLDS.filter((tld) => !presentTlds.has(tld))
+                  const searchableTldExclusions = [...Array.from(presentTlds), ...FEATURED_TLDS]
 
                   return (
                     <div
@@ -152,21 +164,35 @@ export function BaseNameGroupList({
                           />
                         ))}
                       </div>
-                      {onAddTldForBase && remainingTlds.length > 0 && (
-                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                          <span className="text-xs text-gray-500">Add TLD:</span>
-                          {remainingTlds.map((tld) => (
-                            <button
-                              key={`${baseName}-${tld}`}
-                              type="button"
-                              onClick={() => onAddTldForBase(baseName, tld)}
-                              className={`rounded-full px-2 py-0.5 text-xs font-medium transition-all ${
-                                theme.tldSelector.unselected
-                              }`}
-                            >
-                              {tld}
-                            </button>
-                          ))}
+                      {onAddTldForBase && (
+                        <div className="mt-3 space-y-2">
+                          {remainingFeaturedTlds.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="text-xs text-gray-500">Add featured TLD:</span>
+                              {remainingFeaturedTlds.map((tld) => (
+                                <button
+                                  key={`${baseName}-${tld}`}
+                                  type="button"
+                                  onClick={() => onAddTldForBase(baseName, tld)}
+                                  className={`rounded-full px-2 py-0.5 text-xs font-medium transition-all ${
+                                    theme.tldSelector.unselected
+                                  }`}
+                                >
+                                  {tld}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                          <TldSearchInput
+                            supportedTlds={supportedTlds}
+                            excludedTlds={searchableTldExclusions}
+                            onSelect={(tld) => onAddTldForBase(baseName, tld)}
+                            placeholder="Find another Route 53 TLD"
+                            label="Search other TLDs"
+                            isLoading={isLoadingSupportedTlds}
+                            error={supportedTldsError}
+                            size="sm"
+                          />
                         </div>
                       )}
                     </div>

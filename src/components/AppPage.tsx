@@ -13,6 +13,7 @@ import { FeedbackDialog } from '@/components/FeedbackDialog'
 import type { SearchContext } from '@/components/FeedbackDialog'
 import { useBillingStatus } from '@/hooks/useBillingStatus'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
+import { useSupportedTlds } from '@/hooks/useSupportedTlds'
 import { useTheme } from '@/contexts/ThemeContext'
 import type { TLD } from '@/lib/types'
 
@@ -26,6 +27,7 @@ export function AppPage() {
   const { theme, themeName } = useTheme()
   const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
   const { billing, isLoading: isBillingLoading, error: billingError, refresh: refreshBilling } = useBillingStatus()
+  const { supportedTlds, isLoading: isLoadingSupportedTlds, error: supportedTldsError } = useSupportedTlds()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
   const [searchDescription, setSearchDescription] = useState('')
   const [isTldSelectionLocked, setIsTldSelectionLocked] = useState(false)
@@ -292,6 +294,9 @@ export function AppPage() {
               onClearResults={() => setIsClearConfirmOpen(true)}
               initialDescription={initialDescription}
               initialTlds={initialTlds}
+              supportedTlds={supportedTlds}
+              isLoadingSupportedTlds={isLoadingSupportedTlds}
+              supportedTldsError={supportedTldsError}
               searchHistory={searchHistory}
               onDeleteHistory={handleDeleteHistory}
               onClearAllHistory={handleClearAllHistory}
@@ -308,6 +313,9 @@ export function AppPage() {
             searchDescription={searchDescription}
             isCheckingCustom={isCheckingCustom}
             isWaitingForNewRows={isWaitingForNewRows}
+            supportedTlds={supportedTlds}
+            supportedTldsError={supportedTldsError}
+            isLoadingSupportedTlds={isLoadingSupportedTlds}
             onGenerateMore={hasReachedMaxRounds ? undefined : handleGenerateMore}
             onCheckCustom={checkCustom}
             onAddTldForBase={handleAddTldForBase}

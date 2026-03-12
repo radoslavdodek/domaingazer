@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DOMAIN_STATUS_LABELS } from '@/lib/domainStatus'
-import { ALL_TLDS, type DomainResult, type TLD } from '@/lib/types'
+import { createTldComparator } from '@/lib/tlds'
+import type { DomainResult, TLD } from '@/lib/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import { BaseNameGroupList } from './results/BaseNameGroupList'
 import { RefinementCard } from './results/RefinementCard'
@@ -15,6 +16,9 @@ interface ResultsPanelProps {
   status: SearchStatus
   errorMessage: string | null
   tlds: TLD[]
+  supportedTlds: TLD[]
+  supportedTldsError?: string | null
+  isLoadingSupportedTlds?: boolean
   searchDescription?: string
   isCheckingCustom?: boolean
   isWaitingForNewRows?: boolean
@@ -43,6 +47,9 @@ export function ResultsPanel({
   status,
   errorMessage,
   tlds,
+  supportedTlds,
+  supportedTldsError,
+  isLoadingSupportedTlds,
   searchDescription,
   isCheckingCustom,
   isWaitingForNewRows,
@@ -206,11 +213,11 @@ export function ResultsPanel({
     if (!canExport) return
 
     const baseNameOrder = new Map(visibleBaseNames.map((baseName, index) => [baseName, index]))
-    const tldOrder = new Map(ALL_TLDS.map((tld, index) => [tld, index]))
+    const compareTlds = createTldComparator(tlds)
     const exportRows = [...visibleRows].sort((a, b) => {
       const baseDiff = (baseNameOrder.get(a.baseName) ?? 0) - (baseNameOrder.get(b.baseName) ?? 0)
       if (baseDiff !== 0) return baseDiff
-      return (tldOrder.get(a.tld) ?? 0) - (tldOrder.get(b.tld) ?? 0)
+      return compareTlds(a.tld, b.tld)
     })
 
     const rows = exportRows.map((row) => (
@@ -311,6 +318,10 @@ export function ResultsPanel({
         showAvailableOnly={showAvailableOnly}
         showWorkingRow={showWorkingRow}
         resultMap={resultMap}
+        activeTlds={tlds}
+        supportedTlds={supportedTlds}
+        supportedTldsError={supportedTldsError}
+        isLoadingSupportedTlds={isLoadingSupportedTlds}
         onAddTldForBase={onAddTldForBase}
         onTryVariation={onGenerateMore ? runVariationSearch : undefined}
         onExplain={runExplain}

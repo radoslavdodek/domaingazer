@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useRef, useState} from 'react'
+import { normalizeTldList } from '@/lib/tlds'
 import type {TLD} from '@/lib/types'
 import {useTheme} from '@/contexts/ThemeContext'
 import {getOptionalItem, setOptionalItem} from '@/lib/privacy/optional-storage'
@@ -47,6 +48,9 @@ interface SearchFormProps {
     onClearResults?: () => void
     initialDescription?: string
     initialTlds?: TLD[]
+    supportedTlds: TLD[]
+    isLoadingSupportedTlds?: boolean
+    supportedTldsError?: string | null
     searchHistory?: SearchHistoryEntry[]
     onDeleteHistory?: (id: string) => void
     onClearAllHistory?: () => void
@@ -61,6 +65,9 @@ export function SearchForm({
                                onClearResults,
                                initialDescription,
                                initialTlds,
+                               supportedTlds,
+                               isLoadingSupportedTlds = false,
+                               supportedTldsError = null,
                                searchHistory,
                                onDeleteHistory,
                                onClearAllHistory,
@@ -79,7 +86,7 @@ export function SearchForm({
         const savedTlds = getOptionalItem(LS_TLDS)
         if (savedTlds) {
             try {
-                const parsed = JSON.parse(savedTlds) as TLD[]
+                const parsed = normalizeTldList(JSON.parse(savedTlds) as TLD[])
                 setTlds(parsed.length > 0 ? [parsed[0]] : DEFAULT_TLDS)
             } catch { /* ignore */
             }
@@ -92,7 +99,8 @@ export function SearchForm({
         if (initialDescription === undefined || initialTlds === undefined) return
         dbLoadApplied.current = true
         setDescription(initialDescription)
-        setTlds(initialTlds.length > 0 ? initialTlds : DEFAULT_TLDS)
+        const normalizedInitialTlds = normalizeTldList(initialTlds)
+        setTlds(normalizedInitialTlds.length > 0 ? [normalizedInitialTlds[0]] : DEFAULT_TLDS)
     }, [initialDescription, initialTlds])
 
     useEffect(() => {
@@ -120,7 +128,8 @@ export function SearchForm({
 
     const handleHistoryClick = (entry: SearchHistoryEntry) => {
         setDescription(entry.description)
-        setTlds(entry.selected_tlds.length > 0 ? entry.selected_tlds : DEFAULT_TLDS)
+        const normalizedHistoryTlds = normalizeTldList(entry.selected_tlds)
+        setTlds(normalizedHistoryTlds.length > 0 ? [normalizedHistoryTlds[0]] : DEFAULT_TLDS)
     }
 
     const [isHistoryOpen, setIsHistoryOpen] = useState(false)
@@ -214,6 +223,9 @@ export function SearchForm({
                             onChange={(newTlds) => {
                                 setTlds(newTlds)
                             }}
+                            supportedTlds={supportedTlds}
+                            isLoadingSupportedTlds={isLoadingSupportedTlds}
+                            supportedTldsError={supportedTldsError}
                         />
                     </div>
                 )}

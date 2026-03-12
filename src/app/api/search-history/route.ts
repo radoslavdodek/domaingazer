@@ -3,7 +3,12 @@ export const runtime = 'nodejs'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getEffectiveUser } from '@/lib/impersonation'
+import { parseTldList } from '@/lib/tlds'
 import type { TLD } from '@/lib/types'
+
+function sanitizeSelectedTlds(value: unknown): TLD[] {
+  return parseTldList(value).tlds
+}
 
 export async function GET() {
   const supabase = createClient()
@@ -19,7 +24,12 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  return NextResponse.json({ history: data })
+  const history = (data ?? []).map((entry) => ({
+    ...entry,
+    selected_tlds: sanitizeSelectedTlds(entry.selected_tlds),
+  }))
+
+  return NextResponse.json({ history })
 }
 
 export async function POST(req: Request) {
@@ -27,7 +37,12 @@ export async function POST(req: Request) {
   const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { description, selected_tlds } = await req.json() as { description: string; selected_tlds: TLD[] }
+  const { description, selected_tlds } = await req.json() as { description: string; selected_tlds: unknown }
+  const normalizedSelectedTlds = sanitizeSelectedTlds(selected_tlds)
+
+  if (normalizedSelectedTlds.length === 0) {
+    return NextResponse.json({ error: 'At least one TLD is required' }, { status: 400 })
+  }
 
   // Dedup: skip if most recent entry is identical
   const { data: recent } = await supabaseClient
@@ -39,9 +54,10 @@ export async function POST(req: Request) {
 
   if (recent && recent.length > 0) {
     const last = recent[0]
+    const lastSelectedTlds = sanitizeSelectedTlds(last.selected_tlds)
     const sameTlds =
-      last.selected_tlds.length === selected_tlds.length &&
-      last.selected_tlds.every((t: string) => selected_tlds.includes(t as TLD))
+      lastSelectedTlds.length === normalizedSelectedTlds.length &&
+      lastSelectedTlds.every((t) => normalizedSelectedTlds.includes(t))
     if (last.description === description && sameTlds) {
       return NextResponse.json({ ok: true })
     }
@@ -50,7 +66,7 @@ export async function POST(req: Request) {
   await supabaseClient.from('search_history').insert({
     user_id: user.id,
     description,
-    selected_tlds,
+    selected_tlds: normalizedSelectedTlds,
   })
 
   return NextResponse.json({ ok: true })

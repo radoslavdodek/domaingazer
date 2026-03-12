@@ -1,6 +1,8 @@
 export const runtime = 'nodejs'
 
 import {checkDomain} from '@/lib/route53'
+import { getSupportedTldCatalog } from '@/lib/tldCatalog'
+import { getUnsupportedTlds, parseTldList } from '@/lib/tlds'
 import { createClient } from '@/lib/supabase/server'
 import { getEffectiveUser } from '@/lib/impersonation'
 import type {DomainResult, SseEvent, TLD} from '@/lib/types'
@@ -45,13 +47,31 @@ export async function POST(request: Request) {
         })
     }
 
-    const body = (await request.json()) as { baseName?: string; tlds?: TLD[] }
+    const body = (await request.json()) as { baseName?: string; tlds?: unknown }
     const baseName = (body.baseName ?? '').trim().toLowerCase().replace(/\s+/g, '').replace(/\.$/, '')
-    const tlds: TLD[] = Array.isArray(body.tlds) ? body.tlds : []
+    const { tlds, invalid } = parseTldList(body.tlds)
+
+    if (invalid.length > 0) {
+        return new Response(
+            JSON.stringify({error: `Invalid TLD selection: ${invalid.join(', ')}`}),
+            {status: 400, headers: {'Content-Type': 'application/json'}}
+        )
+    }
 
     if (!baseName || tlds.length === 0) {
         return new Response(
             JSON.stringify({error: 'baseName and tlds are required'}),
+            {status: 400, headers: {'Content-Type': 'application/json'}}
+        )
+    }
+
+    const { supportedTlds } = await getSupportedTldCatalog()
+    const supportedTldSet = new Set(supportedTlds)
+    const unsupportedTlds = getUnsupportedTlds(tlds, supportedTldSet)
+
+    if (unsupportedTlds.length > 0) {
+        return new Response(
+            JSON.stringify({error: `Unsupported TLD selection: ${unsupportedTlds.join(', ')}`}),
             {status: 400, headers: {'Content-Type': 'application/json'}}
         )
     }
