@@ -43,7 +43,7 @@ export const HOW_IT_WORKS_FAQS = [
   {
     question: 'Which domain extensions can I search?',
     answer:
-      'Domain Gazer supports searches across .com, .io, .ai, .co, .net, .shop, .store, and .de, so you can compare multiple extensions in one search.',
+      'Domain Gazer supports searches across .com, .io, .ai, .co, .net, .shop, .store, .de, and 300+ more, so you can compare multiple extensions in one search.',
   },
 ] as const
 
@@ -68,7 +68,7 @@ export function getSoftwareApplicationJsonLd(options: SoftwareApplicationOptions
       options.featureList ?? [
         'AI-powered domain name generation',
         'Real-time domain availability checks',
-        'Multi-TLD search across .com, .io, .ai, .co, .net, .shop, .store, and .de',
+        'Multi-TLD search across .com, .io, .ai, .co, .net, .shop, .store, .de, and 300+ more',
         'Search history and follow-up refinement',
       ],
   }
@@ -107,7 +107,7 @@ export function getHowToJsonLd() {
         '@type': 'HowToStep',
         name: 'Choose domain extensions',
         text:
-          'Select the TLDs you want to search, including .com, .io, .ai, .co, .net, .shop, .store, or .de.',
+          'Select the TLDs you want to search, including .com, .io, .ai, .co, .net, .shop, .store, .de, and 300+ more.',
       },
       {
         '@type': 'HowToStep',

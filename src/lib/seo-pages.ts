@@ -239,7 +239,7 @@ const SEO_PAGES: SeoPage[] = [
       {
         question: 'Which TLDs can I compare?',
         answer:
-          'You can compare multiple extensions in one search, including .com, .io, .ai, .co, .net, .shop, .store, and .de.',
+          'You can compare multiple extensions in one search, including .com, .io, .ai, .co, .net, .shop, .store, .de, and 300+ more.',
       },
       {
         question: 'Is this better than checking domains one by one?',
