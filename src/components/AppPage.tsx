@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { openBillingPortal } from '@/lib/billing-client'
+import { getOptionalItem, removeOptionalItem, setOptionalItem } from '@/lib/privacy/optional-storage'
 import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
@@ -25,10 +26,11 @@ interface SearchHistoryEntry {
 }
 
 const FEATURED_TLD_LIST: TLD[] = [...FEATURED_TLDS]
+const LS_CUSTOM_TLD_PILLS = 'domaingazer_custom_tld_pills'
 
 export function AppPage() {
   const { theme, themeName } = useTheme()
-  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
+  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
   const { billing, isLoading: isBillingLoading, error: billingError, refresh: refreshBilling } = useBillingStatus()
   const { supportedTlds, isLoading: isLoadingSupportedTlds, error: supportedTldsError } = useSupportedTlds()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
@@ -43,6 +45,31 @@ export function AppPage() {
   const [billingAction, setBillingAction] = useState<'portal' | null>(null)
   const [billingActionError, setBillingActionError] = useState<string | null>(null)
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
+
+  useEffect(() => {
+    const savedCustomTldPills = getOptionalItem(LS_CUSTOM_TLD_PILLS)
+    if (!savedCustomTldPills) return
+
+    try {
+      const parsed = normalizeTldList(JSON.parse(savedCustomTldPills) as TLD[])
+      setCustomTldPills(parsed.filter((tld) => !FEATURED_TLD_LIST.includes(tld)))
+    } catch {
+      removeOptionalItem(LS_CUSTOM_TLD_PILLS)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (customTldPills.length === 0) {
+      removeOptionalItem(LS_CUSTOM_TLD_PILLS)
+      return
+    }
+
+    setOptionalItem(LS_CUSTOM_TLD_PILLS, JSON.stringify(customTldPills))
+  }, [customTldPills])
+
+  useEffect(() => {
+    setActiveTlds(selectedTlds)
+  }, [selectedTlds, setActiveTlds])
 
   useEffect(() => {
     fetch('/api/search-history')
@@ -330,6 +357,8 @@ export function AppPage() {
             status={status}
             errorMessage={errorMessage}
             tlds={selectedTlds}
+            customTldPills={customTldPills}
+            onRemovePinnedTld={forgetCustomTld}
             searchDescription={searchDescription}
             isCheckingCustom={isCheckingCustom}
             isWaitingForNewRows={isWaitingForNewRows}

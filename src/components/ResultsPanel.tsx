@@ -16,6 +16,8 @@ interface ResultsPanelProps {
   status: SearchStatus
   errorMessage: string | null
   tlds: TLD[]
+  customTldPills?: TLD[]
+  onRemovePinnedTld?: (tld: TLD) => void
   supportedTlds: TLD[]
   supportedTldsError?: string | null
   isLoadingSupportedTlds?: boolean
@@ -47,6 +49,8 @@ export function ResultsPanel({
   status,
   errorMessage,
   tlds,
+  customTldPills = [],
+  onRemovePinnedTld,
   supportedTlds,
   supportedTldsError,
   isLoadingSupportedTlds,
@@ -319,10 +323,12 @@ export function ResultsPanel({
         showWorkingRow={showWorkingRow}
         resultMap={resultMap}
         activeTlds={tlds}
+        customTldPills={customTldPills}
         supportedTlds={supportedTlds}
         supportedTldsError={supportedTldsError}
         isLoadingSupportedTlds={isLoadingSupportedTlds}
         onAddTldForBase={onAddTldForBase}
+        onRemovePinnedTld={onRemovePinnedTld}
         onTryVariation={onGenerateMore ? runVariationSearch : undefined}
         onExplain={runExplain}
         explanationByBaseName={explanationsByBaseName}

@@ -1,9 +1,8 @@
-import { useState } from 'react'
 import { DomainRow } from '@/components/DomainRow'
-import { TldLookupDialog } from '@/components/TldLookupDialog'
+import { TldSelector } from '@/components/TldSelector'
 import { useTheme } from '@/contexts/ThemeContext'
 import { createTldComparator } from '@/lib/tlds'
-import { FEATURED_TLDS, type DomainResult, type TLD } from '@/lib/types'
+import type { DomainResult, TLD } from '@/lib/types'
 import type { SearchStatus } from './types'
 
 interface BaseNameExplanation {
@@ -21,10 +20,12 @@ interface BaseNameGroupListProps {
   showWorkingRow: boolean
   resultMap: Map<string, DomainResult>
   activeTlds: TLD[]
+  customTldPills?: TLD[]
   supportedTlds: TLD[]
   supportedTldsError?: string | null
   isLoadingSupportedTlds?: boolean
   onAddTldForBase?: (baseName: string, tld: TLD) => void
+  onRemovePinnedTld?: (tld: TLD) => void
   onTryVariation?: (baseName: string) => void
   onExplain?: (baseName: string) => void
   explanationByBaseName?: Record<string, BaseNameExplanation>
@@ -43,10 +44,12 @@ export function BaseNameGroupList({
   showWorkingRow,
   resultMap,
   activeTlds,
+  customTldPills = [],
   supportedTlds,
   supportedTldsError,
   isLoadingSupportedTlds,
   onAddTldForBase,
+  onRemovePinnedTld,
   onTryVariation,
   onExplain,
   explanationByBaseName = {},
@@ -57,12 +60,8 @@ export function BaseNameGroupList({
 }: BaseNameGroupListProps) {
   const { theme } = useTheme()
   const compareTlds = createTldComparator(activeTlds)
-  const [lookupBaseName, setLookupBaseName] = useState<string | null>(null)
-  const [lookupExcludedTlds, setLookupExcludedTlds] = useState<TLD[]>([])
-  const [lookupResetKey, setLookupResetKey] = useState(0)
 
   return (
-    <>
     <div className="space-y-2 p-3 sm:p-4">
       {status === 'searching' && totalCount === 0 && (
         <div className="space-y-2">
@@ -99,8 +98,6 @@ export function BaseNameGroupList({
                     .filter((row) => row.baseName === baseName)
                     .sort((a, b) => compareTlds(a.tld, b.tld))
                   const presentTlds = new Set(rowsForBase.map((row) => row.tld))
-                  const remainingFeaturedTlds = FEATURED_TLDS.filter((tld) => !presentTlds.has(tld))
-                  const searchableTldExclusions = [...Array.from(presentTlds), ...FEATURED_TLDS]
 
                   return (
                     <div
@@ -170,39 +167,23 @@ export function BaseNameGroupList({
                         ))}
                       </div>
                       {onAddTldForBase && (
-                        <div className="mt-3 space-y-2">
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            {remainingFeaturedTlds.length > 0 && (
-                              <>
-                                <span className="text-xs text-gray-500">Add featured TLD:</span>
-                                {remainingFeaturedTlds.map((tld) => (
-                                  <button
-                                    key={`${baseName}-${tld}`}
-                                    type="button"
-                                    onClick={() => onAddTldForBase(baseName, tld)}
-                                    className={`rounded-full px-2 py-0.5 text-xs font-medium transition-all ${
-                                      theme.tldSelector.unselected
-                                    }`}
-                                  >
-                                    {tld}
-                                  </button>
-                                ))}
-                              </>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setLookupBaseName(baseName)
-                                setLookupExcludedTlds(searchableTldExclusions)
-                                setLookupResetKey((prev) => prev + 1)
-                              }}
-                              className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-all ${
-                                theme.tldSelector.unselected
-                              }`}
-                            >
-                              + More
-                            </button>
-                          </div>
+                        <div className="mt-3">
+                          <TldSelector
+                            selected={rowsForBase.map((row) => row.tld)}
+                            onChange={(nextTlds) => {
+                              const nextTld = nextTlds.find((tld) => !presentTlds.has(tld))
+                              if (!nextTld) return
+                              onAddTldForBase(baseName, nextTld)
+                            }}
+                            extraTldPills={customTldPills}
+                            onRemoveExtraTld={onRemovePinnedTld}
+                            selectionMode="multiple"
+                            size="compact"
+                            showSelected={false}
+                            supportedTlds={supportedTlds}
+                            isLoadingSupportedTlds={isLoadingSupportedTlds}
+                            supportedTldsError={supportedTldsError}
+                          />
                         </div>
                       )}
                     </div>
@@ -234,21 +215,5 @@ export function BaseNameGroupList({
         </div>
       )}
     </div>
-      <TldLookupDialog
-        isOpen={lookupBaseName !== null}
-        supportedTlds={supportedTlds}
-        excludedTlds={lookupExcludedTlds}
-        isLoading={isLoadingSupportedTlds}
-        error={supportedTldsError}
-        resetKey={lookupResetKey}
-        title={lookupBaseName ? `Add another TLD for ${lookupBaseName}` : 'Add Another TLD'}
-        placeholder="What TLD to add"
-        onSelect={(tld) => {
-          if (!lookupBaseName) return
-          onAddTldForBase?.(lookupBaseName, tld)
-        }}
-        onClose={() => setLookupBaseName(null)}
-      />
-    </>
   )
 }
