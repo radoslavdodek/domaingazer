@@ -23,6 +23,7 @@ type GoogleIdentityWindow = Window & {
           callback: (response: GoogleCredentialResponse) => void | Promise<void>
           nonce?: string
           ux_mode?: 'popup' | 'redirect'
+          use_fedcm_for_button?: boolean
         }): void
         renderButton(
           parent: HTMLElement,
@@ -110,6 +111,7 @@ async function ensureGoogleInitialized() {
         client_id: getGoogleClientId(),
         nonce: hashedNonce,
         ux_mode: 'popup',
+        use_fedcm_for_button: true,
         callback: (response) => {
           void handleGoogleCredentialResponse(response)
         },
