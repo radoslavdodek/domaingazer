@@ -103,7 +103,7 @@ const SEO_PAGES: SeoPage[] = [
       {
         question: 'Can I check multiple TLDs at the same time?',
         answer:
-          'Yes. Domain Gazer compares live availability across multiple extensions, including .com, .io, .ai, .co, .net, .shop, .store, and .de.',
+          'Yes. Domain Gazer compares live availability across multiple extensions, including .com, .io, .ai, .co, .net, .shop, .store, .de, and 300+ more',
       },
       {
         question: 'Is Domain Gazer useful for startup naming?',

@@ -171,12 +171,13 @@ export function LandingPage({
             </div>
 
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href="/app"
+              <MarketingAuthLink
+                signedInHref="/app"
+                signedOutHref="/login?next=%2Fapp"
+                signedInLabel="Search for free"
+                signedOutLabel="Search for free"
                 className={`flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto ${focusRingClassName}`}
-              >
-                Search for free
-              </Link>
+              />
             </div>
             <p className="mt-4 text-sm text-zinc-300">No credit card required · Cancel anytime</p>
           </div>
@@ -471,12 +472,13 @@ export function LandingPage({
                 Join founders who&apos;ve found their perfect domain with Domain Gazer.
                 Sign in and start searching in seconds.
               </p>
-              <Link
-                href="/app"
+              <MarketingAuthLink
+                signedInHref="/app"
+                signedOutHref="/login?next=%2Fapp"
+                signedInLabel="Search for free"
+                signedOutLabel="Search for free"
                 className={`inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto ${focusRingClassName}`}
-              >
-                Search for free
-              </Link>
+              />
               <p className="mt-4 text-sm text-zinc-300">No credit card required · Cancel anytime</p>
             </div>
           </div>

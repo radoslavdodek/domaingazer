@@ -2,7 +2,14 @@
 
 import Link from 'next/link'
 import { useMemo } from 'react'
+import { MarketingAuthLink } from '@/components/MarketingAuthLink'
 import type { BillingCurrency, BillingPlanPricing, CurrencyPricing } from '@/lib/billing-types'
+
+const DASHBOARD_PATH = '/app'
+
+function getLoginHref(nextPath: string) {
+  return `/login?next=${encodeURIComponent(nextPath)}`
+}
 
 function getCurrencyFromCookie(): BillingCurrency {
   if (typeof document === 'undefined') return 'eur'
@@ -34,12 +41,13 @@ export function LandingPricingPlans({
           One-time free credits for trying domain generation and verification before you pay.
         </p>
         <div className="mt-auto pt-8">
-          <Link
-            href="/app"
+          <MarketingAuthLink
+            signedInHref={DASHBOARD_PATH}
+            signedOutHref={getLoginHref(DASHBOARD_PATH)}
+            signedInLabel="Open Dashboard"
+            signedOutLabel="Choose Starter"
             className={`inline-flex w-full items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800 ${focusRingClassName}`}
-          >
-            Choose Starter
-          </Link>
+          />
         </div>
       </div>
 

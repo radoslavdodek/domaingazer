@@ -13,15 +13,21 @@ function getSingleValue(value?: string | string[]) {
   return Array.isArray(value) ? value[0] : value
 }
 
+function normalizeNextPath(value?: string | string[]) {
+  const nextPath = getSingleValue(value)
+
+  return nextPath?.startsWith('/') && !nextPath.startsWith('//') ? nextPath : '/app'
+}
+
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const supabase = createClient()
+  const nextPath = normalizeNextPath(searchParams?.next)
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    redirect('/app')
+    redirect(nextPath)
   }
 
-  const nextPath = getSingleValue(searchParams?.next) ?? '/app'
   const authError = getSingleValue(searchParams?.auth_error) ?? null
 
   return <LoginPageClient nextPath={nextPath} initialAuthError={authError} />
