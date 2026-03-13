@@ -12,7 +12,7 @@ export function LegalPageLayout({ title, description, children }: LegalPageLayou
     <div className="min-h-screen bg-zinc-50 text-zinc-900">
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
         <nav className="mb-8 flex flex-wrap items-center gap-3 text-sm text-zinc-600">
-          <Link href="/landing" className="font-semibold text-zinc-900">
+          <Link href="/" className="font-semibold text-zinc-900">
             Domain Gazer
           </Link>
           <span aria-hidden="true">/</span>

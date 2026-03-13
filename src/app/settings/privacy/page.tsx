@@ -84,7 +84,7 @@ export default function PrivacySettingsPage() {
       clearOptionalStorage()
       const supabase = createClient()
       await supabase.auth.signOut().catch(() => {})
-      router.replace('/landing')
+      router.replace('/')
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : 'Failed to delete account')
     } finally {

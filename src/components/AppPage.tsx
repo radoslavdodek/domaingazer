@@ -159,7 +159,7 @@ export function AppPage() {
       <ImpersonationBanner />
       <main className="mx-auto w-full max-w-4xl">
         <nav className={`${theme.navbar.wrapper} gap-3`}>
-          <Link href="/landing" className={`${theme.navbar.brand} min-w-0`}>
+          <Link href="/" className={`${theme.navbar.brand} min-w-0`}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className={theme.navbar.icon}>
               <defs><linearGradient id="nav-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6366f1"/><stop offset="100%" stopColor="#8b5cf6"/></linearGradient></defs>
               <circle cx="16" cy="16" r="15" fill="url(#nav-g)"/>
