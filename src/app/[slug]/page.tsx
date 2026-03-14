@@ -16,12 +16,13 @@ export function generateStaticParams() {
   return SEO_PAGE_SLUGS.map((slug) => ({ slug }))
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string }
-}): Metadata {
-  const page = getSeoPageBySlug(params.slug)
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const page = getSeoPageBySlug(slug)
 
   if (!page) {
     return {}
@@ -54,12 +55,13 @@ export function generateMetadata({
   }
 }
 
-export default function SeoPage({
+export default async function SeoPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const page = getSeoPageBySlug(params.slug)
+  const { slug } = await params
+  const page = getSeoPageBySlug(slug)
 
   if (!page) {
     notFound()

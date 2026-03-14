@@ -2,10 +2,10 @@ import { BillingPageClient } from '@/components/BillingPageClient'
 import { getBillingPlanPricing } from '@/lib/billing-pricing'
 
 interface BillingPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     checkout?: string | string[]
     portal?: string | string[]
-  }
+  }>
 }
 
 function getSingleValue(value?: string | string[]) {
@@ -14,8 +14,9 @@ function getSingleValue(value?: string | string[]) {
 
 export default async function BillingPage({ searchParams }: BillingPageProps) {
   const pricing = await getBillingPlanPricing()
-  const checkout = getSingleValue(searchParams?.checkout)
-  const portal = getSingleValue(searchParams?.portal)
+  const resolvedSearchParams = await searchParams
+  const checkout = getSingleValue(resolvedSearchParams?.checkout)
+  const portal = getSingleValue(resolvedSearchParams?.portal)
   const autoAction = checkout === 'month' || checkout === 'year'
     ? checkout
     : portal === '1'

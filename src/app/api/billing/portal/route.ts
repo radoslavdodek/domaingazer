@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getEffectiveUser } from '@/lib/impersonation'
 
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user } = await getEffectiveUser(supabase)
 
   if (!user) {

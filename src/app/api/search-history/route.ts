@@ -11,7 +11,7 @@ function sanitizeSelectedTlds(value: unknown): TLD[] {
 }
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -33,7 +33,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

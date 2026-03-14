@@ -1,7 +1,6 @@
 import { ImageResponse } from 'next/og'
 import { getBlogPostBySlug, getAllBlogPosts } from '@/lib/blog'
 
-export const runtime = 'edge'
 export const alt = 'Domain Gazer Blog'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
@@ -12,8 +11,9 @@ export function generateStaticParams() {
   }))
 }
 
-export default function OGImage({ params }: { params: { slug: string } }) {
-  const post = getBlogPostBySlug(params.slug)
+export default async function OGImage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const post = getBlogPostBySlug(slug)
 
   const title = post?.title ?? 'Domain Gazer Blog'
   const category = post?.category ?? 'Blog'

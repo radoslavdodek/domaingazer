@@ -10,7 +10,7 @@ interface TldSearchInputProps {
   excludedTlds?: TLD[]
   onSelect: (tld: TLD) => void
   placeholder: string
-  inputRef?: RefObject<HTMLInputElement>
+  inputRef?: RefObject<HTMLInputElement | null>
   label?: string
   helperText?: string
   disabled?: boolean

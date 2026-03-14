@@ -12,7 +12,7 @@ function jsonError(message: string, status: number) {
 }
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user } = await getEffectiveUser(supabase)
 
   if (!user) {

@@ -12,7 +12,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
 
 export async function POST(req: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -126,7 +126,7 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (user.app_metadata?.is_admin !== true) {

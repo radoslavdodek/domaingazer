@@ -12,7 +12,7 @@ import { getEffectiveUser } from '@/lib/impersonation'
 import { trackUsage } from '@/lib/track-usage'
 
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user } = await getEffectiveUser(supabase)
   if (!user) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {

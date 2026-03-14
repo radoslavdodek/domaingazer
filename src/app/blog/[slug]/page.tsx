@@ -29,12 +29,13 @@ export function generateStaticParams() {
   }))
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string }
-}): Metadata {
-  const post = getBlogPostBySlug(params.slug)
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const post = getBlogPostBySlug(slug)
 
   if (!post) {
     return {}
@@ -73,12 +74,13 @@ export function generateMetadata({
   }
 }
 
-export default function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const post = getBlogPostBySlug(params.slug)
+  const { slug } = await params
+  const post = getBlogPostBySlug(slug)
 
   if (!post) {
     notFound()

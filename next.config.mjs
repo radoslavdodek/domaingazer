@@ -9,9 +9,7 @@ const nextConfig = {
     NEXT_PUBLIC_APP_COMMIT_ID: commitId,
     NEXT_PUBLIC_APP_COMMIT_DATE: commitDate,
   },
-  experimental: {
-    serverComponentsExternalPackages: ['@aws-sdk/client-route-53-domains'],
-  },
+  serverExternalPackages: ['@aws-sdk/client-route-53-domains'],
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

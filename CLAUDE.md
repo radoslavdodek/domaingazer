@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev      # Start dev server at localhost:3000
 npm run build    # Production build
-npm run lint     # ESLint via next lint
+npm run lint     # ESLint via eslint CLI
 ```
 
 No test suite is configured.
@@ -45,7 +45,7 @@ No test suite is configured.
 
 - **Concurrency limiter**: `p-limit` is not used (its ESM import maps break webpack). Both route handlers define an inline `createLimiter(concurrency)`.
 - **Lazy client init**: `OpenAI` and `Route53DomainsClient` are module-level singletons initialized on first use, not at import time, to avoid build-time errors when env vars are absent.
-- **`next.config.mjs`**: Uses `experimental.serverComponentsExternalPackages` (Next.js 14 key; `serverExternalPackages` is Next.js 15+).
+- **`next.config.mjs`**: Uses `serverExternalPackages` for AWS Route 53 Domains.
 - **AWS region**: Route 53 Domains API only works in `us-east-1` regardless of `AWS_REGION`.
 - **README.md**: Always keep this file up-to-date.
 

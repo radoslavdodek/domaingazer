@@ -17,7 +17,7 @@ function throwIfError(error: { message: string } | null) {
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user, isImpersonating } = await getEffectiveUser(supabase)
 
   if (!user) {

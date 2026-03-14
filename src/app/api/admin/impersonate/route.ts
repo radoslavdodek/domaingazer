@@ -7,7 +7,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { IMPERSONATE_UID_COOKIE, IMPERSONATE_INFO_COOKIE } from '@/lib/impersonation'
 
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user || user.app_metadata?.is_admin !== true) {
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Cannot impersonate another admin' }, { status: 400 })
   }
 
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const cookieOptions = {
     path: '/',
     sameSite: 'lax' as const,
@@ -67,14 +67,14 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user || user.app_metadata?.is_admin !== true) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
 
   console.info('[impersonation.stop]', {
     adminId: user.id,

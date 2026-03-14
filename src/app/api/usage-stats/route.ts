@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getEffectiveUser } from '@/lib/impersonation'
 
 export async function GET(req: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

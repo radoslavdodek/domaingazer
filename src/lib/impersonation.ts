@@ -37,7 +37,7 @@ export async function getEffectiveUser(supabase: SupabaseClient): Promise<Effect
     return { user: realUser, isImpersonating: false, supabaseClient: supabase }
   }
 
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const targetUid = cookieStore.get(IMPERSONATE_UID_COOKIE)?.value
 
   if (!targetUid) {

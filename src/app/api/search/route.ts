@@ -46,7 +46,7 @@ function encodeEvent(event: SseEvent): string {
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user } = await getEffectiveUser(supabase)
   if (!user) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {

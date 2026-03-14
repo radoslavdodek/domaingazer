@@ -22,7 +22,7 @@ function getCurrencyFromRequest(request: Request): 'eur' | 'usd' {
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { user } = await getEffectiveUser(supabase)
 
   if (!user) {

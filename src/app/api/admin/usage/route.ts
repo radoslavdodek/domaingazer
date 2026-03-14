@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { purgeExpiredModelUsage } from '@/lib/privacy/server'
 
 export async function GET(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user || user.app_metadata?.is_admin !== true) {
@@ -103,7 +103,7 @@ export async function GET(request: Request) {
     })()
     const effectiveUntil = until ? new Date(until) : now
 
-    let query = supabase
+    const query = supabase
       .from('model_usage')
       .select('created_at, cost_usd')
       .gte('created_at', effectiveSince.toISOString())

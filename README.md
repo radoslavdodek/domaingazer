@@ -79,10 +79,13 @@ The app now depends on Supabase Auth plus the billing tables in `supabase/migrat
 ### Required auth configuration
 
 - Enable **Google** sign-in in Supabase Auth → Providers (requires Google OAuth client ID/secret).
+  - In Google Cloud Console, add every local dev origin you actually use to the OAuth web client’s **Authorized JavaScript origins**.
+  - For local development that usually means `http://localhost:3000`, and also `http://localhost:3001` if port 3000 is occupied and Next starts on 3001.
 - Enable **GitHub** sign-in in Supabase Auth → Providers (requires a GitHub OAuth App client ID/secret — create one at https://github.com/settings/developers).
 - **Email/OTP (magic link)** is enabled by default in Supabase — verify that email templates are configured in Auth → Email Templates.
 - Set the site URL and redirect URLs so Supabase can return users to:
   - `http://localhost:3000/auth/callback` for local development
+  - `http://localhost:3001/auth/callback` if your local app is running on port 3001
   - `https://your-domain.com/auth/callback` for production
 
 ### Apply database migrations
@@ -356,7 +359,7 @@ If you want both flows to use the same setup, keep both sections identical:
 npm run dev                      # Start dev server at localhost:3000
 npm run generate:industry-pages  # Rebuild generated industry SEO pages
 npm run build                    # Production build
-npm run lint                     # ESLint via next lint
+npm run lint                     # ESLint via eslint CLI
 ```
 
 ## Industry SEO pages
