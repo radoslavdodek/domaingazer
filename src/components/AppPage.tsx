@@ -28,7 +28,11 @@ interface SearchHistoryEntry {
 const FEATURED_TLD_LIST: TLD[] = [...FEATURED_TLDS]
 const LS_CUSTOM_TLD_PILLS = 'domaingazer_custom_tld_pills'
 
-export function AppPage() {
+interface AppPageProps {
+  impersonationLabel: string | null
+}
+
+export function AppPage({ impersonationLabel }: AppPageProps) {
   const { theme, themeName } = useTheme()
   const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
   const { billing, isLoading: isBillingLoading, error: billingError, refresh: refreshBilling } = useBillingStatus()
@@ -183,7 +187,7 @@ export function AppPage() {
 
   return (
     <div className={theme.layout.body}>
-      <ImpersonationBanner />
+      <ImpersonationBanner label={impersonationLabel} />
       <main className="mx-auto w-full max-w-4xl">
         <nav className={`${theme.navbar.wrapper} gap-3`}>
           <Link href="/" className={`${theme.navbar.brand} min-w-0`}>
@@ -208,6 +212,7 @@ export function AppPage() {
             )}
             <ThemeToggle />
             <UserMenu
+              impersonationLabel={impersonationLabel}
               planLabel={billing ? planLabel : undefined}
               isSubscribed={billing?.isSubscribed}
               billingDisabled={billingAction !== null}

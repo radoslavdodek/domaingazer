@@ -19,6 +19,12 @@ type EffectiveUserResult = {
   supabaseClient: SupabaseClient
 }
 
+function maskValue(value: string): string {
+  if (!value) return ''
+  if (value.length === 1) return `${value}*`
+  return `${value[0]}${'*'.repeat(value.length - 1)}`
+}
+
 /**
  * Returns the effective user for the current request.
  * If the real user is an admin AND the impersonation cookie is set,
@@ -58,4 +64,28 @@ export async function getEffectiveUser(supabase: SupabaseClient): Promise<Effect
     console.error('[impersonation] failed to fetch target user', err)
     return { user: realUser, isImpersonating: false, supabaseClient: supabase }
   }
+}
+
+export function getMaskedImpersonationLabel(user: EffectiveUserResult['user']): string | null {
+  if (!user) {
+    return null
+  }
+
+  if (user.email) {
+    const [localPart, domainPart] = user.email.split('@')
+
+    if (localPart && domainPart) {
+      const lastDot = domainPart.lastIndexOf('.')
+
+      if (lastDot > 0) {
+        const domainName = domainPart.slice(0, lastDot)
+        const suffix = domainPart.slice(lastDot)
+        return `${maskValue(localPart)}@${maskValue(domainName)}${suffix}`
+      }
+
+      return `${maskValue(localPart)}@${maskValue(domainPart)}`
+    }
+  }
+
+  return `user ${user.id.slice(0, 8)}`
 }

@@ -48,13 +48,7 @@ export async function POST(request: Request) {
     httpOnly: true,
   })
 
-  cookieStore.set(IMPERSONATE_INFO_COOKIE, JSON.stringify({
-    email: targetUser.email,
-    name: targetUser.user_metadata?.full_name || targetUser.user_metadata?.name || null,
-  }), {
-    ...cookieOptions,
-    httpOnly: false,
-  })
+  cookieStore.delete(IMPERSONATE_INFO_COOKIE)
 
   console.info('[impersonation.start]', {
     adminId: user.id,

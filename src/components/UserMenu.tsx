@@ -5,16 +5,10 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { createClient } from '@/lib/supabase/client'
-import { IMPERSONATE_INFO_COOKIE } from '@/lib/impersonation-constants'
 import type { User } from '@supabase/supabase-js'
 
-function getCookie(name: string): string | null {
-  if (typeof document === 'undefined') return null
-  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`))
-  return match ? decodeURIComponent(match[1]) : null
-}
-
 interface UserMenuProps {
+  impersonationLabel: string | null
   planLabel?: string
   isSubscribed?: boolean
   billingDisabled?: boolean
@@ -24,6 +18,7 @@ interface UserMenuProps {
 }
 
 export function UserMenu({
+  impersonationLabel,
   planLabel,
   isSubscribed = false,
   billingDisabled = false,
@@ -34,7 +29,6 @@ export function UserMenu({
   const { theme } = useTheme()
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
-  const [impersonatedInfo, setImpersonatedInfo] = useState<{ email?: string; name?: string | null } | null>(null)
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -46,12 +40,6 @@ export function UserMenu({
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
-
-    // Check for impersonation cookie
-    const raw = getCookie(IMPERSONATE_INFO_COOKIE)
-    if (raw) {
-      try { setImpersonatedInfo(JSON.parse(raw)) } catch { /* ignore */ }
-    }
 
     return () => subscription.unsubscribe()
   }, [])
@@ -74,12 +62,12 @@ export function UserMenu({
 
   if (!user) return null
 
-  const isImpersonating = impersonatedInfo !== null
+  const isImpersonating = impersonationLabel !== null
   const avatarUrl = isImpersonating ? undefined : (user.user_metadata?.avatar_url as string | undefined)
   const name = isImpersonating
-    ? (impersonatedInfo.name ?? impersonatedInfo.email ?? '')
+    ? 'Impersonating'
     : (user.user_metadata?.full_name ?? user.user_metadata?.name ?? user.email ?? '') as string
-  const email = isImpersonating ? (impersonatedInfo.email ?? '') : (user.email ?? '')
+  const email = isImpersonating ? impersonationLabel : (user.email ?? '')
   const initial = name.charAt(0).toUpperCase() || email.charAt(0).toUpperCase() || '?'
   const isAdmin = !isImpersonating && user.app_metadata?.is_admin === true
 
@@ -114,7 +102,9 @@ export function UserMenu({
         <div className="absolute right-0 top-full z-50 mt-1.5 w-56 rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
           <div className="border-b border-gray-100 px-4 py-3">
             <p className="truncate text-sm font-medium text-gray-900">{name}</p>
-            <p className="truncate text-xs text-gray-500">{email}</p>
+            {email && (
+              <p className="truncate text-xs text-gray-500">{email}</p>
+            )}
             {planLabel && (
               <p className="mt-2 inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gray-600">
                 {planLabel}

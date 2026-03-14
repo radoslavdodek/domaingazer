@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { IMPERSONATE_INFO_COOKIE } from '@/lib/impersonation-constants'
 import { PRIVACY_REGION_COOKIE } from '@/lib/privacy/constants'
 import { getCountryHeaderName, getDefaultRegion, getRegionFromCountryCode } from '@/lib/privacy/region'
 import { SEO_PAGE_SLUGS } from '@/lib/seo-pages'
@@ -21,6 +22,7 @@ export async function middleware(request: NextRequest) {
       path: '/',
       maxAge: 60 * 60 * 24,
     })
+    response.cookies.delete(IMPERSONATE_INFO_COOKIE)
     return response
   }
 

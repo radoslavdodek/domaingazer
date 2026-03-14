@@ -1,28 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { IMPERSONATE_INFO_COOKIE } from '@/lib/impersonation-constants'
+import { useState } from 'react'
 
-function getCookie(name: string): string | null {
-  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`))
-  return match ? decodeURIComponent(match[1]) : null
+interface ImpersonationBannerProps {
+  label: string | null
 }
 
-export function ImpersonationBanner() {
-  const [info, setInfo] = useState<{ email?: string; name?: string | null } | null>(null)
+export function ImpersonationBanner({ label }: ImpersonationBannerProps) {
   const [stopping, setStopping] = useState(false)
 
-  useEffect(() => {
-    const raw = getCookie(IMPERSONATE_INFO_COOKIE)
-    if (!raw) return
-    try {
-      setInfo(JSON.parse(raw))
-    } catch { /* ignore */ }
-  }, [])
-
-  if (!info) return null
-
-  const label = info.name ? `${info.name} (${info.email})` : info.email
+  if (!label) return null
 
   const handleStop = async () => {
     setStopping(true)
