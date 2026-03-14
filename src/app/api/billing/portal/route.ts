@@ -2,11 +2,12 @@ export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
 import { getOrCreateStripeCustomerId } from '@/lib/billing'
+import { getAppOrigin } from '@/lib/app-origin'
 import { createStripeBillingPortalSession } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
 import { getEffectiveUser } from '@/lib/impersonation'
 
-export async function POST(request: Request) {
+export async function POST() {
   const supabase = await createClient()
   const { user } = await getEffectiveUser(supabase)
 
@@ -16,13 +17,9 @@ export async function POST(request: Request) {
 
   try {
     const stripeCustomerId = await getOrCreateStripeCustomerId(user.id, user.email)
-
-    const forwardedProto = request.headers.get('x-forwarded-proto') || 'http'
-    const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || new URL(request.url).host
-    const origin = `${forwardedProto}://${forwardedHost}`
     const session = await createStripeBillingPortalSession({
       customerId: stripeCustomerId,
-      origin,
+      origin: getAppOrigin(),
     })
 
     return NextResponse.json({ url: session.url })

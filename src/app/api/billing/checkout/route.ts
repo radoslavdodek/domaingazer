@@ -2,6 +2,7 @@ export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
 import type { BillingInterval } from '@/lib/billing-types'
+import { getAppOrigin } from '@/lib/app-origin'
 import {
   getOrCreateStripeCustomerId,
   getUserBillingState,
@@ -47,16 +48,12 @@ export async function POST(request: Request) {
 
     const stripeCustomerId = await getOrCreateStripeCustomerId(user.id, user.email)
     const currency = getCurrencyFromRequest(request)
-
-    const forwardedProto = request.headers.get('x-forwarded-proto') || 'http'
-    const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || new URL(request.url).host
-    const origin = `${forwardedProto}://${forwardedHost}`
     const session = await createStripeCheckoutSession({
       customerId: stripeCustomerId,
       interval,
       currency,
       userId: user.id,
-      origin,
+      origin: getAppOrigin(),
     })
 
     if (!session.url) {
