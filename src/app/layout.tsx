@@ -69,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <meta name="impact-site-verification" content="e0e806fe-1f3f-42c4-9ece-cf49ac5b79f3" />
       </head>
