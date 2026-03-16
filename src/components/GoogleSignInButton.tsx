@@ -111,7 +111,7 @@ async function ensureGoogleInitialized() {
         client_id: getGoogleClientId(),
         nonce: hashedNonce,
         ux_mode: 'popup',
-        use_fedcm_for_button: true,
+        use_fedcm_for_button: false,
         callback: (response) => {
           void handleGoogleCredentialResponse(response)
         },
