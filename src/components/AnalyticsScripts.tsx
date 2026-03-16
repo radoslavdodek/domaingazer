@@ -14,6 +14,7 @@ export function AnalyticsScripts({
   gaMeasurementId,
   clarityProjectId,
 }: AnalyticsScriptsProps) {
+  const isProduction = process.env.NODE_ENV === 'production'
   const [shouldLoad, setShouldLoad] = useState(false)
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export function AnalyticsScripts({
     }
   }, [])
 
-  if (!shouldLoad) {
+  if (!isProduction || !shouldLoad) {
     return null
   }
 

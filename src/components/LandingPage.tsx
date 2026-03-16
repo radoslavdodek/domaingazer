@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { AppIcon } from '@/components/AppIcon'
+import { LandingDemoPreview } from '@/components/LandingDemoPreview'
 import { LandingPricingPlans } from '@/components/LandingPricingPlans'
 import { MarketingAuthLink } from '@/components/MarketingAuthLink'
 import type { BillingPlanPricing } from '@/lib/billing-types'
@@ -185,107 +186,7 @@ export function LandingPage({
             <p className="mt-4 text-sm text-zinc-300">No credit card required · Cancel anytime</p>
           </div>
 
-          {/* App preview mockup */}
-          <div className="relative mx-auto mt-16 max-w-4xl">
-            {/* Glow behind the card */}
-            <div className="absolute inset-x-0 -bottom-6 h-1/2 bg-gradient-to-r from-blue-600/20 via-cyan-600/15 to-blue-600/20 blur-2xl" aria-hidden="true" />
-
-            <div className="relative overflow-hidden rounded-2xl border border-zinc-700/60 bg-zinc-900 shadow-2xl shadow-black/60">
-              {/* Browser chrome bar */}
-              <div className="flex items-center gap-3 border-b border-zinc-800 bg-zinc-950/70 px-4 py-3">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-zinc-700" />
-                  <div className="h-3 w-3 rounded-full bg-zinc-700" />
-                  <div className="h-3 w-3 rounded-full bg-zinc-700" />
-                </div>
-                <div className="flex flex-1 items-center justify-center rounded-md bg-zinc-800/80 px-3 py-1 text-xs text-zinc-300">
-                  domaingazer.com
-                </div>
-              </div>
-
-              {/* Simulated app content */}
-              <div className="p-5 sm:p-7">
-                {/* Search query display */}
-                <div className="mb-5 rounded-xl border border-zinc-700/60 bg-zinc-800/50 p-4">
-                  <p className="mb-1 text-xs font-medium uppercase tracking-wider text-zinc-300">Searching for</p>
-                  <p className="text-sm text-zinc-200 sm:text-base">
-                    &ldquo;A SaaS tool to help remote startup teams manage projects and stay in sync&rdquo;
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {['.io', '.ai', '.com'].map((tld) => (
-                      <span key={tld} className="rounded-md bg-sky-600/20 px-2.5 py-0.5 text-xs font-semibold text-sky-300">
-                        {tld}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Results header */}
-                <div className="mb-4 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-400" aria-hidden="true" />
-                    <span className="text-zinc-300">
-                      <span className="font-semibold text-emerald-400">3 available</span>
-                      <span className="text-zinc-300"> · 9 checked · 12 total</span>
-                    </span>
-                  </div>
-                  <span className="text-xs text-zinc-300">Round 1 of 5</span>
-                </div>
-
-                <div className="space-y-3">
-                  {/* Group: sparkflow */}
-                  <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/40 p-4">
-                    <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <span className="text-sm font-bold text-zinc-100">sparkflow</span>
-                      <span className="text-xs font-medium text-zinc-300">Try variations →</span>
-                    </div>
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                      <div className="flex flex-col gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-200">sparkflow.io</span>
-                        <span className="text-xs font-bold text-emerald-400">AVAILABLE</span>
-                      </div>
-                      <div className="flex flex-col gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-200">sparkflow.ai</span>
-                        <span className="text-xs font-bold text-emerald-400">AVAILABLE</span>
-                      </div>
-                      <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-300">sparkflow.com</span>
-                        <span className="text-xs font-medium text-zinc-300">TAKEN</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Group: teamcraft */}
-                  <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/40 p-4">
-                    <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <span className="text-sm font-bold text-zinc-100">teamcraft</span>
-                      <span className="text-xs font-medium text-zinc-300">Try variations →</span>
-                    </div>
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                      <div className="flex flex-col gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-200">teamcraft.io</span>
-                        <span className="text-xs font-bold text-emerald-400">AVAILABLE</span>
-                      </div>
-                      <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-300">teamcraft.ai</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" aria-hidden="true" />
-                          <span className="text-xs text-zinc-300">Checking</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-300">teamcraft.com</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" aria-hidden="true" />
-                          <span className="text-xs text-zinc-300">Checking</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <LandingDemoPreview focusRingClassName={focusRingClassName} />
         </div>
         </section>
 

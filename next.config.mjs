@@ -30,7 +30,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "img-src 'self' data: blob: https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://www.clarity.ms https://*.supabase.co",
               "font-src 'self' data: https://accounts.google.com",
-              "frame-src https://accounts.google.com",
+              "frame-src https://accounts.google.com https://demo.arcade.software https://*.arcade.software",
               "connect-src 'self' https://accounts.google.com https://*.supabase.co https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com https://www.clarity.ms https://*.clarity.ms",
               "object-src 'none'",
               "base-uri 'self'",
