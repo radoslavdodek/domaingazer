@@ -29,10 +29,17 @@ export async function POST(request: Request) {
     })
   }
 
-  const body = (await request.json()) as { description?: string; tlds?: unknown; exclude?: string[]; hint?: string }
+  const body = (await request.json()) as {
+    description?: string
+    tlds?: unknown
+    exclude?: string[]
+    hint?: string
+    primaryTldOnly?: boolean
+  }
   const description = body.description?.trim() ?? ''
   const exclude: string[] = Array.isArray(body.exclude) ? body.exclude : []
   const hint = body.hint?.trim() || undefined
+  const primaryTldOnly = body.primaryTldOnly === true
   const { tlds: normalizedTlds, invalid } = parseTldList(Array.isArray(body.tlds) ? body.tlds : getDefaultSearchTlds())
 
   if (!description || description.length < 5) {
@@ -80,6 +87,10 @@ export async function POST(request: Request) {
       { status: 400, headers: { 'Content-Type': 'application/json' } }
     )
   }
+
+  const tldsToCheck = primaryTldOnly
+    ? normalizedTlds.slice(0, 1)
+    : normalizedTlds
 
   let billingState: BillingStatusResponse
   try {
@@ -145,7 +156,7 @@ export async function POST(request: Request) {
         // Build all (name, tld) pairs
         const pairs: { baseName: string; tld: TLD; fullDomain: string }[] = []
         for (const name of generatedNames) {
-          for (const tld of normalizedTlds) {
+          for (const tld of tldsToCheck) {
             pairs.push({ baseName: name, tld, fullDomain: `${name}${tld}` })
           }
         }

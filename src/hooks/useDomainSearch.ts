@@ -49,6 +49,9 @@ export function useDomainSearch() {
     exclude: string[],
     appendResults: boolean,
     hint?: string,
+    options?: {
+      primaryTldOnly?: boolean
+    },
   ) => {
     abortRef.current?.abort()
     const generation = ++generationRef.current
@@ -80,7 +83,13 @@ export function useDomainSearch() {
       const response = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description, tlds, exclude, hint }),
+        body: JSON.stringify({
+          description,
+          tlds,
+          exclude,
+          hint,
+          primaryTldOnly: options?.primaryTldOnly ?? false,
+        }),
         signal: controller.signal,
       })
 
@@ -209,6 +218,7 @@ export function useDomainSearch() {
       currentBaseNames,
       true,
       hint,
+      { primaryTldOnly: true },
     )
   }, [runSearch])
 
