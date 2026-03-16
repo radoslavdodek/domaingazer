@@ -6,7 +6,7 @@ import {
 import type { DomainStatus } from './types'
 
 let _client: Route53DomainsClient | null = null
-function getClient() {
+export function getRoute53Client() {
   if (!_client) _client = new Route53DomainsClient({ region: 'us-east-1' })
   return _client
 }
@@ -29,7 +29,7 @@ export async function checkDomain(fullDomain: string, signal?: AbortSignal): Pro
         DomainName: fullDomain,
       })
       console.log(`[Route53] REQ  CheckDomainAvailability { DomainName: "${fullDomain}" } (attempt ${attempt + 1}/${maxRetries + 1})`)
-      const response = await getClient().send(command, { abortSignal: signal })
+      const response = await getRoute53Client().send(command, { abortSignal: signal })
       console.log(`[Route53] RES  ${fullDomain} → ${response.Availability}`)
 
       switch (response.Availability) {

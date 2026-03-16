@@ -1,0 +1,1649 @@
+[
+  {
+    "slug": "fintech",
+    "industry": "Fintech",
+    "category": "Finance",
+    "audience": "finance leaders, founders, and modern teams handling money movement or financial reporting",
+    "offer": "make financial workflows easier to trust, understand, and operate",
+    "problem": "buyers need names that signal control, accuracy, and institutional confidence",
+    "tone": "precise, credible, and calm",
+    "recommendedTlds": [
+      ".com",
+      ".io",
+      ".co"
+    ],
+    "coreTerms": [
+      "fund",
+      "cash",
+      "yield",
+      "pay"
+    ],
+    "metaphorTerms": [
+      "bridge",
+      "anchor",
+      "signal",
+      "forge"
+    ],
+    "trustTerms": [
+      "ledger",
+      "vault",
+      "mint",
+      "balance"
+    ],
+    "avoidTerms": [
+      "hype-heavy crypto language unless the product is actually crypto-native",
+      "jokey money references that weaken trust",
+      "names that imply a bank without the product backing it up"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "operaura",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "operaura.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "operaura.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "operaura.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "fundarae",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "fundarae.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "fundarae.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "fundarae.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "pivotaic",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "pivotaic.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "pivotaic.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "pivotaic.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "evidaris",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "evidaris.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "evidaris.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "evidaris.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "inclario",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "inclario.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "inclario.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "inclario.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "fintentia",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "fintentia.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "fintentia.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "fintentia.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "healthcare-clinics",
+    "industry": "Healthcare Clinics",
+    "category": "Healthcare",
+    "audience": "patients and care teams looking for clarity, professionalism, and a low-friction healthcare experience",
+    "offer": "help people access care, coordination, or medical support with more confidence",
+    "problem": "the brand has to feel reassuring before it feels clever",
+    "tone": "clear, human, and dependable",
+    "recommendedTlds": [
+      ".com",
+      ".health",
+      ".care"
+    ],
+    "coreTerms": [
+      "care",
+      "clinic",
+      "health",
+      "visit"
+    ],
+    "metaphorTerms": [
+      "spring",
+      "harbor",
+      "path",
+      "beacon"
+    ],
+    "trustTerms": [
+      "trusted",
+      "steady",
+      "well",
+      "north"
+    ],
+    "avoidTerms": [
+      "cold biotech jargon for patient-facing brands",
+      "wordplay that makes pronunciation harder in a call-center setting",
+      "claims that sound like medical outcomes instead of care access"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "steadlyn",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "steadlyn.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "steadlyn.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "steadlyn.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "carestell",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "carestell.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "carestell.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "carestell.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "claranza",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "claranza.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "claranza.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "claranza.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "pathwellin",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "pathwellin.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "pathwellin.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "pathwellin.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "harmonixis",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "harmonixis.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "harmonixis.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "harmonixis.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "real-estate",
+    "industry": "Real Estate",
+    "category": "Property",
+    "audience": "buyers, sellers, investors, and agents who need confidence during property decisions",
+    "offer": "make property search, transactions, or portfolio workflows easier to navigate",
+    "problem": "the name should sound established enough for trust but modern enough for a better experience",
+    "tone": "grounded, reliable, and polished",
+    "recommendedTlds": [
+      ".com",
+      ".co",
+      ".io"
+    ],
+    "coreTerms": [
+      "home",
+      "lot",
+      "estate",
+      "key"
+    ],
+    "metaphorTerms": [
+      "haven",
+      "north",
+      "stone",
+      "path"
+    ],
+    "trustTerms": [
+      "anchor",
+      "equity",
+      "brick",
+      "crest"
+    ],
+    "avoidTerms": [
+      "forced luxury language for mass-market offerings",
+      "geographic terms that box the brand into one region",
+      "names that sound like listing portals if the product is a service layer"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "oaknera",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "oaknera.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "oaknera.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "oaknera.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "porchmark",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "porchmark.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "porchmark.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "porchmark.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "firmlyn",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "firmlyn.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "firmlyn.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "firmlyn.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "havneer",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "havneer.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "havneer.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "havneer.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "surelyst",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "surelyst.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "surelyst.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "surelyst.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "legal-services",
+    "industry": "Legal Services",
+    "category": "Professional Services",
+    "audience": "clients who want credibility, discretion, and a clear sense of expertise",
+    "offer": "help clients solve legal matters with more confidence and less confusion",
+    "problem": "the name has to imply seriousness without sounding dated or opaque",
+    "tone": "authoritative, composed, and modern",
+    "recommendedTlds": [
+      ".com",
+      ".law",
+      ".co"
+    ],
+    "coreTerms": [
+      "case",
+      "brief",
+      "counsel",
+      "claim"
+    ],
+    "metaphorTerms": [
+      "summit",
+      "beacon",
+      "bridge",
+      "signal"
+    ],
+    "trustTerms": [
+      "verdict",
+      "statute",
+      "accord",
+      "chamber"
+    ],
+    "avoidTerms": [
+      "aggressive litigation language for broader advisory firms",
+      "latin-heavy constructions that hurt recall",
+      "cute wordplay that undercuts seriousness"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "summiset",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "summiset.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "summiset.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "summiset.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "statunea",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "statunea.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "statunea.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "statunea.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "counvia",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "counvia.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "counvia.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "counvia.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "caseforth",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "caseforth.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "caseforth.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "caseforth.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "legatist",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "legatist.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "legatist.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "legatist.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "decisivea",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "decisivea.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "decisivea.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "decisivea.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "ecommerce",
+    "industry": "Ecommerce",
+    "category": "Commerce",
+    "audience": "online shoppers and retail operators who care about speed, convenience, and brand feel",
+    "offer": "help brands sell, deliver, or merchandise products more effectively online",
+    "problem": "the name should feel memorable and commercial without becoming generic",
+    "tone": "sharp, energetic, and easy to remember",
+    "recommendedTlds": [
+      ".com",
+      ".store",
+      ".shop"
+    ],
+    "coreTerms": [
+      "cart",
+      "shop",
+      "shelf",
+      "drop"
+    ],
+    "metaphorTerms": [
+      "spark",
+      "rally",
+      "lane",
+      "studio"
+    ],
+    "trustTerms": [
+      "market",
+      "merchant",
+      "supply",
+      "stock"
+    ],
+    "avoidTerms": [
+      "trend words that will date quickly",
+      "misspellings that make direct traffic harder",
+      "names that imply one product category when the catalog may expand"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "lanestry",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "lanestry.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "lanestry.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "lanestry.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "stocentra",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "stocentra.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "stocentra.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "stocentra.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "plintic",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "plintic.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "plintic.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "plintic.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "shelvista",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "shelvista.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "shelvista.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "shelvista.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "vibarro",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "vibarro.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "vibarro.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "vibarro.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "cybersecurity",
+    "industry": "Cybersecurity",
+    "category": "Security",
+    "audience": "security leaders and technical buyers evaluating risk, coverage, and response readiness",
+    "offer": "reduce risk and help teams detect, prevent, or respond to security issues faster",
+    "problem": "buyers want competence and control, not marketing noise",
+    "tone": "technical, confident, and disciplined",
+    "recommendedTlds": [
+      ".com",
+      ".io",
+      ".ai"
+    ],
+    "coreTerms": [
+      "shield",
+      "guard",
+      "vector",
+      "signal"
+    ],
+    "metaphorTerms": [
+      "sentinel",
+      "forge",
+      "citadel",
+      "watch"
+    ],
+    "trustTerms": [
+      "vault",
+      "secure",
+      "trace",
+      "core"
+    ],
+    "avoidTerms": [
+      "fear-based names that sound like antivirus from a previous decade",
+      "overused dark-tech words with no differentiation",
+      "names that imply military posture when the product is workflow software"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "vectelry",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "vectelry.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "vectelry.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "vectelry.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "tracelor",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "tracelor.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "tracelor.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "tracelor.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "watchlyn",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "watchlyn.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "watchlyn.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "watchlyn.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "securaeon",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "securaeon.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "securaeon.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "securaeon.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "coverallia",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "coverallia.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "coverallia.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "coverallia.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "climate-tech",
+    "industry": "Climate Tech",
+    "category": "Sustainability",
+    "audience": "operators, policymakers, and enterprise buyers evaluating measurable climate or energy outcomes",
+    "offer": "help customers reduce waste, emissions, or energy costs with practical systems",
+    "problem": "the name should signal progress and credibility, not empty virtue branding",
+    "tone": "optimistic, practical, and rigorous",
+    "recommendedTlds": [
+      ".com",
+      ".io",
+      ".earth"
+    ],
+    "coreTerms": [
+      "carbon",
+      "grid",
+      "energy",
+      "climate"
+    ],
+    "metaphorTerms": [
+      "horizon",
+      "current",
+      "north",
+      "spring"
+    ],
+    "trustTerms": [
+      "terra",
+      "measure",
+      "atlas",
+      "signal"
+    ],
+    "avoidTerms": [
+      "vague green language that says nothing about the product",
+      "activist framing when the buyer is a practical operator",
+      "science-fiction names that weaken enterprise trust"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "currond",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "currond.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "currond.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "currond.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "enercroft",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "enercroft.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "enercroft.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "enercroft.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "currenset",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "currenset.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "currenset.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "currenset.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "gridvant",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "gridvant.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "gridvant.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "gridvant.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "rigestra",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "rigestra.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "rigestra.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "rigestra.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "recruiting",
+    "industry": "Recruiting",
+    "category": "Talent",
+    "audience": "hiring teams and candidates who need speed, trust, and clear matching signals",
+    "offer": "help companies source, evaluate, or close candidates more effectively",
+    "problem": "the name should feel professional enough for employers and approachable enough for candidates",
+    "tone": "clear, energetic, and trustworthy",
+    "recommendedTlds": [
+      ".com",
+      ".co",
+      ".io"
+    ],
+    "coreTerms": [
+      "hire",
+      "talent",
+      "match",
+      "team"
+    ],
+    "metaphorTerms": [
+      "bridge",
+      "lane",
+      "spark",
+      "north"
+    ],
+    "trustTerms": [
+      "roster",
+      "signal",
+      "bench",
+      "align"
+    ],
+    "avoidTerms": [
+      "internal HR jargon that means little to candidates",
+      "overpromising words like instant or perfect",
+      "names that overfit one role type if the platform may expand"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "benchive",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "benchive.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "benchive.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "benchive.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "signastr",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "signastr.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "signastr.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "signastr.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "trustrove",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "trustrove.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "trustrove.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "trustrove.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "synclette",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "synclette.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "synclette.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "synclette.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "hirevueo",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "hirevueo.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "hirevueo.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "hirevueo.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "education",
+    "industry": "Education",
+    "category": "Learning",
+    "audience": "learners, educators, and program operators looking for progress that feels achievable",
+    "offer": "help people learn a skill, complete a course, or improve performance with less friction",
+    "problem": "the name should feel encouraging and credible without sounding childish",
+    "tone": "clear, motivating, and smart",
+    "recommendedTlds": [
+      ".com",
+      ".academy",
+      ".io"
+    ],
+    "coreTerms": [
+      "learn",
+      "study",
+      "course",
+      "skill"
+    ],
+    "metaphorTerms": [
+      "path",
+      "summit",
+      "spark",
+      "ladder"
+    ],
+    "trustTerms": [
+      "mentor",
+      "campus",
+      "guild",
+      "class"
+    ],
+    "avoidTerms": [
+      "overly academic names for practical upskilling products",
+      "cartoonish school references for adult learners",
+      "generic edtech constructions that blend into the market"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "clarityve",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "clarityve.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "clarityve.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "clarityve.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "risefold",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "risefold.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "risefold.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "risefold.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "progessis",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "progessis.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "progessis.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "progessis.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "veriffa",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "veriffa.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "veriffa.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "veriffa.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "pursiva",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "pursiva.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "pursiva.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "pursiva.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "ai-consulting",
+    "industry": "AI Consulting",
+    "category": "Professional Services",
+    "audience": "executives and teams trying to adopt AI without losing control of execution",
+    "offer": "help clients move from AI interest to measurable operational outcomes",
+    "problem": "the name should balance innovation with executive-level trust",
+    "tone": "forward-looking, credible, and strategic",
+    "recommendedTlds": [
+      ".com",
+      ".ai",
+      ".io"
+    ],
+    "coreTerms": [
+      "model",
+      "agent",
+      "signal",
+      "system"
+    ],
+    "metaphorTerms": [
+      "bridge",
+      "forge",
+      "north",
+      "pilot"
+    ],
+    "trustTerms": [
+      "advisory",
+      "studio",
+      "vector",
+      "ops"
+    ],
+    "avoidTerms": [
+      "generic AI buzzwords with no service positioning",
+      "names that sound like a model lab if the business is consulting",
+      "science-fiction language that undermines buyer trust"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "pilutra",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "pilutra.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "pilutra.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "pilutra.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "forevance",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "forevance.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "forevance.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "forevance.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "guidetra",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "guidetra.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "guidetra.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "guidetra.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "forviant",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "forviant.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "forviant.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "forviant.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "navivis",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "navivis.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "navivis.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "navivis.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "foresity",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "foresity.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "foresity.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "foresity.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "creator-tools",
+    "industry": "Creator Tools",
+    "category": "Media",
+    "audience": "creators and small teams trying to publish, grow, and monetize more consistently",
+    "offer": "help creators streamline content production, audience growth, or monetization workflows",
+    "problem": "the name should feel modern and energetic while staying broad enough for new formats",
+    "tone": "expressive, sharp, and product-led",
+    "recommendedTlds": [
+      ".com",
+      ".io",
+      ".studio"
+    ],
+    "coreTerms": [
+      "creator",
+      "clip",
+      "publish",
+      "studio"
+    ],
+    "metaphorTerms": [
+      "spark",
+      "rally",
+      "pulse",
+      "canvas"
+    ],
+    "trustTerms": [
+      "channel",
+      "signal",
+      "frame",
+      "scene"
+    ],
+    "avoidTerms": [
+      "platform-specific terms that age when formats change",
+      "slang that may feel dated in a year",
+      "names that box the product into only video or only newsletters"
+    ],
+    "availableExamples": [
+      {
+        "groupKey": "suggested",
+        "name": "scenanex",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "scenanex.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "scenanex.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "scenanex.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "spartune",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "spartune.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "spartune.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "spartune.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "prismory",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "prismory.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "prismory.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "prismory.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "emitara",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "emitara.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "emitara.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "emitara.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      },
+      {
+        "groupKey": "suggested",
+        "name": "moxenna",
+        "domains": [
+          {
+            "tld": ".com",
+            "fullDomain": "moxenna.com",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".io",
+            "fullDomain": "moxenna.io",
+            "status": "AVAILABLE"
+          },
+          {
+            "tld": ".ai",
+            "fullDomain": "moxenna.ai",
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  }
+]

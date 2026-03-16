@@ -1,6 +1,8 @@
 import { DomainRow } from '@/components/DomainRow'
-import { ALL_TLDS, type DomainResult, type TLD } from '@/lib/types'
+import { TldSelector } from '@/components/TldSelector'
 import { useTheme } from '@/contexts/ThemeContext'
+import { createTldComparator } from '@/lib/tlds'
+import type { DomainResult, TLD } from '@/lib/types'
 import type { SearchStatus } from './types'
 
 interface BaseNameExplanation {
@@ -17,7 +19,13 @@ interface BaseNameGroupListProps {
   showAvailableOnly: boolean
   showWorkingRow: boolean
   resultMap: Map<string, DomainResult>
+  activeTlds: TLD[]
+  customTldPills?: TLD[]
+  supportedTlds: TLD[]
+  supportedTldsError?: string | null
+  isLoadingSupportedTlds?: boolean
   onAddTldForBase?: (baseName: string, tld: TLD) => void
+  onRemovePinnedTld?: (tld: TLD) => void
   onTryVariation?: (baseName: string) => void
   onExplain?: (baseName: string) => void
   explanationByBaseName?: Record<string, BaseNameExplanation>
@@ -35,7 +43,13 @@ export function BaseNameGroupList({
   showAvailableOnly,
   showWorkingRow,
   resultMap,
+  activeTlds,
+  customTldPills = [],
+  supportedTlds,
+  supportedTldsError,
+  isLoadingSupportedTlds,
   onAddTldForBase,
+  onRemovePinnedTld,
   onTryVariation,
   onExplain,
   explanationByBaseName = {},
@@ -45,6 +59,7 @@ export function BaseNameGroupList({
   onBaseNameRowRef,
 }: BaseNameGroupListProps) {
   const { theme } = useTheme()
+  const compareTlds = createTldComparator(activeTlds)
 
   return (
     <div className="space-y-2 p-3 sm:p-4">
@@ -79,11 +94,10 @@ export function BaseNameGroupList({
                   const explanation = explanationByBaseName[baseName]
                   const hasExplanationState =
                     explanation && (explanation.isLoading || Boolean(explanation.error) || Boolean(explanation.text))
-                  const rowsForBase = ALL_TLDS
-                    .map((tld) => resultMap.get(`${baseName}${tld}`))
-                    .filter((row): row is DomainResult => Boolean(row))
+                  const rowsForBase = Array.from(resultMap.values())
+                    .filter((row) => row.baseName === baseName)
+                    .sort((a, b) => compareTlds(a.tld, b.tld))
                   const presentTlds = new Set(rowsForBase.map((row) => row.tld))
-                  const remainingTlds = ALL_TLDS.filter((tld) => !presentTlds.has(tld))
 
                   return (
                     <div
@@ -152,21 +166,24 @@ export function BaseNameGroupList({
                           />
                         ))}
                       </div>
-                      {onAddTldForBase && remainingTlds.length > 0 && (
-                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                          <span className="text-xs text-gray-500">Add TLD:</span>
-                          {remainingTlds.map((tld) => (
-                            <button
-                              key={`${baseName}-${tld}`}
-                              type="button"
-                              onClick={() => onAddTldForBase(baseName, tld)}
-                              className={`rounded-full px-2 py-0.5 text-xs font-medium transition-all ${
-                                theme.tldSelector.unselected
-                              }`}
-                            >
-                              {tld}
-                            </button>
-                          ))}
+                      {onAddTldForBase && (
+                        <div className="mt-3">
+                          <TldSelector
+                            selected={rowsForBase.map((row) => row.tld)}
+                            onChange={(nextTlds) => {
+                              const nextTld = nextTlds.find((tld) => !presentTlds.has(tld))
+                              if (!nextTld) return
+                              onAddTldForBase(baseName, nextTld)
+                            }}
+                            extraTldPills={customTldPills}
+                            onRemoveExtraTld={onRemovePinnedTld}
+                            selectionMode="multiple"
+                            size="compact"
+                            showSelected={false}
+                            supportedTlds={supportedTlds}
+                            isLoadingSupportedTlds={isLoadingSupportedTlds}
+                            supportedTldsError={supportedTldsError}
+                          />
                         </div>
                       )}
                     </div>

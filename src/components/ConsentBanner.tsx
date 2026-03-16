@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import type { RegionKind } from '@/lib/privacy/constants'
 import { getConsentSnapshot, setConsentStatus } from '@/lib/privacy/client-consent'
 import { PrivacyStorageControls } from './PrivacyStorageControls'
 
-export function ConsentBanner({ initialRegion }: { initialRegion: RegionKind }) {
+export function ConsentBanner() {
   const [isVisible, setIsVisible] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [region, setRegion] = useState<'eu' | 'non-eu'>('non-eu')
 
   useEffect(() => {
     const snapshot = getConsentSnapshot()
+    setRegion(snapshot.region)
     setIsVisible(snapshot.region === 'eu' && snapshot.status === 'unknown')
   }, [])
 
@@ -63,7 +64,7 @@ export function ConsentBanner({ initialRegion }: { initialRegion: RegionKind }) 
 
         {isExpanded && (
           <PrivacyStorageControls
-            initialRegion={initialRegion}
+            initialRegion={region}
             compact
             onDecision={() => {
               setIsExpanded(false)

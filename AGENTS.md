@@ -5,19 +5,19 @@
 - `src/components`: Reusable UI components.
 - `src/hooks`: Custom React hooks.
 - `src/lib`: Shared utilities and service clients (e.g., OpenAI/AWS helpers).
-- Root config: `next.config.mjs`, `tailwind.config.ts`, `postcss.config.mjs`, `tsconfig.json`, `.eslintrc.json`.
+- Root config: `next.config.mjs`, `tailwind.config.ts`, `postcss.config.mjs`, `tsconfig.json`, `eslint.config.mjs`.
 - Environment: `.env.example` is the template; `.env.local` holds local secrets.
 
 ## Build, Test, and Development Commands
 - `npm run dev`: Start the local dev server at `http://localhost:3000`.
 - `npm run build`: Create a production build.
 - `npm run start`: Run the production server from the build output.
-- `npm run lint`: Run ESLint via Next.js.
+- `npm run lint`: Run ESLint via the ESLint CLI.
 
 ## Coding Style & Naming Conventions
-- Language: TypeScript + React (Next.js 14 App Router).
+- Language: TypeScript + React (Next.js 16 App Router).
 - Indentation: 2 spaces (match existing project defaults).
-- Linting: `next/core-web-vitals` via `.eslintrc.json`; run `npm run lint` before PRs.
+- Linting: `next/core-web-vitals` via `eslint.config.mjs`; run `npm run lint` before PRs.
 - Naming: Prefer `PascalCase` for components and `camelCase` for variables/functions.
 
 ## Testing Guidelines

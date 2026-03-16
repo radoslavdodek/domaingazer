@@ -1,6 +1,7 @@
-export const ALL_TLDS = ['.com', '.io', '.ai', '.co', '.net', '.shop', '.store', '.de'] as const
+export const FEATURED_TLDS = ['.com', '.io', '.ai', '.co', '.net', '.shop', '.store', '.de'] as const
+export const DEFAULT_SEARCH_TLDS = ['.com', '.io'] as const
 
-export type TLD = (typeof ALL_TLDS)[number]
+export type TLD = string
 
 export type DomainStatus =
   | 'CHECKING'

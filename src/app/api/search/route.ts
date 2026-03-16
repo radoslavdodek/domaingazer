@@ -8,19 +8,20 @@ import {
 import type { BillingStatusResponse } from '@/lib/billing-types'
 import { checkDomains } from '@/lib/domain-checker'
 import { generateDomainNames } from '@/lib/openai'
+import { getSupportedTldCatalog } from '@/lib/tldCatalog'
+import { getDefaultSearchTlds, getUnsupportedTlds, parseTldList } from '@/lib/tlds'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 import { trackUsage } from '@/lib/track-usage'
 import type { DomainResult, SseEvent, TLD } from '@/lib/types'
-
-const DEFAULT_SEARCH_TLDS: TLD[] = ['.com', '.io']
 
 function encodeEvent(event: SseEvent): string {
   return `data: ${JSON.stringify(event)}\n\n`
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient()
+  const { user } = await getEffectiveUser(supabase)
   if (!user) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
@@ -28,11 +29,11 @@ export async function POST(request: Request) {
     })
   }
 
-  const body = (await request.json()) as { description?: string; tlds?: TLD[]; exclude?: string[]; hint?: string }
+  const body = (await request.json()) as { description?: string; tlds?: unknown; exclude?: string[]; hint?: string }
   const description = body.description?.trim() ?? ''
-  const tlds: TLD[] = Array.isArray(body.tlds) ? body.tlds : DEFAULT_SEARCH_TLDS
   const exclude: string[] = Array.isArray(body.exclude) ? body.exclude : []
   const hint = body.hint?.trim() || undefined
+  const { tlds: normalizedTlds, invalid } = parseTldList(Array.isArray(body.tlds) ? body.tlds : getDefaultSearchTlds())
 
   if (!description || description.length < 5) {
     return new Response(
@@ -51,6 +52,31 @@ export async function POST(request: Request) {
   if (hint && hint.length > 200) {
     return new Response(
       JSON.stringify({ error: 'Hint must be at most 200 characters' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  if (invalid.length > 0) {
+    return new Response(
+      JSON.stringify({ error: `Invalid TLD selection: ${invalid.join(', ')}` }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  if (normalizedTlds.length === 0) {
+    return new Response(
+      JSON.stringify({ error: 'At least one TLD is required' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  const { supportedTlds } = await getSupportedTldCatalog()
+  const supportedTldSet = new Set(supportedTlds)
+  const unsupportedTlds = getUnsupportedTlds(normalizedTlds, supportedTldSet)
+
+  if (unsupportedTlds.length > 0) {
+    return new Response(
+      JSON.stringify({ error: `Unsupported TLD selection: ${unsupportedTlds.join(', ')}` }),
       { status: 400, headers: { 'Content-Type': 'application/json' } }
     )
   }
@@ -119,7 +145,7 @@ export async function POST(request: Request) {
         // Build all (name, tld) pairs
         const pairs: { baseName: string; tld: TLD; fullDomain: string }[] = []
         for (const name of generatedNames) {
-          for (const tld of tlds) {
+          for (const tld of normalizedTlds) {
             pairs.push({ baseName: name, tld, fullDomain: `${name}${tld}` })
           }
         }

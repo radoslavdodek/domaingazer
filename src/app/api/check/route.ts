@@ -1,16 +1,19 @@
 export const runtime = 'nodejs'
 
 import { checkDomains } from '@/lib/domain-checker'
+import { getEffectiveUser } from '@/lib/impersonation'
 import { createClient } from '@/lib/supabase/server'
-import type {SseEvent, TLD} from '@/lib/types'
+import { getSupportedTldCatalog } from '@/lib/tldCatalog'
+import { getUnsupportedTlds, parseTldList } from '@/lib/tlds'
+import type { SseEvent, TLD } from '@/lib/types'
 
 function encodeEvent(event: SseEvent): string {
     return `data: ${JSON.stringify(event)}\n\n`
 }
 
 export async function POST(request: Request) {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const supabase = await createClient()
+    const { user } = await getEffectiveUser(supabase)
     if (!user) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
             status: 401,
@@ -18,13 +21,31 @@ export async function POST(request: Request) {
         })
     }
 
-    const body = (await request.json()) as { baseName?: string; tlds?: TLD[] }
+    const body = (await request.json()) as { baseName?: string; tlds?: unknown }
     const baseName = (body.baseName ?? '').trim().toLowerCase().replace(/\s+/g, '').replace(/\.$/, '')
-    const tlds: TLD[] = Array.isArray(body.tlds) ? body.tlds : []
+    const { tlds, invalid } = parseTldList(body.tlds)
+
+    if (invalid.length > 0) {
+        return new Response(
+            JSON.stringify({error: `Invalid TLD selection: ${invalid.join(', ')}`}),
+            {status: 400, headers: {'Content-Type': 'application/json'}}
+        )
+    }
 
     if (!baseName || tlds.length === 0) {
         return new Response(
             JSON.stringify({error: 'baseName and tlds are required'}),
+            {status: 400, headers: {'Content-Type': 'application/json'}}
+        )
+    }
+
+    const { supportedTlds } = await getSupportedTldCatalog()
+    const supportedTldSet = new Set(supportedTlds)
+    const unsupportedTlds = getUnsupportedTlds(tlds, supportedTldSet)
+
+    if (unsupportedTlds.length > 0) {
+        return new Response(
+            JSON.stringify({error: `Unsupported TLD selection: ${unsupportedTlds.join(', ')}`}),
             {status: 400, headers: {'Content-Type': 'application/json'}}
         )
     }

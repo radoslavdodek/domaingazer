@@ -23,6 +23,7 @@ type GoogleIdentityWindow = Window & {
           callback: (response: GoogleCredentialResponse) => void | Promise<void>
           nonce?: string
           ux_mode?: 'popup' | 'redirect'
+          use_fedcm_for_button?: boolean
         }): void
         renderButton(
           parent: HTMLElement,
@@ -110,6 +111,7 @@ async function ensureGoogleInitialized() {
         client_id: getGoogleClientId(),
         nonce: hashedNonce,
         ux_mode: 'popup',
+        use_fedcm_for_button: false,
         callback: (response) => {
           void handleGoogleCredentialResponse(response)
         },
@@ -174,7 +176,7 @@ interface GoogleSignInButtonProps {
 }
 
 export function GoogleSignInButton({
-  nextPath = '/',
+  nextPath = '/app',
   className,
   buttonClassName = 'min-h-[44px] w-full',
   messageClassName = 'mt-3 text-center text-xs text-red-600',
@@ -309,7 +311,7 @@ export function GoogleSignInButton({
             <GoogleMark className={iconClassName} />
             <span>{buttonLabel}</span>
           </div>
-          <div ref={buttonContainerRef} className={`absolute inset-0 z-10 ${isReady ? 'opacity-0' : 'pointer-events-none opacity-0'}`} />
+          <div ref={buttonContainerRef} className={`absolute inset-0 z-10 ${isReady ? 'opacity-[0.01]' : 'pointer-events-none opacity-0'}`} />
         </div>
       ) : (
         <div ref={buttonContainerRef} className={buttonClassName} />

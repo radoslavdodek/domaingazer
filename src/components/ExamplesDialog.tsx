@@ -84,7 +84,7 @@ export function ExamplesDialog({ isOpen, examples, onSelect, onClose }: Examples
           <div>
             <h2 className={titleClass}>Project Description Examples</h2>
             <p className={bodyTextClass}>
-              Choose an example to populate the project description field.
+              Here are some examples of how to write a project description.
             </p>
           </div>
           <button

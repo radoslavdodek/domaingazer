@@ -13,7 +13,7 @@ interface RefinementCardProps {
   onCustomInputChange: (value: string) => void
   onGenerateMore?: (hint: string) => void
   onCheckCustom?: (baseName: string) => void
-  hintRef: RefObject<HTMLInputElement>
+  hintRef: RefObject<HTMLInputElement | null>
 }
 
 export function RefinementCard({

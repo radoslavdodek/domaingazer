@@ -41,8 +41,7 @@ export default function OGImage() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
-            marginBottom: 36,
+            marginBottom: 28,
             padding: '10px 24px',
             borderRadius: 999,
             border: '1px solid rgba(59, 130, 246, 0.35)',
@@ -51,40 +50,43 @@ export default function OGImage() {
             fontSize: 20,
           }}
         >
-          ✦ Powered by GPT-4.1 &amp; AWS Route 53
+          Powered by AI
         </div>
 
         {/* Main heading */}
         <div
           style={{
-            fontSize: 72,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            fontSize: 68,
             fontWeight: 900,
             textAlign: 'center',
             lineHeight: 1.1,
             color: '#ffffff',
-            marginBottom: 28,
+            marginBottom: 32,
           }}
         >
-          Find your perfect{' '}
-          <span style={{ color: '#60a5fa' }}>domain name</span>
-          {' '}— instantly
+          <div>Find Your Perfect</div>
+          <div style={{ color: '#60a5fa' }}>Domain Name with AI</div>
+          <div>Instantly</div>
         </div>
 
         {/* Subtitle */}
         <div
           style={{
-            fontSize: 26,
+            fontSize: 24,
             color: '#a1a1aa',
             textAlign: 'center',
-            marginBottom: 52,
+            marginBottom: 60,
           }}
         >
-          AI-powered generation · Real-time availability · Multiple TLDs
+          AI-powered generation | Real-time availability | Multiple TLDs
         </div>
 
         {/* TLD pills */}
-        <div style={{ display: 'flex', gap: 14 }}>
-          {['.com', '.io', '.ai', '.co', '.net'].map((tld) => (
+        <div style={{ display: 'flex', gap: 14, marginBottom: 96 }}>
+          {['.com', '.io', '.ai', '.net', '.shop', '.store'].map((tld) => (
             <div
               key={tld}
               style={{
@@ -105,7 +107,7 @@ export default function OGImage() {
         <div
           style={{
             position: 'absolute',
-            bottom: 44,
+            bottom: 28,
             color: '#52525b',
             fontSize: 20,
           }}

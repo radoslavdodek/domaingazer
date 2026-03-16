@@ -7,6 +7,7 @@ export const OPTIONAL_STORAGE_KEYS = [
   'domaingazer_theme',
   'domaingazer_description',
   'domaingazer_tlds',
+  'domaingazer_custom_tld_pills',
 ] as const
 
 export const MODEL_USAGE_RETENTION_DAYS = 180

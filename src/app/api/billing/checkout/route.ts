@@ -2,12 +2,14 @@ export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
 import type { BillingInterval } from '@/lib/billing-types'
+import { getAppOrigin } from '@/lib/app-origin'
 import {
   getOrCreateStripeCustomerId,
   getUserBillingState,
 } from '@/lib/billing'
 import { createStripeCheckoutSession } from '@/lib/stripe'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 
 function isBillingInterval(value: unknown): value is BillingInterval {
   return value === 'month' || value === 'year'
@@ -21,8 +23,8 @@ function getCurrencyFromRequest(request: Request): 'eur' | 'usd' {
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient()
+  const { user } = await getEffectiveUser(supabase)
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -46,16 +48,12 @@ export async function POST(request: Request) {
 
     const stripeCustomerId = await getOrCreateStripeCustomerId(user.id, user.email)
     const currency = getCurrencyFromRequest(request)
-
-    const forwardedProto = request.headers.get('x-forwarded-proto') || 'http'
-    const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || new URL(request.url).host
-    const origin = `${forwardedProto}://${forwardedHost}`
     const session = await createStripeCheckoutSession({
       customerId: stripeCustomerId,
       interval,
       currency,
       userId: user.id,
-      origin,
+      origin: getAppOrigin(),
     })
 
     if (!session.url) {

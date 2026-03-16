@@ -1,17 +1,23 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { openBillingPortal } from '@/lib/billing-client'
+import { getOptionalItem, removeOptionalItem, setOptionalItem } from '@/lib/privacy/optional-storage'
 import { SearchForm } from '@/components/SearchForm'
 import { ResultsPanel } from '@/components/ResultsPanel'
 import { ClearResultsModal } from '@/components/results/ClearResultsModal'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { UserMenu } from '@/components/UserMenu'
+import { ImpersonationBanner } from '@/components/ImpersonationBanner'
+import { FeedbackDialog } from '@/components/FeedbackDialog'
+import type { SearchContext } from '@/components/FeedbackDialog'
 import { useBillingStatus } from '@/hooks/useBillingStatus'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
+import { useSupportedTlds } from '@/hooks/useSupportedTlds'
 import { useTheme } from '@/contexts/ThemeContext'
-import type { TLD } from '@/lib/types'
+import { FEATURED_TLDS, type TLD } from '@/lib/types'
+import { normalizeTldList } from '@/lib/tlds'
 
 interface SearchHistoryEntry {
   id: string
@@ -19,11 +25,20 @@ interface SearchHistoryEntry {
   selected_tlds: TLD[]
 }
 
-export function AppPage() {
+const FEATURED_TLD_LIST: TLD[] = [...FEATURED_TLDS]
+const LS_CUSTOM_TLD_PILLS = 'domaingazer_custom_tld_pills'
+
+interface AppPageProps {
+  impersonationLabel: string | null
+}
+
+export function AppPage({ impersonationLabel }: AppPageProps) {
   const { theme, themeName } = useTheme()
-  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld } = useDomainSearch()
+  const { results, nameBatches, status, errorMessage, isCheckingCustom, isWaitingForNewRows, hasReachedMaxRounds, search, generateMore, cancel, clearResults, checkCustom, checkNewTld, setActiveTlds } = useDomainSearch()
   const { billing, isLoading: isBillingLoading, error: billingError, refresh: refreshBilling } = useBillingStatus()
+  const { supportedTlds, isLoading: isLoadingSupportedTlds, error: supportedTldsError } = useSupportedTlds()
   const [selectedTlds, setSelectedTlds] = useState<TLD[]>([])
+  const [customTldPills, setCustomTldPills] = useState<TLD[]>([])
   const [searchDescription, setSearchDescription] = useState('')
   const [isTldSelectionLocked, setIsTldSelectionLocked] = useState(false)
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false)
@@ -33,6 +48,32 @@ export function AppPage() {
   const resultsPanelRef = useRef<HTMLDivElement>(null)
   const [billingAction, setBillingAction] = useState<'portal' | null>(null)
   const [billingActionError, setBillingActionError] = useState<string | null>(null)
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
+
+  useEffect(() => {
+    const savedCustomTldPills = getOptionalItem(LS_CUSTOM_TLD_PILLS)
+    if (!savedCustomTldPills) return
+
+    try {
+      const parsed = normalizeTldList(JSON.parse(savedCustomTldPills) as TLD[])
+      setCustomTldPills(parsed.filter((tld) => !FEATURED_TLD_LIST.includes(tld)))
+    } catch {
+      removeOptionalItem(LS_CUSTOM_TLD_PILLS)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (customTldPills.length === 0) {
+      removeOptionalItem(LS_CUSTOM_TLD_PILLS)
+      return
+    }
+
+    setOptionalItem(LS_CUSTOM_TLD_PILLS, JSON.stringify(customTldPills))
+  }, [customTldPills])
+
+  useEffect(() => {
+    setActiveTlds(selectedTlds)
+  }, [selectedTlds, setActiveTlds])
 
   useEffect(() => {
     fetch('/api/search-history')
@@ -47,7 +88,18 @@ export function AppPage() {
       .catch(() => {/* ignore — user may not be logged in */})
   }, [])
 
+  const rememberCustomTld = useCallback((nextTld: TLD | undefined) => {
+    if (!nextTld || FEATURED_TLD_LIST.includes(nextTld)) return
+    setCustomTldPills((prev) => normalizeTldList([...prev, nextTld]))
+  }, [])
+
+  const forgetCustomTld = useCallback((tldToRemove: TLD) => {
+    setCustomTldPills((prev) => prev.filter((tld) => tld !== tldToRemove))
+    setSelectedTlds((prev) => prev.filter((tld) => tld !== tldToRemove))
+  }, [])
+
   const handleSearch = (description: string, tlds: TLD[]) => {
+    rememberCustomTld(tlds[0])
     setSelectedTlds(tlds)
     setSearchDescription(description)
     setIsTldSelectionLocked(true)
@@ -72,6 +124,8 @@ export function AppPage() {
   }
 
   const handleAddTldForBase = (baseName: string, tld: TLD) => {
+    rememberCustomTld(tld)
+    setSelectedTlds((prev) => normalizeTldList([...prev, tld]))
     checkNewTld(tld, [baseName])
   }
 
@@ -133,9 +187,10 @@ export function AppPage() {
 
   return (
     <div className={theme.layout.body}>
+      <ImpersonationBanner label={impersonationLabel} />
       <main className="mx-auto w-full max-w-4xl">
         <nav className={`${theme.navbar.wrapper} gap-3`}>
-          <Link href="/landing" className={`${theme.navbar.brand} min-w-0`}>
+          <Link href="/" className={`${theme.navbar.brand} min-w-0`}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className={theme.navbar.icon}>
               <defs><linearGradient id="nav-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6366f1"/><stop offset="100%" stopColor="#8b5cf6"/></linearGradient></defs>
               <circle cx="16" cy="16" r="15" fill="url(#nav-g)"/>
@@ -157,6 +212,7 @@ export function AppPage() {
             )}
             <ThemeToggle />
             <UserMenu
+              impersonationLabel={impersonationLabel}
               planLabel={billing ? planLabel : undefined}
               isSubscribed={billing?.isSubscribed}
               billingDisabled={billingAction !== null}
@@ -166,6 +222,7 @@ export function AppPage() {
               onManageBilling={billing?.isSubscribed
                 ? () => { void handleManageBilling() }
                 : undefined}
+              onFeedbackClick={() => setIsFeedbackOpen(true)}
             />
           </div>
         </nav>
@@ -286,6 +343,12 @@ export function AppPage() {
               onClearResults={() => setIsClearConfirmOpen(true)}
               initialDescription={initialDescription}
               initialTlds={initialTlds}
+              extraTldPills={customTldPills}
+              onPinTld={rememberCustomTld}
+              onRemovePinnedTld={forgetCustomTld}
+              supportedTlds={supportedTlds}
+              isLoadingSupportedTlds={isLoadingSupportedTlds}
+              supportedTldsError={supportedTldsError}
               searchHistory={searchHistory}
               onDeleteHistory={handleDeleteHistory}
               onClearAllHistory={handleClearAllHistory}
@@ -299,9 +362,14 @@ export function AppPage() {
             status={status}
             errorMessage={errorMessage}
             tlds={selectedTlds}
+            customTldPills={customTldPills}
+            onRemovePinnedTld={forgetCustomTld}
             searchDescription={searchDescription}
             isCheckingCustom={isCheckingCustom}
             isWaitingForNewRows={isWaitingForNewRows}
+            supportedTlds={supportedTlds}
+            supportedTldsError={supportedTldsError}
+            isLoadingSupportedTlds={isLoadingSupportedTlds}
             onGenerateMore={hasReachedMaxRounds ? undefined : handleGenerateMore}
             onCheckCustom={checkCustom}
             onAddTldForBase={handleAddTldForBase}
@@ -320,6 +388,33 @@ export function AppPage() {
             }}
           />
 
+          <FeedbackDialog
+            isOpen={isFeedbackOpen}
+            onClose={() => setIsFeedbackOpen(false)}
+            searchContext={searchDescription && results.length > 0 ? {
+              query: searchDescription,
+              results: results.map((r) => ({ fullDomain: r.fullDomain, status: r.status })),
+            } satisfies SearchContext : null}
+          />
+
+          {billing && (
+            <button
+              type="button"
+              onClick={() => setIsFeedbackOpen(true)}
+              className={`fixed bottom-5 right-5 z-40 flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium shadow-lg transition-colors ${
+                isMidnightTheme
+                  ? 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+              }`}
+              aria-label="Share your feedback"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path fillRule="evenodd" d="M10 2c-2.236 0-4.43.18-6.57.524C1.993 2.755 1 4.014 1 5.426v5.148c0 1.413.993 2.67 2.43 2.902 1.168.188 2.352.327 3.55.414.28.02.521.18.642.413l1.713 3.293a.75.75 0 0 0 1.33 0l1.713-3.293a.783.783 0 0 1 .642-.413 41.102 41.102 0 0 0 3.55-.414c1.437-.231 2.43-1.49 2.43-2.902V5.426c0-1.413-.993-2.67-2.43-2.902A41.289 41.289 0 0 0 10 2ZM6.75 6a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 2.5a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Z" clipRule="evenodd" />
+              </svg>
+              Share your feedback
+            </button>
+          )}
+
           <footer className={theme.footer.wrapper}>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
               <p className={theme.footer.text}>© 2026 Domain Gazer · Find your perfect domain name with AI</p>
@@ -336,6 +431,18 @@ export function AppPage() {
                 <Link href="/terms" className="underline underline-offset-2">
                   Terms
                 </Link>
+                <span className="mx-1 hidden sm:inline text-gray-300 dark:text-zinc-600">|</span>
+                <div className="flex items-center gap-2">
+                  <a href="https://x.com/intent/tweet?url=https%3A%2F%2Fdomaingazer.com&text=Find%20your%20perfect%20domain%20name%20with%20AI" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on X">
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  </a>
+                  <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fdomaingazer.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on LinkedIn">
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  </a>
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdomaingazer.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on Facebook">
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                  </a>
+                </div>
               </div>
             </div>
           </footer>

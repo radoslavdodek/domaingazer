@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import { createClient } from '@/lib/supabase/server'
-import { AppPage } from '@/components/AppPage'
 import { LandingPage } from '@/components/LandingPage'
 import { StructuredDataScripts } from '@/components/StructuredDataScripts'
 import { getBillingPlanPricing } from '@/lib/billing-pricing'
@@ -12,19 +10,9 @@ export const metadata: Metadata = {
   },
 }
 
+export const revalidate = 3600
+
 export default async function Home() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (user) {
-    return (
-      <>
-        <StructuredDataScripts />
-        <AppPage />
-      </>
-    )
-  }
-
   const pricing = await getBillingPlanPricing()
   const featuredPosts = getFeaturedBlogPostSummaries()
 

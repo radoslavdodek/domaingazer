@@ -1,7 +1,8 @@
 'use client'
 
-import {useEffect, useRef, useState} from 'react'
-import type {TLD} from '@/lib/types'
+import {useCallback, useEffect, useRef, useState} from 'react'
+import { FEATURED_TLDS, type TLD } from '@/lib/types'
+import { normalizeTldList } from '@/lib/tlds'
 import {useTheme} from '@/contexts/ThemeContext'
 import {getOptionalItem, setOptionalItem} from '@/lib/privacy/optional-storage'
 import {TldSelector} from './TldSelector'
@@ -11,6 +12,7 @@ import {HistoryDialog} from './HistoryDialog'
 const LS_DESCRIPTION = 'domaingazer_description'
 const LS_TLDS = 'domaingazer_tlds'
 const DEFAULT_TLDS: TLD[] = ['.com']
+const FEATURED_TLD_LIST: TLD[] = [...FEATURED_TLDS]
 const DESCRIPTION_EXAMPLES = [
     {
         title: 'Digital Wellness App',
@@ -47,6 +49,12 @@ interface SearchFormProps {
     onClearResults?: () => void
     initialDescription?: string
     initialTlds?: TLD[]
+    extraTldPills?: TLD[]
+    onPinTld?: (tld: TLD) => void
+    onRemovePinnedTld?: (tld: TLD) => void
+    supportedTlds: TLD[]
+    isLoadingSupportedTlds?: boolean
+    supportedTldsError?: string | null
     searchHistory?: SearchHistoryEntry[]
     onDeleteHistory?: (id: string) => void
     onClearAllHistory?: () => void
@@ -61,6 +69,12 @@ export function SearchForm({
                                onClearResults,
                                initialDescription,
                                initialTlds,
+                               extraTldPills = [],
+                               onPinTld,
+                               onRemovePinnedTld,
+                               supportedTlds,
+                               isLoadingSupportedTlds = false,
+                               supportedTldsError = null,
                                searchHistory,
                                onDeleteHistory,
                                onClearAllHistory,
@@ -71,6 +85,11 @@ export function SearchForm({
     const [isExamplesOpen, setIsExamplesOpen] = useState(false)
     const dbLoadApplied = useRef(false)
 
+    const rememberPinnedTld = useCallback((nextTld: TLD | undefined) => {
+        if (!nextTld || FEATURED_TLD_LIST.includes(nextTld)) return
+        onPinTld?.(nextTld)
+    }, [onPinTld])
+
     // Fast initial load from localStorage
     useEffect(() => {
         const savedDesc = getOptionalItem(LS_DESCRIPTION)
@@ -79,12 +98,13 @@ export function SearchForm({
         const savedTlds = getOptionalItem(LS_TLDS)
         if (savedTlds) {
             try {
-                const parsed = JSON.parse(savedTlds) as TLD[]
+                const parsed = normalizeTldList(JSON.parse(savedTlds) as TLD[])
+                rememberPinnedTld(parsed[0])
                 setTlds(parsed.length > 0 ? [parsed[0]] : DEFAULT_TLDS)
             } catch { /* ignore */
             }
         }
-    }, [])
+    }, [rememberPinnedTld])
 
     // Once DB response arrives, overwrite with most-recent entry (runs once)
     useEffect(() => {
@@ -92,8 +112,10 @@ export function SearchForm({
         if (initialDescription === undefined || initialTlds === undefined) return
         dbLoadApplied.current = true
         setDescription(initialDescription)
-        setTlds(initialTlds.length > 0 ? initialTlds : DEFAULT_TLDS)
-    }, [initialDescription, initialTlds])
+        const normalizedInitialTlds = normalizeTldList(initialTlds)
+        rememberPinnedTld(normalizedInitialTlds[0])
+        setTlds(normalizedInitialTlds.length > 0 ? [normalizedInitialTlds[0]] : DEFAULT_TLDS)
+    }, [initialDescription, initialTlds, rememberPinnedTld])
 
     useEffect(() => {
         setOptionalItem(LS_DESCRIPTION, description)
@@ -120,7 +142,9 @@ export function SearchForm({
 
     const handleHistoryClick = (entry: SearchHistoryEntry) => {
         setDescription(entry.description)
-        setTlds(entry.selected_tlds.length > 0 ? entry.selected_tlds : DEFAULT_TLDS)
+        const normalizedHistoryTlds = normalizeTldList(entry.selected_tlds)
+        rememberPinnedTld(normalizedHistoryTlds[0])
+        setTlds(normalizedHistoryTlds.length > 0 ? [normalizedHistoryTlds[0]] : DEFAULT_TLDS)
     }
 
     const [isHistoryOpen, setIsHistoryOpen] = useState(false)
@@ -155,14 +179,15 @@ export function SearchForm({
                                 className={
                                     description.trim().length === 0 && !isSearching
                                         ? isMidnightTheme
-                                            ? 'flex items-center gap-1 rounded-lg border border-indigo-500/60 bg-indigo-500/10 px-2.5 py-1.5 text-xs font-medium text-indigo-300 transition-colors hover:border-indigo-400 hover:bg-indigo-500/20 hover:text-indigo-200 animate-pulse'
-                                            : 'flex items-center gap-1 rounded-md border border-indigo-400 bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-600 transition-colors hover:border-indigo-500 hover:bg-indigo-100 hover:text-indigo-700 animate-pulse'
+                                            ? 'flex items-center gap-1 rounded-lg border border-indigo-500/60 bg-indigo-500/15 px-3 py-1.5 text-xs font-semibold text-indigo-300 ring-2 ring-indigo-500/30 shadow-sm shadow-indigo-500/20 animate-ring-glow transition-colors hover:border-indigo-400 hover:bg-indigo-500/25 hover:text-indigo-200'
+                                            : 'flex items-center gap-1 rounded-md border border-indigo-400 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-600 ring-2 ring-indigo-300/50 shadow-sm shadow-indigo-500/20 animate-ring-glow transition-colors hover:border-indigo-500 hover:bg-indigo-100 hover:text-indigo-700'
                                         : utilityButtonClass
                                 }
                                 aria-expanded={isExamplesOpen}
                                 aria-haspopup="dialog"
                                 title="See example project descriptions"
                             >
+                                {description.trim().length === 0 && !isSearching && <span aria-hidden="true">✦</span>}
                                 Examples
                             </button>
                             {hasHistory && (
@@ -211,8 +236,17 @@ export function SearchForm({
                         <TldSelector
                             selected={tlds}
                             onChange={(newTlds) => {
+                                rememberPinnedTld(newTlds[0])
                                 setTlds(newTlds)
                             }}
+                            extraTldPills={extraTldPills}
+                            onRemoveExtraTld={(tld) => {
+                                onRemovePinnedTld?.(tld)
+                                setTlds((prev) => prev.filter((item) => item !== tld))
+                            }}
+                            supportedTlds={supportedTlds}
+                            isLoadingSupportedTlds={isLoadingSupportedTlds}
+                            supportedTldsError={supportedTldsError}
                         />
                     </div>
                 )}

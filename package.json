@@ -4,28 +4,29 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "generate:industry-pages": "node scripts/build-industry-pages.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "api:smoke": "bash scripts/api-smoke.sh"
   },
   "dependencies": {
     "@aws-sdk/client-route-53-domains": "^3.734.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.98.0",
+    "next": "16.1.6",
     "fast-xml-parser": "^5.4.2",
-    "next": "14.2.29",
     "openai": "^4.86.0",
-    "react": "^18",
-    "react-dom": "^18"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.29",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "16.1.6",
     "playwright": "^1.58.2",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",

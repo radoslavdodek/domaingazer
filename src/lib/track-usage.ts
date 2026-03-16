@@ -20,9 +20,10 @@ export function trackUsage(
   const cost_usd = computeCost(usage.model, usage.promptTokens, usage.completionTokens)
 
   // Intentionally no await — don't block the main response
-  createClient()
-    .from('model_usage')
-    .insert({
+  void (async () => {
+    const supabase = await createClient()
+
+    await supabase.from('model_usage').insert({
       user_id: userId,
       user_email: userEmail,
       provider: usage.provider,
@@ -33,8 +34,5 @@ export function trackUsage(
       total_tokens: usage.totalTokens,
       cost_usd,
     })
-    .then(
-      () => {},
-      (err) => console.error('[track_usage.error]', err)
-    )
+  })().catch((err) => console.error('[track_usage.error]', err))
 }

@@ -2,10 +2,11 @@ export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 
 export async function GET(req: Request) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient()
+  const { user, supabaseClient } = await getEffectiveUser(supabase)
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
@@ -15,7 +16,7 @@ export async function GET(req: Request) {
   since.setUTCDate(since.getUTCDate() - days + 1)
   since.setUTCHours(0, 0, 0, 0)
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('search_history')
     .select('created_at')
     .eq('user_id', user.id)

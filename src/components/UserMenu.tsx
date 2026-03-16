@@ -8,19 +8,23 @@ import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
 interface UserMenuProps {
+  impersonationLabel: string | null
   planLabel?: string
   isSubscribed?: boolean
   billingDisabled?: boolean
   onUpgrade?: () => void
   onManageBilling?: () => void
+  onFeedbackClick?: () => void
 }
 
 export function UserMenu({
+  impersonationLabel,
   planLabel,
   isSubscribed = false,
   billingDisabled = false,
   onUpgrade,
   onManageBilling,
+  onFeedbackClick,
 }: UserMenuProps) {
   const { theme } = useTheme()
   const router = useRouter()
@@ -53,16 +57,19 @@ export function UserMenu({
   const handleSignOut = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
-    router.replace('/landing')
+    router.replace('/')
   }
 
   if (!user) return null
 
-  const avatarUrl = user.user_metadata?.avatar_url as string | undefined
-  const name = (user.user_metadata?.full_name ?? user.user_metadata?.name ?? user.email ?? '') as string
-  const email = user.email ?? ''
+  const isImpersonating = impersonationLabel !== null
+  const avatarUrl = isImpersonating ? undefined : (user.user_metadata?.avatar_url as string | undefined)
+  const name = isImpersonating
+    ? 'Impersonating'
+    : (user.user_metadata?.full_name ?? user.user_metadata?.name ?? user.email ?? '') as string
+  const email = isImpersonating ? impersonationLabel : (user.email ?? '')
   const initial = name.charAt(0).toUpperCase() || email.charAt(0).toUpperCase() || '?'
-  const isAdmin = user.app_metadata?.is_admin === true
+  const isAdmin = !isImpersonating && user.app_metadata?.is_admin === true
 
   return (
     <div className="relative" ref={menuRef}>
@@ -95,7 +102,9 @@ export function UserMenu({
         <div className="absolute right-0 top-full z-50 mt-1.5 w-56 rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
           <div className="border-b border-gray-100 px-4 py-3">
             <p className="truncate text-sm font-medium text-gray-900">{name}</p>
-            <p className="truncate text-xs text-gray-500">{email}</p>
+            {email && (
+              <p className="truncate text-xs text-gray-500">{email}</p>
+            )}
             {planLabel && (
               <p className="mt-2 inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gray-600">
                 {planLabel}
@@ -151,6 +160,18 @@ export function UserMenu({
             </svg>
             Privacy &amp; Data
           </button>
+          {onFeedbackClick && (
+            <button
+              type="button"
+              onClick={() => { setOpen(false); onFeedbackClick() }}
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path fillRule="evenodd" d="M10 2c-2.236 0-4.43.18-6.57.524C1.993 2.755 1 4.014 1 5.426v5.148c0 1.413.993 2.67 2.43 2.902 1.168.188 2.352.327 3.55.414.28.02.521.18.642.413l1.713 3.293a.75.75 0 0 0 1.33 0l1.713-3.293a.783.783 0 0 1 .642-.413 41.102 41.102 0 0 0 3.55-.414c1.437-.231 2.43-1.49 2.43-2.902V5.426c0-1.413-.993-2.67-2.43-2.902A41.289 41.289 0 0 0 10 2ZM6.75 6a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 2.5a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Z" clipRule="evenodd" />
+              </svg>
+              Share your feedback
+            </button>
+          )}
           <button
             type="button"
             onClick={handleSignOut}

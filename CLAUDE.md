@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev      # Start dev server at localhost:3000
 npm run build    # Production build
-npm run lint     # ESLint via next lint
+npm run lint     # ESLint via eslint CLI
 ```
 
 No test suite is configured.
@@ -21,7 +21,7 @@ No test suite is configured.
 1. `page.tsx` (`'use client'`) owns top-level state via `useDomainSearch` hook.
 2. User submits a description + selected TLDs through `SearchForm` / `TldSelector`.
 3. The hook POSTs to `/api/search`, which:
-   - Calls OpenAI (`gpt-4.1`) to generate 10 base names per round (up to 5 rounds, stopping early when any AVAILABLE domain is found).
+   - Calls kimi-k2 or OpenAI (`gpt-4.1`) to generate 10 base names per round (up to 5 rounds, stopping early when any AVAILABLE domain is found).
    - Concurrently checks each `(baseName, tld)` pair via Route 53 `CheckDomainAvailabilityCommand` (concurrency=3, exponential backoff on throttling).
    - Streams results back as SSE (`text/event-stream`).
 4. The hook reads the SSE stream, updating results in place (CHECKING → final status).
@@ -45,7 +45,7 @@ No test suite is configured.
 
 - **Concurrency limiter**: `p-limit` is not used (its ESM import maps break webpack). Both route handlers define an inline `createLimiter(concurrency)`.
 - **Lazy client init**: `OpenAI` and `Route53DomainsClient` are module-level singletons initialized on first use, not at import time, to avoid build-time errors when env vars are absent.
-- **`next.config.mjs`**: Uses `experimental.serverComponentsExternalPackages` (Next.js 14 key; `serverExternalPackages` is Next.js 15+).
+- **`next.config.mjs`**: Uses `serverExternalPackages` for AWS Route 53 Domains.
 - **AWS region**: Route 53 Domains API only works in `us-east-1` regardless of `AWS_REGION`.
 - **README.md**: Always keep this file up-to-date.
 
@@ -64,4 +64,5 @@ NAMECHEAP_API_USER=
 NAMECHEAP_API_KEY=
 NAMECHEAP_CLIENT_IP=
 NEXT_PUBLIC_NAMECHEAP_AFFILIATE_ID=
+SLACK_FEEDBACK_WEBHOOK_URL=
 ```

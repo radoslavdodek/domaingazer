@@ -78,9 +78,14 @@ The app now depends on Supabase Auth plus the billing tables in `supabase/migrat
 
 ### Required auth configuration
 
-- Enable Google sign-in in Supabase Auth if you want to use the current login flow.
+- Enable **Google** sign-in in Supabase Auth → Providers (requires Google OAuth client ID/secret).
+  - In Google Cloud Console, add every local dev origin you actually use to the OAuth web client’s **Authorized JavaScript origins**.
+  - For local development that usually means `http://localhost:3000`, and also `http://localhost:3001` if port 3000 is occupied and Next starts on 3001.
+- Enable **GitHub** sign-in in Supabase Auth → Providers (requires a GitHub OAuth App client ID/secret — create one at https://github.com/settings/developers).
+- **Email/OTP (magic link)** is enabled by default in Supabase — verify that email templates are configured in Auth → Email Templates.
 - Set the site URL and redirect URLs so Supabase can return users to:
   - `http://localhost:3000/auth/callback` for local development
+  - `http://localhost:3001/auth/callback` if your local app is running on port 3001
   - `https://your-domain.com/auth/callback` for production
 
 ### Apply database migrations
@@ -281,6 +286,26 @@ Before considering billing fully configured, verify all of the following:
 - User is charged but still blocked by free-credit limits
   - The checkout succeeded, but the webhook did not sync the subscription into Supabase.
 
+## Admin: User impersonation
+
+Admins can view the app as any non-admin user to debug issues, verify billing state, or reproduce problems.
+
+### How to use
+
+1. Sign in as an admin (`is_admin: true` in Supabase Auth `app_metadata`).
+2. Go to `/admin/users`.
+3. Search for a user by email or name.
+4. Click **Impersonate** on the target row — you'll be redirected to `/` with an amber banner showing the impersonated user's email.
+5. The app now behaves as that user: search history, billing status, usage stats, and all API calls resolve against the impersonated user's data.
+6. Click **Stop Impersonating** in the banner to return to your own admin view.
+
+### Restrictions
+
+- Cannot impersonate yourself or another admin.
+- Account deletion is blocked while impersonating.
+- Non-admins with a manually set cookie are silently ignored (the cookie is only trusted after server-side admin validation).
+- Admin routes (`/api/admin/*`) always use the real admin identity, never the impersonated user.
+
 ## AI provider config
 
 Provider/model selection lives in [`src/config/ai-providers.json`](src/config/ai-providers.json):
@@ -331,10 +356,36 @@ If you want both flows to use the same setup, keep both sections identical:
 ## Commands
 
 ```bash
-npm run dev      # Start dev server at localhost:3000
-npm run build    # Production build
-npm run lint     # ESLint via next lint
+npm run dev                      # Start dev server at localhost:3000
+npm run generate:industry-pages  # Rebuild generated industry SEO pages
+npm run build                    # Production build
+npm run lint                     # ESLint via eslint CLI
 ```
+
+## Industry SEO pages
+
+The app includes a programmatic SEO cluster under `/domain-name-ideas` for pages such as:
+
+- `/domain-name-ideas`
+- `/domain-name-ideas/saas`
+- `/domain-name-ideas/fintech`
+
+The workflow is:
+
+1. Edit the seed data in `src/data/industry-seeds.json`.
+2. Run `npm run generate:industry-pages`.
+3. Commit the updated generated artifact in `src/generated/industry-pages.ts`.
+
+The generator script lives in `scripts/build-industry-pages.mjs`. It validates each generated page shape, rejects duplicate or overly similar content, and emits the static data consumed by the app route layer.
+
+To add a new industry page:
+
+1. Add a new seed object with a unique `slug`.
+2. Fill in the audience, offer, tone, term sets, recommended TLDs, and avoid-patterns.
+3. Run `npm run generate:industry-pages`.
+4. Open `/domain-name-ideas/<slug>` locally to review the page.
+
+The generated routes are wired automatically into the hub page, middleware allowlist, static params, and sitemap.
 
 ## Tech stack
 

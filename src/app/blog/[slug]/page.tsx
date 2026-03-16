@@ -10,6 +10,7 @@ import {
   getBlogPostJsonLd,
   getRelatedBlogPosts,
 } from '@/lib/blog'
+import { getSeoPagesForBlogPost } from '@/lib/seo-pages'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
 
@@ -28,12 +29,13 @@ export function generateStaticParams() {
   }))
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string }
-}): Metadata {
-  const post = getBlogPostBySlug(params.slug)
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const post = getBlogPostBySlug(slug)
 
   if (!post) {
     return {}
@@ -72,12 +74,13 @@ export function generateMetadata({
   }
 }
 
-export default function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const post = getBlogPostBySlug(params.slug)
+  const { slug } = await params
+  const post = getBlogPostBySlug(slug)
 
   if (!post) {
     notFound()
@@ -87,6 +90,7 @@ export default function BlogPostPage({
   const faqJsonLd = getBlogPostFaqJsonLd(post)
   const breadcrumbJsonLd = getBlogPostBreadcrumbJsonLd(post)
   const relatedPosts = getRelatedBlogPosts(post.slug)
+  const relatedSeoPages = getSeoPagesForBlogPost(post.slug)
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -228,6 +232,33 @@ export default function BlogPostPage({
               >
                 Read more articles
               </Link>
+            </div>
+          </section>
+
+          <section className="mt-8 rounded-3xl border border-zinc-800 bg-zinc-900/60 p-8 sm:p-10">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">Related Product Pages</p>
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">
+                  Continue with the matching workflow
+                </h2>
+              </div>
+            </div>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {relatedSeoPages.map((relatedPage) => (
+                <Link
+                  key={relatedPage.slug}
+                  href={`/${relatedPage.slug}`}
+                  className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-5 transition-colors hover:border-cyan-500/30 hover:bg-zinc-950"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200/90">
+                    {relatedPage.primaryKeyword}
+                  </p>
+                  <h3 className="mt-3 text-xl font-semibold text-zinc-100">{relatedPage.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-zinc-400">{relatedPage.description}</p>
+                  <span className="mt-4 inline-flex text-sm font-semibold text-cyan-300">Open page {'->'}</span>
+                </Link>
+              ))}
             </div>
           </section>
 

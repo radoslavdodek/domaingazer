@@ -1,10 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import Script from 'next/script'
-import { cookies } from 'next/headers'
-import { ThemeProvider } from '@/contexts/ThemeContext'
-import { ConsentBanner } from '@/components/ConsentBanner'
-import { PRIVACY_REGION_COOKIE, type RegionKind } from '@/lib/privacy/constants'
+import { AnalyticsScripts } from '@/components/AnalyticsScripts'
 import './globals.css'
 
 const inter = Inter({
@@ -22,7 +18,7 @@ export const metadata: Metadata = {
     template: '%s | Domain Gazer',
   },
   description:
-    'Describe your project in plain English. Our AI instantly generates brandable domain ideas and checks real-time availability across .com, .io, .ai & 10+ TLDs. Free to try. No tab-hopping.',
+    'Describe your project in plain English. Our AI instantly generates brandable domain ideas and checks real-time availability across .com, .io, .ai & 10+ TLDs. Free to try.',
   keywords: [
     'domain name finder',
     'AI domain generator',
@@ -57,13 +53,13 @@ export const metadata: Metadata = {
     siteName: 'Domain Gazer',
     title: 'Domain Gazer — AI Domain Name Finder',
     description:
-      'Describe your project in plain English and instantly find available domain names. AI-powered by GPT-4.1 with real-time availability checks across .com, .io, .ai, .co, .net and more.',
+      'Describe your project in plain English. Our AI generates brandable domain candidates and checks real-time availability across multiple TLDs — all in one shot.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Domain Gazer — AI Domain Name Finder',
     description:
-      'Describe your project and instantly find available, brandable domain names. AI-powered by GPT-4.1.',
+      'Describe your project in plain English. Our AI generates brandable domain candidates and checks real-time availability across multiple TLDs — all in one shot.',
   },
 }
 
@@ -72,31 +68,23 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const regionCookie = cookies().get(PRIVACY_REGION_COOKIE)?.value
-  const initialRegion: RegionKind = regionCookie === 'eu' ? 'eu' : 'non-eu'
-
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <meta name="impact-site-verification" content="e0e806fe-1f3f-42c4-9ece-cf49ac5b79f3" />
       </head>
       <body className="min-h-screen font-sans">
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-CD28TVE1XL"
-          strategy="afterInteractive"
+        <a
+          href="#main-content"
+          className="sr-only absolute left-4 top-4 z-[100] rounded-md bg-white px-4 py-2 text-sm font-semibold text-zinc-950 shadow-lg focus:not-sr-only focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2"
+        >
+          Skip to main content
+        </a>
+        {children}
+        <AnalyticsScripts
+          gaMeasurementId="G-CD28TVE1XL"
+          clarityProjectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID}
         />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-CD28TVE1XL');
-          `}
-        </Script>
-        <ThemeProvider>
-          {children}
-          <ConsentBanner initialRegion={initialRegion} />
-        </ThemeProvider>
       </body>
     </html>
   )

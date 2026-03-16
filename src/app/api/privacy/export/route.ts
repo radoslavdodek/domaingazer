@@ -1,6 +1,7 @@
 export const runtime = 'nodejs'
 
 import { createClient } from '@/lib/supabase/server'
+import { getEffectiveUser } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 function jsonError(message: string, status: number) {
@@ -11,8 +12,8 @@ function jsonError(message: string, status: number) {
 }
 
 export async function GET() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient()
+  const { user } = await getEffectiveUser(supabase)
 
   if (!user) {
     return jsonError('Unauthorized', 401)

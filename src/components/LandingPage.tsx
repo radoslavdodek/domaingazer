@@ -1,13 +1,10 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AppIcon } from '@/components/AppIcon'
-import { GoogleSignInButton } from '@/components/GoogleSignInButton'
-import { createClient } from '@/lib/supabase/client'
-import { BillingPlans } from '@/components/BillingPlans'
+import { LandingPricingPlans } from '@/components/LandingPricingPlans'
+import { MarketingAuthLink } from '@/components/MarketingAuthLink'
 import type { BillingPlanPricing } from '@/lib/billing-types'
 import { HOW_IT_WORKS_FAQS } from '@/lib/structuredData'
+import { getAllSeoPages } from '@/lib/seo-pages'
 
 type FeaturedBlogPost = {
   slug: string
@@ -73,7 +70,7 @@ const FEATURES = [
   },
   {
     title: 'Multiple TLDs Supported',
-    description: 'Search across .com, .io, .ai, .co, .net, .shop, .store, and .de — mix and match freely.',
+    description: 'Search across .com, .io, .ai, .co, .net, .shop, .store, .de, and 300+ more — mix and match freely.',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
@@ -99,18 +96,8 @@ export function LandingPage({
   pricing: BillingPlanPricing | null
   featuredPosts: FeaturedBlogPost[]
 }) {
-  const [isSignedIn, setIsSignedIn] = useState(false)
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => setIsSignedIn(!!user))
-  }, [])
-
-  const handleSignOut = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    setIsSignedIn(false)
-  }
+  const seoPages = getAllSeoPages()
+  const focusRingClassName = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950'
 
   return (
     <div className="min-h-screen bg-zinc-950 font-sans text-white antialiased">
@@ -131,43 +118,27 @@ export function LandingPage({
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <Link
               href="/blog"
-              className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+              className={`rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800 ${focusRingClassName}`}
             >
               Blog
             </Link>
-            {isSignedIn ? (
-              <>
-                <Link
-                  href="/"
-                  className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
-                >
-                  Go to Dashboard
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-600 hover:bg-zinc-800 hover:text-red-400 sm:w-auto"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <GoogleSignInButton
-                className="w-full sm:w-auto"
-                buttonClassName="min-h-[38px] w-full sm:w-auto"
-                label="Sign in"
-                text="signin"
-                variant="landing-nav"
-                width={132}
-              />
-            )}
+            <Link
+              href="/domain-name-ideas"
+              className={`rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800 ${focusRingClassName}`}
+            >
+              Industry Guides
+            </Link>
+            <MarketingAuthLink
+              className={`flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-sm transition-colors hover:bg-white/[0.08] ${focusRingClassName}`}
+            />
           </div>
         </div>
       </nav>
 
-      {/* ── Hero ── */}
-      <section className="relative z-10 px-4 pb-20 pt-20 sm:px-6 sm:pt-28 lg:pt-36">
-        <div className="mx-auto max-w-6xl">
+      <main id="main-content">
+        {/* ── Hero ── */}
+        <section className="relative z-10 px-4 pb-20 pt-20 sm:px-6 sm:pt-28 lg:pt-36">
+          <div className="mx-auto max-w-6xl">
           {/* Heading block */}
           <div className="mx-auto max-w-3xl text-center">
             <div
@@ -190,35 +161,28 @@ export function LandingPage({
             </p>
 
             {/* TLD pills */}
-            <div className="mb-10 flex flex-wrap justify-center gap-2">
-              {['.com', '.io', '.ai', '.co', '.net', '.shop', '.store', '.de'].map((tld) => (
-                  <span key={tld}
-                        className="rounded-md border border-zinc-700/60 bg-zinc-800/60 px-2.5 py-1 text-xs font-mono font-medium text-zinc-400">
-                  {tld}
-                </span>
-              ))}
+            <div className="mb-10 flex flex-col items-center gap-3">
+              <div className="flex flex-wrap justify-center gap-2">
+                {['.com', '.io', '.ai', '.co', '.net', '.shop', '.store', '.de'].map((tld) => (
+                    <span key={tld}
+                          className="rounded-md border border-zinc-700/60 bg-zinc-800/60 px-2.5 py-1 text-xs font-mono font-medium text-zinc-300">
+                    {tld}
+                  </span>
+                ))}
+              </div>
+              <span className="text-sm text-zinc-300">and 300+ more</span>
             </div>
 
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              {isSignedIn ? (
-                  <Link
-                      href="/"
-                      className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
-                  >
-                    Go to Dashboard
-                  </Link>
-              ) : (
-                  <GoogleSignInButton
-                      className="w-full sm:w-auto"
-                      buttonClassName="min-h-[54px] w-full sm:w-auto"
-                      label="Get started free"
-                      text="signin"
-                      variant="landing-cta"
-                      width={208}
-                  />
-              )}
+              <MarketingAuthLink
+                signedInHref="/app"
+                signedOutHref="/login?next=%2Fapp"
+                signedInLabel="Search for free"
+                signedOutLabel="Search for free"
+                className={`flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto ${focusRingClassName}`}
+              />
             </div>
-            <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
+            <p className="mt-4 text-sm text-zinc-300">No credit card required · Cancel anytime</p>
           </div>
 
           {/* App preview mockup */}
@@ -234,7 +198,7 @@ export function LandingPage({
                   <div className="h-3 w-3 rounded-full bg-zinc-700" />
                   <div className="h-3 w-3 rounded-full bg-zinc-700" />
                 </div>
-                <div className="flex flex-1 items-center justify-center rounded-md bg-zinc-800/80 px-3 py-1 text-xs text-zinc-500">
+                <div className="flex flex-1 items-center justify-center rounded-md bg-zinc-800/80 px-3 py-1 text-xs text-zinc-300">
                   domaingazer.com
                 </div>
               </div>
@@ -243,7 +207,7 @@ export function LandingPage({
               <div className="p-5 sm:p-7">
                 {/* Search query display */}
                 <div className="mb-5 rounded-xl border border-zinc-700/60 bg-zinc-800/50 p-4">
-                  <p className="mb-1 text-xs font-medium uppercase tracking-wider text-zinc-500">Searching for</p>
+                  <p className="mb-1 text-xs font-medium uppercase tracking-wider text-zinc-300">Searching for</p>
                   <p className="text-sm text-zinc-200 sm:text-base">
                     &ldquo;A SaaS tool to help remote startup teams manage projects and stay in sync&rdquo;
                   </p>
@@ -259,13 +223,13 @@ export function LandingPage({
                 {/* Results header */}
                 <div className="mb-4 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                    <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-400" aria-hidden="true" />
                     <span className="text-zinc-300">
                       <span className="font-semibold text-emerald-400">3 available</span>
-                      <span className="text-zinc-500"> · 9 checked · 12 total</span>
+                      <span className="text-zinc-300"> · 9 checked · 12 total</span>
                     </span>
                   </div>
-                  <span className="text-xs text-zinc-600">Round 1 of 5</span>
+                  <span className="text-xs text-zinc-300">Round 1 of 5</span>
                 </div>
 
                 <div className="space-y-3">
@@ -273,7 +237,7 @@ export function LandingPage({
                   <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/40 p-4">
                     <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-sm font-bold text-zinc-100">sparkflow</span>
-                      <button className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">Try variations →</button>
+                      <span className="text-xs font-medium text-zinc-300">Try variations →</span>
                     </div>
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                       <div className="flex flex-col gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
@@ -285,8 +249,8 @@ export function LandingPage({
                         <span className="text-xs font-bold text-emerald-400">AVAILABLE</span>
                       </div>
                       <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-500">sparkflow.com</span>
-                        <span className="text-xs font-medium text-zinc-600">TAKEN</span>
+                        <span className="text-sm text-zinc-300">sparkflow.com</span>
+                        <span className="text-xs font-medium text-zinc-300">TAKEN</span>
                       </div>
                     </div>
                   </div>
@@ -295,7 +259,7 @@ export function LandingPage({
                   <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/40 p-4">
                     <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-sm font-bold text-zinc-100">teamcraft</span>
-                      <button className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">Try variations →</button>
+                      <span className="text-xs font-medium text-zinc-300">Try variations →</span>
                     </div>
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                       <div className="flex flex-col gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
@@ -303,17 +267,17 @@ export function LandingPage({
                         <span className="text-xs font-bold text-emerald-400">AVAILABLE</span>
                       </div>
                       <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-500">teamcraft.ai</span>
+                        <span className="text-sm text-zinc-300">teamcraft.ai</span>
                         <div className="flex items-center gap-1.5">
-                          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" />
-                          <span className="text-xs text-zinc-600">Checking</span>
+                          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" aria-hidden="true" />
+                          <span className="text-xs text-zinc-300">Checking</span>
                         </div>
                       </div>
                       <div className="flex flex-col gap-1.5 rounded-lg border border-zinc-700/40 bg-zinc-800/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
-                        <span className="text-sm text-zinc-500">teamcraft.com</span>
+                        <span className="text-sm text-zinc-300">teamcraft.com</span>
                         <div className="flex items-center gap-1.5">
-                          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" />
-                          <span className="text-xs text-zinc-600">Checking</span>
+                          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400" aria-hidden="true" />
+                          <span className="text-xs text-zinc-300">Checking</span>
                         </div>
                       </div>
                     </div>
@@ -323,14 +287,14 @@ export function LandingPage({
             </div>
           </div>
         </div>
-      </section>
+        </section>
 
-      {/* ── How It Works ── */}
-      <section className="relative z-10 px-4 py-24 sm:px-6">
+        {/* ── How It Works ── */}
+        <section className="relative z-10 px-4 py-24 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">How it works</h2>
-            <p className="text-zinc-400">From idea to domain in three steps</p>
+            <p className="text-zinc-300">From idea to domain in three steps</p>
           </div>
 
           <div className="relative grid gap-10 sm:grid-cols-3 sm:gap-8">
@@ -342,9 +306,9 @@ export function LandingPage({
                 <div className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-500/30 bg-blue-500/10 text-blue-400 ring-4 ring-zinc-950">
                   {step.icon}
                 </div>
-                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-blue-500/50">{step.number}</p>
+                <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-blue-300">{step.number}</p>
                 <h3 className="mb-2.5 text-lg font-bold">{step.title}</h3>
-                <p className="text-sm leading-relaxed text-zinc-400">{step.description}</p>
+                <p className="text-sm leading-relaxed text-zinc-300">{step.description}</p>
               </div>
             ))}
           </div>
@@ -352,7 +316,7 @@ export function LandingPage({
           <div className="mt-16">
             <div className="mx-auto mb-8 max-w-2xl text-center">
               <h3 className="text-2xl font-bold tracking-tight sm:text-3xl">Common questions</h3>
-              <p className="mt-3 text-zinc-400">The same details covered in the workflow, in plain language.</p>
+              <p className="mt-3 text-zinc-300">The same details covered in the workflow, in plain language.</p>
             </div>
 
             <div className="grid gap-4 lg:grid-cols-3">
@@ -362,7 +326,7 @@ export function LandingPage({
                   className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6"
                 >
                   <h4 className="text-lg font-semibold text-zinc-100">{item.question}</h4>
-                  <p className="mt-3 text-sm leading-relaxed text-zinc-400">{item.answer}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-zinc-300">{item.answer}</p>
                 </article>
               ))}
             </div>
@@ -375,7 +339,7 @@ export function LandingPage({
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">Everything you need</h2>
-            <p className="text-zinc-400">Powerful features built for founders and makers</p>
+            <p className="text-zinc-300">Powerful features built for founders and makers</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -390,7 +354,7 @@ export function LandingPage({
                     {feature.icon}
                   </div>
                   <h3 className="mb-2 font-semibold text-zinc-100">{feature.title}</h3>
-                  <p className="text-sm leading-relaxed text-zinc-400">{feature.description}</p>
+                  <p className="text-sm leading-relaxed text-zinc-300">{feature.description}</p>
                 </div>
               )
             })}
@@ -404,14 +368,14 @@ export function LandingPage({
             <div className="max-w-2xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300/80">SEO Content Hub</p>
               <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Fresh articles for founders choosing a domain</h2>
-              <p className="mt-4 text-zinc-400">
+              <p className="mt-4 text-zinc-300">
                 Browse practical guides built around the exact search intent Domain Gazer solves: naming, domain availability,
                 and picking the right extension for a new brand.
               </p>
             </div>
             <Link
               href="/blog"
-              className="inline-flex items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 px-5 py-3 text-sm font-semibold text-zinc-100 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+              className={`inline-flex items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 px-5 py-3 text-sm font-semibold text-zinc-100 transition-colors hover:border-zinc-600 hover:bg-zinc-800 ${focusRingClassName}`}
             >
               Explore the blog
             </Link>
@@ -422,19 +386,55 @@ export function LandingPage({
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="group rounded-3xl border border-zinc-800 bg-zinc-900/70 p-6 transition-all hover:border-cyan-500/40 hover:bg-zinc-900"
+                className={`group rounded-3xl border border-zinc-800 bg-zinc-900/70 p-6 transition-all hover:border-cyan-500/40 hover:bg-zinc-900 ${focusRingClassName}`}
               >
                 <div className="flex items-center justify-between gap-4">
                   <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
                     {post.category}
                   </span>
-                  <span className="text-xs font-medium text-zinc-500">{post.readTime}</span>
+                  <span className="text-xs font-medium text-zinc-300">{post.readTime}</span>
                 </div>
                 <h3 className="mt-5 text-xl font-semibold text-zinc-100 transition-colors group-hover:text-cyan-200">
                   {post.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-zinc-400">{post.description}</p>
+                <p className="mt-3 text-sm leading-relaxed text-zinc-300">{post.description}</p>
                 <span className="mt-5 inline-flex text-sm font-semibold text-cyan-300">Read article →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative z-10 px-4 py-24 sm:px-6">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-300">Search Intent Pages</p>
+              <h2 className="mt-3 text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
+                Dedicated guides for the exact searches founders make
+              </h2>
+              <p className="mt-4 text-zinc-300">
+                These pages break down the main workflows behind Domain Gazer, from AI naming to live availability
+                checks and comparison-driven research.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            {seoPages.map((page) => (
+              <Link
+                key={page.slug}
+                href={`/${page.slug}`}
+                className={`group rounded-3xl border border-zinc-800 bg-zinc-900/70 p-6 transition-all hover:border-cyan-500/40 hover:bg-zinc-900 ${focusRingClassName}`}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200/90">
+                  {page.primaryKeyword}
+                </p>
+                <h3 className="mt-4 text-2xl font-semibold text-zinc-100 transition-colors group-hover:text-cyan-200">
+                  {page.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-zinc-300">{page.description}</p>
+                <span className="mt-5 inline-flex text-sm font-semibold text-cyan-300">Open page →</span>
               </Link>
             ))}
           </div>
@@ -446,12 +446,12 @@ export function LandingPage({
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">Simple pricing</h2>
-            <p className="text-zinc-400">
+            <p className="text-zinc-300">
               Start with one-time free credits, then unlock unlimited usage with a monthly or yearly subscription.
             </p>
           </div>
 
-          <BillingPlans pricing={pricing} isSignedIn={isSignedIn} showFreePlan />
+          <LandingPricingPlans pricing={pricing} />
         </div>
       </section>
 
@@ -471,28 +471,18 @@ export function LandingPage({
               <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
                 Ready to find your domain?
               </h2>
-              <p className="mb-8 text-zinc-400">
+              <p className="mb-8 text-zinc-300">
                 Join founders who&apos;ve found their perfect domain with Domain Gazer.
-                Sign in with Google and start searching in seconds.
+                Sign in and start searching in seconds.
               </p>
-              {isSignedIn ? (
-                <Link
-                  href="/"
-                  className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto"
-                >
-                  Go to Dashboard
-                </Link>
-              ) : (
-                <GoogleSignInButton
-                  className="w-full sm:w-auto"
-                  buttonClassName="min-h-[54px] w-full sm:w-auto"
-                  label="Get started free"
-                  text="signin"
-                  variant="landing-cta"
-                  width={208}
-                />
-              )}
-              <p className="mt-4 text-sm text-zinc-500">No credit card required · Cancel anytime</p>
+              <MarketingAuthLink
+                signedInHref="/app"
+                signedOutHref="/login?next=%2Fapp"
+                signedInLabel="Search for free"
+                signedOutLabel="Search for free"
+                className={`inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(90deg,#6d28ff_0%,#4f46e5_28%,#2563eb_62%,#06b6d4_100%)] px-6 py-3 text-base font-semibold text-white shadow-[0_18px_48px_rgba(37,99,235,0.28)] transition-all hover:opacity-90 sm:w-auto ${focusRingClassName}`}
+              />
+              <p className="mt-4 text-sm text-zinc-300">No credit card required · Cancel anytime</p>
             </div>
           </div>
         </div>
@@ -501,29 +491,42 @@ export function LandingPage({
       {/* ── Footer ── */}
       <footer className="relative z-10 border-t border-zinc-800/60 px-4 py-8 sm:px-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
-          <div className="flex items-center gap-2.5 text-zinc-500">
+          <div className="flex items-center gap-2.5 text-zinc-400">
             <AppIcon className="h-5 w-5" />
             <span className="text-sm font-semibold text-zinc-400">Domain Gazer</span>
           </div>
           <div className="flex flex-col items-center gap-3 sm:items-end">
-            <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-zinc-500">
-              <Link href="/blog" className="underline underline-offset-2">
+            <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-zinc-300">
+              <Link href="/blog" className={`underline underline-offset-2 ${focusRingClassName}`}>
                 Blog
               </Link>
-              <Link href="/privacy" className="underline underline-offset-2">
+              <Link href="/privacy" className={`underline underline-offset-2 ${focusRingClassName}`}>
                 Privacy
               </Link>
-              <Link href="/cookies" className="underline underline-offset-2">
+              <Link href="/cookies" className={`underline underline-offset-2 ${focusRingClassName}`}>
                 Cookies
               </Link>
-              <Link href="/terms" className="underline underline-offset-2">
+              <Link href="/terms" className={`underline underline-offset-2 ${focusRingClassName}`}>
                 Terms
               </Link>
+              <span className="mx-1 text-zinc-700">|</span>
+              <div className="flex items-center gap-2">
+                <a href="https://x.com/intent/tweet?url=https%3A%2F%2Fdomaingazer.com&text=Find%20your%20perfect%20domain%20name%20with%20AI" target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on X">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fdomaingazer.com" target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on LinkedIn">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdomaingazer.com" target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on Facebook">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+              </div>
             </div>
-            <p className="text-sm text-zinc-600">© 2026 Domain Gazer · Find your perfect domain name with AI</p>
+            <p className="text-sm text-zinc-300">© 2026 Domain Gazer · Find your perfect domain name with AI with the best AI domain name generator in 2026</p>
           </div>
         </div>
       </footer>
+      </main>
     </div>
   )
 }

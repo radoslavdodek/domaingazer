@@ -6,9 +6,11 @@ import {
   getBlogListJsonLd,
   type BlogPostSummary,
 } from '@/lib/blog'
+import { getAllSeoPages } from '@/lib/seo-pages'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
 const posts = getAllBlogPosts()
+const seoPages = getAllSeoPages()
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -161,6 +163,38 @@ export default function BlogPage() {
           <div className="mt-14">
             <FeaturedArticle post={featuredPost} />
           </div>
+
+          <section className="mt-12 rounded-[2rem] border border-zinc-800 bg-zinc-900/70 p-8 sm:p-10">
+            <div className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">Product Pages</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-100 sm:text-4xl">
+                Start with the exact workflow you need
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-zinc-400">
+                If you already know the problem you are solving, jump straight into one of the dedicated pages for AI
+                naming, live availability checks, or comparison shopping.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-4 lg:grid-cols-2">
+              {seoPages.map((page) => (
+                <Link
+                  key={page.slug}
+                  href={`/${page.slug}`}
+                  className="group rounded-[1.5rem] border border-zinc-800 bg-zinc-950/60 p-6 transition-all hover:border-cyan-500/30 hover:bg-zinc-950"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200/90">
+                    {page.primaryKeyword}
+                  </p>
+                  <h3 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-100 transition-colors group-hover:text-cyan-200">
+                    {page.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-zinc-400">{page.description}</p>
+                  <span className="mt-4 inline-flex text-sm font-semibold text-cyan-300">Open page {'->'}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
 
           <div className="mt-12 flex items-end justify-between gap-4">
             <div>

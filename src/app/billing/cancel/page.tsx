@@ -10,7 +10,7 @@ export default function BillingCancelPage() {
           You can keep using your remaining free credits, or start checkout again whenever you are ready.
         </p>
         <Link
-          href="/"
+          href="/app"
           className="mt-6 inline-flex rounded-xl border border-zinc-700 px-5 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
         >
           Return to dashboard
