@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { getSiteName } from '@/lib/site-config'
 import type { DomainResult } from '@/lib/types'
 
 export interface SearchContext {
@@ -41,6 +42,7 @@ const PRIORITIES = [
 const MAX_ATTACHMENTS = 3
 
 export function FeedbackDialog({ isOpen, onClose, searchContext }: FeedbackDialogProps) {
+  const siteName = getSiteName()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -198,7 +200,7 @@ export function FeedbackDialog({ isOpen, onClose, searchContext }: FeedbackDialo
           <div>
             <h2 className="text-sm font-semibold text-gray-800 dark:text-zinc-100">Share your feedback</h2>
             <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
-              Help us improve Domain Gazer
+              Help us improve {siteName}
             </p>
           </div>
           <button

@@ -2,10 +2,10 @@ import type { MetadataRoute } from 'next'
 import { getAllBlogPosts } from '@/lib/blog'
 import { getAllIndustryPages } from '@/lib/industry-pages'
 import { getAllSeoPages } from '@/lib/seo-pages'
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
+import { getSiteUrl } from '@/lib/site-config'
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const siteUrl = getSiteUrl()
   const blogPosts = getAllBlogPosts()
   const industryPages = getAllIndustryPages()
   const seoPages = getAllSeoPages()

@@ -1,4 +1,7 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
+import { getSiteName, getSiteUrl } from '@/lib/site-config'
+
+const siteName = getSiteName()
+const siteUrl = getSiteUrl()
 
 type SoftwareApplicationOptions = {
   description?: string
@@ -31,19 +34,19 @@ type CollectionPageOptions = {
 
 export const HOW_IT_WORKS_FAQS = [
   {
-    question: 'How do I find domain name ideas with Domain Gazer?',
+    question: `How do I find domain name ideas with ${siteName}?`,
     answer:
-      'Describe your business or project in plain English, choose the TLDs you care about, and Domain Gazer generates brandable domain ideas tailored to that description.',
+      `Describe your business or project in plain English, choose the TLDs you care about, and ${siteName} generates brandable domain ideas tailored to that description.`,
   },
   {
-    question: 'Does Domain Gazer check domain availability in real time?',
+    question: `Does ${siteName} check domain availability in real time?`,
     answer:
       'Yes. Every suggested domain is checked live so you can immediately see whether a domain is available, taken, or still being checked.',
   },
   {
     question: 'Which domain extensions can I search?',
     answer:
-      'Domain Gazer supports searches across .com, .io, .ai, .co, .net, .shop, .store, .de, and 300+ more, so you can compare multiple extensions in one search.',
+      `${siteName} supports searches across .com, .io, .ai, .co, .net, .shop, .store, .de, and 300+ more, so you can compare multiple extensions in one search.`,
   },
 ] as const
 
@@ -51,7 +54,7 @@ export function getSoftwareApplicationJsonLd(options: SoftwareApplicationOptions
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: options.name ?? 'Domain Gazer',
+    name: options.name ?? siteName,
     url: options.url ?? siteUrl,
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
@@ -93,15 +96,15 @@ export function getHowToJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    name: 'How to find an available domain name with Domain Gazer',
+    name: `How to find an available domain name with ${siteName}`,
     description:
-      'Use Domain Gazer to turn a project description into available domain names you can register.',
+      `Use ${siteName} to turn a project description into available domain names you can register.`,
     step: [
       {
         '@type': 'HowToStep',
         name: 'Describe your project',
         text:
-          'Enter a plain-English description of your business, startup, product, or idea so Domain Gazer understands what you are building.',
+          `Enter a plain-English description of your business, startup, product, or idea so ${siteName} understands what you are building.`,
       },
       {
         '@type': 'HowToStep',
@@ -113,7 +116,7 @@ export function getHowToJsonLd() {
         '@type': 'HowToStep',
         name: 'Generate domain ideas',
         text:
-          'Let Domain Gazer create brandable domain name candidates that match the description you entered.',
+          `Let ${siteName} create brandable domain name candidates that match the description you entered.`,
       },
       {
         '@type': 'HowToStep',

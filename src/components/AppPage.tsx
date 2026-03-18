@@ -16,6 +16,7 @@ import { useBillingStatus } from '@/hooks/useBillingStatus'
 import { useDomainSearch } from '@/hooks/useDomainSearch'
 import { useSupportedTlds } from '@/hooks/useSupportedTlds'
 import { useTheme } from '@/contexts/ThemeContext'
+import { getSiteName, getSocialShareLinks, getSiteTagline } from '@/lib/site-config'
 import { FEATURED_TLDS, type TLD } from '@/lib/types'
 import { normalizeTldList } from '@/lib/tlds'
 
@@ -27,6 +28,9 @@ interface SearchHistoryEntry {
 
 const FEATURED_TLD_LIST: TLD[] = [...FEATURED_TLDS]
 const LS_CUSTOM_TLD_PILLS = 'domaingazer_custom_tld_pills'
+const siteName = getSiteName()
+const siteTagline = getSiteTagline()
+const socialShareLinks = getSocialShareLinks()
 
 interface AppPageProps {
   impersonationLabel: string | null
@@ -198,7 +202,7 @@ export function AppPage({ impersonationLabel }: AppPageProps) {
               <circle cx="16" cy="16" r="4" fill="white"/>
               <circle cx="16" cy="16" r="1.8" fill="#6366f1"/>
             </svg>
-            <span className="truncate">Domain Gazer</span>
+            <span className="truncate">{siteName}</span>
           </Link>
           <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
             {billing?.isSubscribed && (
@@ -232,7 +236,7 @@ export function AppPage({ impersonationLabel }: AppPageProps) {
             <div className="mb-3">
               <span className={theme.page.heroBadge}>✦ AI-Powered</span>
             </div>
-            <h1 className={theme.page.title}>Domain Gazer</h1>
+            <h1 className={theme.page.title}>{siteName}</h1>
             <p className={theme.page.subtitle}>
               Describe your project, pick your TLDs, and get AI-generated domain names with live availability checks.
             </p>
@@ -417,7 +421,7 @@ export function AppPage({ impersonationLabel }: AppPageProps) {
 
           <footer className={theme.footer.wrapper}>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-              <p className={theme.footer.text}>© 2026 Domain Gazer · Find your perfect domain name with AI</p>
+              <p className={theme.footer.text}>© 2026 {siteName} · {siteTagline}</p>
               <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-500 dark:text-zinc-400">
                 <Link href="/settings/privacy" className="underline underline-offset-2">
                   Privacy &amp; Data
@@ -433,13 +437,13 @@ export function AppPage({ impersonationLabel }: AppPageProps) {
                 </Link>
                 <span className="mx-1 hidden sm:inline text-gray-300 dark:text-zinc-600">|</span>
                 <div className="flex items-center gap-2">
-                  <a href="https://x.com/intent/tweet?url=https%3A%2F%2Fdomaingazer.com&text=Find%20your%20perfect%20domain%20name%20with%20AI" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on X">
+                  <a href={socialShareLinks.x} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on X">
                     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                   </a>
-                  <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fdomaingazer.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on LinkedIn">
+                  <a href={socialShareLinks.linkedIn} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on LinkedIn">
                     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                   </a>
-                  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdomaingazer.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on Facebook">
+                  <a href={socialShareLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors" aria-label="Share on Facebook">
                     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                   </a>
                 </div>

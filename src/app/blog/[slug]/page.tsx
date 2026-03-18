@@ -11,8 +11,10 @@ import {
   getRelatedBlogPosts,
 } from '@/lib/blog'
 import { getSeoPagesForBlogPost } from '@/lib/seo-pages'
+import { getSiteName, getSiteUrl } from '@/lib/site-config'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
+const siteName = getSiteName()
+const siteUrl = getSiteUrl()
 
 function getSectionId(heading: string) {
   return heading
@@ -46,9 +48,9 @@ export async function generateMetadata({
     description: post.description,
     keywords: post.keywords,
     category: post.category,
-    authors: [{ name: 'Domain Gazer', url: siteUrl }],
-    creator: 'Domain Gazer',
-    publisher: 'Domain Gazer',
+    authors: [{ name: siteName, url: siteUrl }],
+    creator: siteName,
+    publisher: siteName,
     robots: {
       index: true,
       follow: true,
@@ -116,7 +118,7 @@ export default async function BlogPostPage({
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
             <AppIcon className="h-7 w-7" />
-            <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
+            <span className="text-lg font-bold tracking-tight">{siteName}</span>
           </Link>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
@@ -216,7 +218,7 @@ export default async function BlogPostPage({
           <section className="mt-8 rounded-3xl border border-cyan-500/20 bg-cyan-500/5 p-8 sm:p-10">
             <h2 className="text-2xl font-semibold tracking-tight text-zinc-100">Turn the research into a shortlist</h2>
             <p className="mt-4 text-base leading-8 text-zinc-300">
-              Once you have a direction, use Domain Gazer to generate brandable options and compare live availability
+              Once you have a direction, use {siteName} to generate brandable options and compare live availability
               across multiple TLDs without jumping between tools.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -224,7 +226,7 @@ export default async function BlogPostPage({
                 href="/"
                 className="inline-flex items-center justify-center rounded-xl bg-[linear-gradient(90deg,#2563eb_0%,#06b6d4_100%)] px-5 py-3 text-sm font-semibold text-white"
               >
-                Try Domain Gazer
+                Try {siteName}
               </Link>
               <Link
                 href="/blog"

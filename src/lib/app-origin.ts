@@ -1,4 +1,4 @@
-const DEFAULT_PRODUCTION_ORIGIN = 'https://domaingazer.com'
+const DEFAULT_PRODUCTION_ORIGIN = 'https://example.com'
 const DEFAULT_DEVELOPMENT_ORIGIN = 'http://localhost:3000'
 
 function normalizeOrigin(value: string, envName: string) {

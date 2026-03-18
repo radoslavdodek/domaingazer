@@ -11,8 +11,7 @@ import {
   getCollectionPageJsonLd,
   getFaqPageJsonLd,
 } from '@/lib/structuredData'
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
+import { getSiteUrl } from '@/lib/site-config'
 
 export const dynamicParams = false
 
@@ -27,6 +26,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { industrySlug } = await params
   const page = getIndustryPageBySlug(industrySlug)
+  const siteUrl = getSiteUrl()
 
   if (!page) {
     return {}
@@ -66,6 +66,7 @@ export default async function IndustryPage({
 }) {
   const { industrySlug } = await params
   const page = getIndustryPageBySlug(industrySlug)
+  const siteUrl = getSiteUrl()
 
   if (!page) {
     notFound()

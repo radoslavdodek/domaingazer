@@ -1,13 +1,19 @@
 {
   "name": "domaingazer",
   "version": "0.1.0",
+  "description": "AI-powered domain name finder with live availability checks and self-hostable SaaS scaffolding.",
+  "license": "MIT",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "generate:industry-pages": "node scripts/build-industry-pages.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "check": "npm run lint && npm run build",
     "api:smoke": "bash scripts/api-smoke.sh"
   },
   "dependencies": {

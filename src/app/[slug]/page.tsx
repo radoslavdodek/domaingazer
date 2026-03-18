@@ -7,8 +7,7 @@ import {
   getFaqPageJsonLd,
   getSoftwareApplicationJsonLd,
 } from '@/lib/structuredData'
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
+import { getSiteUrl } from '@/lib/site-config'
 
 export const dynamicParams = false
 
@@ -23,6 +22,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const page = getSeoPageBySlug(slug)
+  const siteUrl = getSiteUrl()
 
   if (!page) {
     return {}
@@ -62,6 +62,7 @@ export default async function SeoPage({
 }) {
   const { slug } = await params
   const page = getSeoPageBySlug(slug)
+  const siteUrl = getSiteUrl()
 
   if (!page) {
     notFound()

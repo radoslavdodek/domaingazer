@@ -6,6 +6,7 @@ import { MarketingAuthLink } from '@/components/MarketingAuthLink'
 import type { BillingPlanPricing } from '@/lib/billing-types'
 import { HOW_IT_WORKS_FAQS } from '@/lib/structuredData'
 import { getAllSeoPages } from '@/lib/seo-pages'
+import { getSiteName, getSocialShareLinks, getSiteTagline } from '@/lib/site-config'
 
 type FeaturedBlogPost = {
   slug: string
@@ -14,6 +15,10 @@ type FeaturedBlogPost = {
   category: string
   readTime: string
 }
+
+const siteName = getSiteName()
+const siteTagline = getSiteTagline()
+const socialShareLinks = getSocialShareLinks()
 
 const STEPS = [
   {
@@ -114,7 +119,7 @@ export function LandingPage({
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="flex items-center gap-2.5">
             <AppIcon className="h-7 w-7 text-blue-400" />
-            <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
+            <span className="text-lg font-bold tracking-tight">{siteName}</span>
           </div>
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <Link
@@ -270,7 +275,7 @@ export function LandingPage({
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300/80">SEO Content Hub</p>
               <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Fresh articles for founders choosing a domain</h2>
               <p className="mt-4 text-zinc-300">
-                Browse practical guides built around the exact search intent Domain Gazer solves: naming, domain availability,
+                Browse practical guides built around the exact search intent {siteName} solves: naming, domain availability,
                 and picking the right extension for a new brand.
               </p>
             </div>
@@ -315,7 +320,7 @@ export function LandingPage({
                 Dedicated guides for the exact searches founders make
               </h2>
               <p className="mt-4 text-zinc-300">
-                These pages break down the main workflows behind Domain Gazer, from AI naming to live availability
+                These pages break down the main workflows behind {siteName}, from AI naming to live availability
                 checks and comparison-driven research.
               </p>
             </div>
@@ -373,7 +378,7 @@ export function LandingPage({
                 Ready to find your domain?
               </h2>
               <p className="mb-8 text-zinc-300">
-                Join founders who&apos;ve found their perfect domain with Domain Gazer.
+                Join founders who&apos;ve found their perfect domain with {siteName}.
                 Sign in and start searching in seconds.
               </p>
               <MarketingAuthLink
@@ -394,7 +399,7 @@ export function LandingPage({
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2.5 text-zinc-400">
             <AppIcon className="h-5 w-5" />
-            <span className="text-sm font-semibold text-zinc-400">Domain Gazer</span>
+            <span className="text-sm font-semibold text-zinc-400">{siteName}</span>
           </div>
           <div className="flex flex-col items-center gap-3 sm:items-end">
             <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-zinc-300">
@@ -412,18 +417,18 @@ export function LandingPage({
               </Link>
               <span className="mx-1 text-zinc-700">|</span>
               <div className="flex items-center gap-2">
-                <a href="https://x.com/intent/tweet?url=https%3A%2F%2Fdomaingazer.com&text=Find%20your%20perfect%20domain%20name%20with%20AI" target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on X">
+                <a href={socialShareLinks.x} target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on X">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fdomaingazer.com" target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on LinkedIn">
+                <a href={socialShareLinks.linkedIn} target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on LinkedIn">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                 </a>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdomaingazer.com" target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on Facebook">
+                <a href={socialShareLinks.facebook} target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-zinc-300 transition-colors hover:text-zinc-100 ${focusRingClassName}`} aria-label="Share on Facebook">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 </a>
               </div>
             </div>
-            <p className="text-sm text-zinc-300">© 2026 Domain Gazer · Find your perfect domain name with AI with the best AI domain name generator in 2026</p>
+            <p className="text-sm text-zinc-300">© 2026 {siteName} · {siteTagline}</p>
           </div>
         </div>
       </footer>

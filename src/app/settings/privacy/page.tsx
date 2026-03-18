@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTheme } from '@/contexts/ThemeContext'
 import { clearOptionalStorage } from '@/lib/privacy/client-consent'
+import { getSiteName } from '@/lib/site-config'
 import { createClient } from '@/lib/supabase/client'
 import { PrivacyStorageControls } from '@/components/PrivacyStorageControls'
 
@@ -13,6 +14,7 @@ type ErrorPayload = {
 }
 
 export default function PrivacySettingsPage() {
+  const siteName = getSiteName()
   const router = useRouter()
   const { theme, themeName } = useTheme()
   const [isExporting, setIsExporting] = useState(false)
@@ -125,7 +127,7 @@ export default function PrivacySettingsPage() {
             <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${mutedLabelClassName}`}>Export</p>
             <h2 className="mt-2 text-xl font-semibold">Download my data</h2>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
-              Export includes your search history stored by Domain Gazer.
+              Export includes your search history stored by {siteName}.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
@@ -146,7 +148,7 @@ export default function PrivacySettingsPage() {
             <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${dangerLabelClassName}`}>Danger zone</p>
             <h2 className="mt-2 text-xl font-semibold">Delete account</h2>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
-              This permanently removes your Domain Gazer account and app data. If you have an active paid subscription,
+              This permanently removes your {siteName} account and app data. If you have an active paid subscription,
               cancel it first from the billing portal before continuing. To prevent free-credit abuse, a minimal hashed
               anti-abuse record may be retained after deletion.
             </p>

@@ -1,5 +1,18 @@
 /.next
 /node_modules
+/coverage
+/playwright-report
+/test-results
 
-.env.local
+.env
+.env.*
+!.env.example
+
+.DS_Store
+.idea/
+.vscode/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 tsconfig.tsbuildinfo

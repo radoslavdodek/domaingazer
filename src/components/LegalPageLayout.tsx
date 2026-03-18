@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import { getSiteName } from '@/lib/site-config'
 
 interface LegalPageLayoutProps {
   title: string
@@ -8,12 +9,14 @@ interface LegalPageLayoutProps {
 }
 
 export function LegalPageLayout({ title, description, children }: LegalPageLayoutProps) {
+  const siteName = getSiteName()
+
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900">
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
         <nav className="mb-8 flex flex-wrap items-center gap-3 text-sm text-zinc-600">
           <Link href="/" className="font-semibold text-zinc-900">
-            Domain Gazer
+            {siteName}
           </Link>
           <span aria-hidden="true">/</span>
           <Link href="/privacy" className="hover:text-zinc-900">

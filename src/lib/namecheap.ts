@@ -1,4 +1,5 @@
 import { XMLParser } from 'fast-xml-parser'
+import { getErrorMessage, logDebug } from './logging'
 import type { DomainStatus } from './types'
 
 const API_URL = 'https://api.namecheap.com/xml.response'
@@ -61,7 +62,11 @@ export async function checkDomainsBulk(
     }
 
     try {
-      console.log(`[Namecheap] REQ domains.check (${fullDomains.length} domains, attempt ${attempt + 1}/${maxRetries + 1})`)
+      logDebug('[namecheap.request.start]', {
+        count: fullDomains.length,
+        attempt: attempt + 1,
+        maxAttempts: maxRetries + 1,
+      })
       const response = await fetch(url, { signal })
       const text = await response.text()
       const parsed = parser.parse(text) as NamecheapResponse
@@ -71,12 +76,12 @@ export async function checkDomainsBulk(
         const errors = apiResponse.Errors?.Error
         const errorList = Array.isArray(errors) ? errors : errors ? [errors] : []
         const errorMsg = errorList.map((e) => e['#text']).join('; ')
-        console.error(`[Namecheap] API error: ${errorMsg}`)
+        console.error('[namecheap.api_error]', { message: errorMsg })
 
         // Rate limit or transient errors — retry
         if (attempt < maxRetries) {
           const delay = 1000 * 2 ** attempt + Math.random() * 500
-          console.log(`[Namecheap] Retrying in ${Math.round(delay)}ms`)
+          logDebug('[namecheap.request.retry]', { delayMs: Math.round(delay) })
           await new Promise((r) => setTimeout(r, delay))
           continue
         }
@@ -94,14 +99,13 @@ export async function checkDomainsBulk(
         const domain = r['@_Domain'].toLowerCase()
         const available = r['@_Available']?.toLowerCase() === 'true'
         const status: DomainStatus = available ? 'AVAILABLE' : 'UNAVAILABLE'
-        console.log(`[Namecheap] RES  ${domain} → ${status}`)
         results.set(domain, status)
       }
 
       // Fill in any domains not in the response
       for (const d of fullDomains) {
         if (!results.has(d.toLowerCase())) {
-          console.log(`[Namecheap] MISSING ${d} — marking as ERROR`)
+          logDebug('[namecheap.response.missing_domain]')
           results.set(d.toLowerCase(), 'ERROR')
         }
       }
@@ -115,12 +119,16 @@ export async function checkDomainsBulk(
 
       if (attempt < maxRetries) {
         const delay = 1000 * 2 ** attempt + Math.random() * 500
-        console.log(`[Namecheap] Error (attempt ${attempt + 1}), retrying in ${Math.round(delay)}ms:`, err)
+        logDebug('[namecheap.request.error_retry]', {
+          attempt: attempt + 1,
+          delayMs: Math.round(delay),
+          message: getErrorMessage(err),
+        })
         await new Promise((r) => setTimeout(r, delay))
         continue
       }
 
-      console.error('[Namecheap] All retries exhausted:', err)
+      console.error('[namecheap.request.exhausted]', { message: getErrorMessage(err) })
       throw err
     }
   }

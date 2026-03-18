@@ -7,7 +7,7 @@ import { CONSENT_CHANGED_EVENT } from '@/lib/privacy/constants'
 
 interface AnalyticsScriptsProps {
   gaMeasurementId?: string
-  clarityProjectId?: string | null
+  clarityProjectId?: string
 }
 
 export function AnalyticsScripts({

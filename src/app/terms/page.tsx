@@ -1,5 +1,11 @@
 import type { Metadata } from 'next'
 import { LegalPageLayout } from '@/components/LegalPageLayout'
+import {
+  getCompanyAddress,
+  getCompanyLegalName,
+  getCompanyRegistrationId,
+  getSiteName,
+} from '@/lib/site-config'
 
 export const metadata: Metadata = {
   alternates: {
@@ -8,17 +14,22 @@ export const metadata: Metadata = {
 }
 
 export default function TermsPage() {
+  const siteName = getSiteName()
+  const companyName = getCompanyLegalName()
+  const companyAddress = getCompanyAddress()
+  const companyRegistrationId = getCompanyRegistrationId()
+
   return (
     <LegalPageLayout
       title="Terms of Service"
-      description={`These terms govern access to Domain Gazer. This service is run by Indek s.r.o.
-Address: Lichardova 26, 01001 Zilina, Slovakia, European Union.
-Company ID: 46942955.`}
+      description={`These terms govern access to ${siteName}. This service is run by ${companyName}.
+Address: ${companyAddress}.
+Company ID: ${companyRegistrationId}.`}
     >
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Service access</h2>
         <p className="mt-2">
-          Domain Gazer provides AI-assisted domain discovery, availability checks, and subscription-managed access to paid
+          {siteName} provides AI-assisted domain discovery, availability checks, and subscription-managed access to paid
           features. You are responsible for maintaining the security of your account and for activity performed using it.
         </p>
       </section>

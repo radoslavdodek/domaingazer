@@ -4,6 +4,7 @@ import {
   buildGenerateMessages,
   sanitizeGeneratedBaseNames,
 } from '@/lib/domain-generation-prompt.mjs'
+import { getErrorMessage, logDebug } from '@/lib/logging'
 
 type ProviderConfig = {
   name: string
@@ -135,7 +136,7 @@ async function callGenerateApi(
   const requestId = crypto.randomUUID()
   const startedAt = Date.now()
 
-  console.info('[ai.request.start]', {
+  logDebug('[ai.request.start]', {
     requestId,
     provider: provider.name,
     model: provider.model,
@@ -149,7 +150,7 @@ async function callGenerateApi(
     messages,
   }, { signal })
 
-  console.info('[ai.request.success]', {
+  logDebug('[ai.request.success]', {
     requestId,
     provider: provider.name,
     model: provider.model,
@@ -157,12 +158,13 @@ async function callGenerateApi(
     durationMs: Date.now() - startedAt,
     choiceCount: response.choices.length,
   })
-  console.info('[ai.request.response]', {
+  logDebug('[ai.request.response]', {
     requestId,
     provider: provider.name,
     model: provider.model,
     requestUrl,
-    response,
+    finishReason: response.choices[0]?.finish_reason ?? null,
+    usage: response.usage ?? null,
   })
 
   const usage: AiUsage = {
@@ -178,7 +180,7 @@ async function callGenerateApi(
     const parsed = JSON.parse(content) as { names?: unknown }
     if (Array.isArray(parsed.names)) {
       const names = sanitizeGeneratedBaseNames(parsed.names)
-      console.info('[ai.request.parsed]', {
+      logDebug('[ai.request.parsed]', {
         requestId,
         provider: provider.name,
         model: provider.model,
@@ -186,13 +188,13 @@ async function callGenerateApi(
       })
       return { names, usage }
     }
-    console.warn('[ai.request.parse_invalid_schema]', {
+    logDebug('[ai.request.parse_invalid_schema]', {
       requestId,
       provider: provider.name,
       model: provider.model,
     })
   } catch {
-    console.warn('[ai.request.parse_error]', {
+    logDebug('[ai.request.parse_error]', {
       requestId,
       provider: provider.name,
       model: provider.model,
@@ -222,7 +224,7 @@ export async function generateDomainNames(
   } catch (err) {
     if (signal?.aborted) throw err
 
-    const message = err instanceof Error ? err.message : String(err)
+    const message = getErrorMessage(err)
     console.error('[ai.request.error]', {
       provider: provider.name,
       model: provider.model,
@@ -232,7 +234,7 @@ export async function generateDomainNames(
     const backup = getBackupProvider('generateDomains')
     if (!backup) throw err
 
-    console.info('[ai.request.fallback]', {
+    logDebug('[ai.request.fallback]', {
       from: `${provider.name}/${provider.model}`,
       to: `${backup.name}/${backup.model}`,
       reason: message,
@@ -267,7 +269,7 @@ async function callExplainApi(
   const requestId = crypto.randomUUID()
   const startedAt = Date.now()
 
-  console.info('[ai.explain.start]', {
+  logDebug('[ai.explain.start]', {
     requestId,
     provider: provider.name,
     model: provider.model,
@@ -280,7 +282,7 @@ async function callExplainApi(
     messages,
   }, { signal })
 
-  console.info('[ai.explain.success]', {
+  logDebug('[ai.explain.success]', {
     requestId,
     provider: provider.name,
     model: provider.model,
@@ -314,7 +316,7 @@ export async function explainDomainName(
   } catch (err) {
     if (signal?.aborted) throw err
 
-    const message = err instanceof Error ? err.message : String(err)
+    const message = getErrorMessage(err)
     console.error('[ai.explain.error]', {
       provider: provider.name,
       model: provider.model,
@@ -324,7 +326,7 @@ export async function explainDomainName(
     const backup = getBackupProvider('explain')
     if (!backup) throw err
 
-    console.info('[ai.explain.fallback]', {
+    logDebug('[ai.explain.fallback]', {
       from: `${provider.name}/${provider.model}`,
       to: `${backup.name}/${backup.model}`,
       reason: message,

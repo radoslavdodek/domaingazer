@@ -52,9 +52,7 @@ export async function POST(request: Request) {
 
   console.info('[impersonation.start]', {
     adminId: user.id,
-    adminEmail: user.email,
     targetId: targetUser.id,
-    targetEmail: targetUser.email,
   })
 
   return NextResponse.json({ ok: true })
@@ -72,7 +70,6 @@ export async function DELETE() {
 
   console.info('[impersonation.stop]', {
     adminId: user.id,
-    adminEmail: user.email,
     targetId: cookieStore.get(IMPERSONATE_UID_COOKIE)?.value,
   })
 

@@ -1,7 +1,10 @@
 import { ImageResponse } from 'next/og'
+import { getSiteHost, getSiteName } from '@/lib/site-config'
 
-export const runtime = 'edge'
-export const alt = 'Domain Gazer — AI Domain Name Finder'
+const siteHost = getSiteHost()
+const siteName = getSiteName()
+
+export const alt = `${siteName} — AI Domain Name Finder`
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -112,7 +115,7 @@ export default function OGImage() {
             fontSize: 20,
           }}
         >
-          domaingazer.com
+          {siteHost}
         </div>
       </div>
     ),

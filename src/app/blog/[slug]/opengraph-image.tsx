@@ -1,7 +1,11 @@
 import { ImageResponse } from 'next/og'
 import { getBlogPostBySlug, getAllBlogPosts } from '@/lib/blog'
+import { getSiteHost, getSiteName } from '@/lib/site-config'
 
-export const alt = 'Domain Gazer Blog'
+const siteHost = getSiteHost()
+const siteName = getSiteName()
+
+export const alt = `${siteName} Blog`
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -15,7 +19,7 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
   const { slug } = await params
   const post = getBlogPostBySlug(slug)
 
-  const title = post?.title ?? 'Domain Gazer Blog'
+  const title = post?.title ?? `${siteName} Blog`
   const category = post?.category ?? 'Blog'
   const readTime = post?.readTime ?? ''
 
@@ -103,7 +107,7 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
             fontSize: 20,
           }}
         >
-          domaingazer.com/blog
+          {siteHost}/blog
         </div>
       </div>
     ),

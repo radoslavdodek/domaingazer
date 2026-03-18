@@ -7,8 +7,10 @@ import {
   type BlogPostSummary,
 } from '@/lib/blog'
 import { getAllSeoPages } from '@/lib/seo-pages'
+import { getSiteName, getSiteUrl } from '@/lib/site-config'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
+const siteName = getSiteName()
+const siteUrl = getSiteUrl()
 const posts = getAllBlogPosts()
 const seoPages = getAllSeoPages()
 
@@ -28,13 +30,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: `${siteUrl}/blog`,
-    title: 'Domain Gazer Blog',
+    title: `${siteName} Blog`,
     description:
       'Actionable articles about startup naming, domain availability, and choosing the right extension.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Domain Gazer Blog',
+    title: `${siteName} Blog`,
     description:
       'Actionable articles about startup naming, domain availability, and choosing the right extension.',
   },
@@ -134,7 +136,7 @@ export default function BlogPage() {
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
             <AppIcon className="h-7 w-7" />
-            <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
+            <span className="text-lg font-bold tracking-tight">{siteName}</span>
           </Link>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
@@ -150,7 +152,7 @@ export default function BlogPage() {
       <main className="relative z-10 px-4 pb-20 pt-16 sm:px-6 sm:pt-24">
         <section className="mx-auto max-w-6xl">
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-300/80">Domain Gazer Blog</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-300/80">{siteName} Blog</p>
             <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-6xl">
               Domain naming insights that compound your SEO
             </h1>

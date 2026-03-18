@@ -9,9 +9,10 @@ import {
   getBreadcrumbListJsonLd,
   getCollectionPageJsonLd,
 } from '@/lib/structuredData'
+import { getSiteName, getSiteUrl } from '@/lib/site-config'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
-
+const siteName = getSiteName()
+const siteUrl = getSiteUrl()
 const groupedPages = getIndustryPagesByCategory()
 const allPages = getAllIndustryPages()
 
@@ -79,7 +80,7 @@ export default function IndustryIdeasHubPage() {
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
             <AppIcon className="h-7 w-7" />
-            <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
+            <span className="text-lg font-bold tracking-tight">{siteName}</span>
           </Link>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
@@ -92,7 +93,7 @@ export default function IndustryIdeasHubPage() {
               href="/login"
               className="rounded-lg bg-[linear-gradient(90deg,#2563eb_0%,#06b6d4_100%)] px-4 py-2 text-center text-sm font-semibold text-white"
             >
-              Try Domain Gazer
+              Try {siteName}
             </Link>
           </div>
         </div>
@@ -117,7 +118,7 @@ export default function IndustryIdeasHubPage() {
             <ul className="mt-5 space-y-3 text-base text-zinc-200">
               <li>Open the market that matches your product or client base.</li>
               <li>Use the examples to spot the naming patterns that already feel right.</li>
-              <li>Paste the suggested project brief into Domain Gazer and validate the shortlist with live checks.</li>
+              <li>Paste the suggested project brief into {siteName} and validate the shortlist with live checks.</li>
             </ul>
           </div>
 

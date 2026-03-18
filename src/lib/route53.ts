@@ -3,6 +3,7 @@ import {
   CheckDomainAvailabilityCommand,
   DomainAvailability,
 } from '@aws-sdk/client-route-53-domains'
+import { getErrorMessage, logDebug } from './logging'
 import type { DomainStatus } from './types'
 
 let _client: Route53DomainsClient | null = null
@@ -28,9 +29,12 @@ export async function checkDomain(fullDomain: string, signal?: AbortSignal): Pro
       const command = new CheckDomainAvailabilityCommand({
         DomainName: fullDomain,
       })
-      console.log(`[Route53] REQ  CheckDomainAvailability { DomainName: "${fullDomain}" } (attempt ${attempt + 1}/${maxRetries + 1})`)
+      logDebug('[route53.request.start]', {
+        attempt: attempt + 1,
+        maxAttempts: maxRetries + 1,
+      })
       const response = await getRoute53Client().send(command, { abortSignal: signal })
-      console.log(`[Route53] RES  ${fullDomain} → ${response.Availability}`)
+      logDebug('[route53.request.result]', { availability: response.Availability ?? null })
 
       switch (response.Availability) {
         case DomainAvailability.AVAILABLE:
@@ -47,17 +51,17 @@ export async function checkDomain(fullDomain: string, signal?: AbortSignal): Pro
         error.__type === 'UnsupportedTLD' ||
         (err instanceof Error && err.message?.includes('UnsupportedTLD'))
       ) {
-        console.log(`[Route53] RES  ${fullDomain} → UnsupportedTLD`)
+        logDebug('[route53.request.unsupported_tld]')
         return 'UNSUPPORTED'
       }
       if (isThrottling(err) && attempt < maxRetries && !signal?.aborted) {
         const delay = 500 * 2 ** attempt + Math.random() * 200
-        console.log(`[Route53] THROTTLED ${fullDomain} — retrying in ${Math.round(delay)}ms`)
+        logDebug('[route53.request.retry]', { delayMs: Math.round(delay) })
         await new Promise((r) => setTimeout(r, delay))
         continue
       }
       if (signal?.aborted) return 'ERROR'
-      console.error(`[Route53] ERROR ${fullDomain}:`, err)
+      console.error('[route53.request.error]', { message: getErrorMessage(err) })
       return 'ERROR'
     }
   }

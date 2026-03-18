@@ -1,10 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { getSiteHost, getSiteName } from '@/lib/site-config'
 
 const DEMO_EMBED_URL = 'https://demo.arcade.software/6Q7YAKbp8Fd7RkhTjcMZ?embed&embed_mobile=tab&embed_desktop=tab&show_copy_link=true'
 
 export function LandingDemoPreview({ focusRingClassName }: { focusRingClassName: string }) {
+  const siteHost = getSiteHost()
+  const siteName = getSiteName()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [isOpen, setIsOpen] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
@@ -65,7 +68,7 @@ export function LandingDemoPreview({ focusRingClassName }: { focusRingClassName:
           type="button"
           onClick={handleOpen}
           disabled={!isDesktop}
-          aria-label="Open the interactive Domain Gazer product demo"
+          aria-label={`Open the interactive ${siteName} product demo`}
           className={`group relative block w-full overflow-hidden rounded-2xl border border-zinc-700/60 bg-zinc-900 text-left shadow-2xl shadow-black/60 transition-all hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-cyan-950/20 disabled:cursor-default disabled:hover:translate-y-0 disabled:hover:border-zinc-700/60 disabled:hover:shadow-black/60 ${focusRingClassName}`}
         >
           <div className="flex items-center gap-3 border-b border-zinc-800 bg-zinc-950/70 px-4 py-3">
@@ -76,7 +79,7 @@ export function LandingDemoPreview({ focusRingClassName }: { focusRingClassName:
             </div>
             <div className="flex min-w-0 flex-1 items-center gap-2">
               <div className="flex min-w-0 flex-1 items-center justify-center rounded-md bg-zinc-800/80 px-3 py-1 text-xs text-zinc-300">
-                <span className="truncate">domaingazer.com</span>
+                <span className="truncate">{siteHost}</span>
               </div>
               <span className="pointer-events-none hidden shrink-0 items-center gap-2 rounded-full border border-cyan-400/25 bg-zinc-950/85 px-3 py-1.5 text-xs font-semibold text-cyan-200 shadow-lg shadow-black/40 backdrop-blur transition-colors group-hover:border-cyan-300/45 group-hover:text-white md:inline-flex">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -177,7 +180,7 @@ export function LandingDemoPreview({ focusRingClassName }: { focusRingClassName:
             <div>
               <h2 className="text-sm font-semibold text-zinc-100 sm:text-base">Interactive product tour</h2>
               <p className="mt-1 text-xs text-zinc-400 sm:text-sm">
-                Explore Domain Gazer inside the embedded walkthrough.
+                Explore {siteName} inside the embedded walkthrough.
               </p>
             </div>
             <button
@@ -205,7 +208,7 @@ export function LandingDemoPreview({ focusRingClassName }: { focusRingClassName:
                 >
                   <iframe
                     src={DEMO_EMBED_URL}
-                    title="Domain Gazer - Find the best brand and domain name for your product"
+                    title={`${siteName} - Find the best brand and domain name for your product`}
                     frameBorder="0"
                     loading="lazy"
                     allowFullScreen

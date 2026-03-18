@@ -1,3 +1,5 @@
+import { normalizeBrandReferences } from '@/lib/brand-copy'
+
 export type SeoPageSection = {
   title: string
   paragraphs: string[]
@@ -43,7 +45,7 @@ const BLOG_TO_SEO_PAGE_SLUGS: Record<string, string[]> = {
   ],
 }
 
-const SEO_PAGES: SeoPage[] = [
+const RAW_SEO_PAGES: SeoPage[] = [
   {
     slug: 'ai-domain-name-generator',
     title: 'AI Domain Name Generator with Real-Time Availability',
@@ -317,6 +319,8 @@ const SEO_PAGES: SeoPage[] = [
     ],
   },
 ]
+
+const SEO_PAGES: SeoPage[] = RAW_SEO_PAGES.map((page) => normalizeBrandReferences(page))
 
 export const SEO_PAGE_SLUGS = SEO_PAGES.map((page) => page.slug)
 

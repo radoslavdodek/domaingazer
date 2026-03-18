@@ -1,4 +1,5 @@
 import type { DomainStatus } from './types'
+import { getErrorMessage, logDebug } from './logging'
 import { checkDomainsBulk, isNamecheapConfigured } from './namecheap'
 import { checkDomain } from './route53'
 
@@ -52,16 +53,16 @@ export async function checkDomains(
       }
 
       if (fallbackDomains.length > 0) {
-        console.log(`[DomainChecker] Falling back to Route53 for ${fallbackDomains.length} domain(s)`)
+        logDebug('[domain_checker.route53_fallback]', { count: fallbackDomains.length })
         await checkDomainsViaRoute53(fallbackDomains, signal, emit)
       }
 
       return
     } catch (err) {
-      console.error('[DomainChecker] Namecheap failed entirely, falling back to Route53:', err)
+      console.error('[domain_checker.namecheap_failed]', { message: getErrorMessage(err) })
     }
   } else {
-    console.log('[DomainChecker] Namecheap not configured, using Route53')
+    logDebug('[domain_checker.namecheap_unconfigured]')
   }
 
   await checkDomainsViaRoute53(fullDomains, signal, emit)

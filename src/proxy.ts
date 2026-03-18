@@ -5,7 +5,7 @@ import { PRIVACY_REGION_COOKIE } from '@/lib/privacy/constants'
 import { getCountryHeaderName, getDefaultRegion, getRegionFromCountryCode } from '@/lib/privacy/region'
 import { SEO_PAGE_SLUGS } from '@/lib/seo-pages'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const countryCode = request.headers.get('x-vercel-ip-country')
     ?? request.headers.get(getCountryHeaderName())

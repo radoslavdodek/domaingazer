@@ -1,13 +1,19 @@
 import { execSync } from 'child_process'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 const commitId = (() => { try { return execSync('git rev-parse --short HEAD').toString().trim() } catch { return 'unknown' } })()
 const commitDate = (() => { try { return execSync('git log -1 --format=%ci').toString().trim() } catch { return 'unknown' } })()
+const projectRoot = dirname(fileURLToPath(import.meta.url))
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
     NEXT_PUBLIC_APP_COMMIT_ID: commitId,
     NEXT_PUBLIC_APP_COMMIT_DATE: commitDate,
+  },
+  turbopack: {
+    root: projectRoot,
   },
   serverExternalPackages: ['@aws-sdk/client-route-53-domains'],
   images: {

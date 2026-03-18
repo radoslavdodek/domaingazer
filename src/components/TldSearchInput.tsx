@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, type RefObject } from 'react'
+import { useEffect, useMemo, useState, type Ref } from 'react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { searchTlds } from '@/lib/tlds'
 import type { TLD } from '@/lib/types'
@@ -10,7 +10,7 @@ interface TldSearchInputProps {
   excludedTlds?: TLD[]
   onSelect: (tld: TLD) => void
   placeholder: string
-  inputRef?: RefObject<HTMLInputElement | null>
+  inputRef?: Ref<HTMLInputElement>
   label?: string
   helperText?: string
   disabled?: boolean

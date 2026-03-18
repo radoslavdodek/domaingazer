@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { LegalPageLayout } from '@/components/LegalPageLayout'
+import { getSiteName } from '@/lib/site-config'
 
 export const metadata: Metadata = {
   alternates: {
@@ -8,10 +9,12 @@ export const metadata: Metadata = {
 }
 
 export default function CookiesPage() {
+  const siteName = getSiteName()
+
   return (
     <LegalPageLayout
       title="Cookie Policy"
-      description="Domain Gazer currently uses essential authentication cookies and a small amount of first-party browser storage. This page documents what is used and how to control it."
+      description={`${siteName} currently uses essential authentication cookies and a small amount of first-party browser storage. This page documents what is used and how to control it.`}
     >
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Essential cookies</h2>
@@ -32,7 +35,7 @@ export default function CookiesPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Optional browser storage</h2>
         <p className="mt-2">
-          When enabled, Domain Gazer stores your selected theme, your current draft search description, and your most
+          When enabled, {siteName} stores your selected theme, your current draft search description, and your most
           recent TLD selection in first-party browser storage. For EU users, this storage is disabled until you opt in.
         </p>
       </section>

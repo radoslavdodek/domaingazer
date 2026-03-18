@@ -1,4 +1,7 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://domaingazer.com'
+import { getSiteName, getSiteUrl } from '@/lib/site-config'
+
+const siteName = getSiteName()
+const siteUrl = getSiteUrl()
 
 type BlogSection = {
   heading: string
@@ -285,7 +288,7 @@ export function getBlogListJsonLd(posts: BlogPostSummary[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: 'Domain Gazer Blog',
+    name: `${siteName} Blog`,
     url: `${siteUrl}/blog`,
     description:
       'SEO-focused articles about choosing brandable domain names, checking availability, and selecting the right TLD for a startup.',
@@ -336,11 +339,11 @@ export function getBlogPostJsonLd(post: BlogPost) {
     about: post.keywords,
     author: {
       '@type': 'Organization',
-      name: 'Domain Gazer',
+      name: siteName,
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Domain Gazer',
+      name: siteName,
       url: siteUrl,
     },
     articleSection: post.category,

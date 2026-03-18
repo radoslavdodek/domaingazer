@@ -1,4 +1,5 @@
 import { INDUSTRY_PAGES as GENERATED_INDUSTRY_PAGES } from '@/generated/industry-pages'
+import { normalizeBrandReferences } from '@/lib/brand-copy'
 import type { DomainStatus } from '@/lib/types'
 
 export type IndustryNamingAngle = {
@@ -57,9 +58,12 @@ export type IndustryPage = {
   generatedAt: string
 }
 
-const INDUSTRY_PAGES: IndustryPage[] = [...GENERATED_INDUSTRY_PAGES].map((page) => ({
-  ...page,
-  promptRecipes: page.promptRecipes.slice(0, 1),
+const INDUSTRY_PAGES: IndustryPage[] = [...GENERATED_INDUSTRY_PAGES].map((generatedPage) => {
+  const page = normalizeBrandReferences(generatedPage) as IndustryPage
+
+  return {
+    ...page,
+    promptRecipes: page.promptRecipes.slice(0, 1),
   exampleGroups: (() => {
     const examples = page.exampleGroups
       .flatMap((group) => group.examples)
@@ -79,7 +83,8 @@ const INDUSTRY_PAGES: IndustryPage[] = [...GENERATED_INDUSTRY_PAGES].map((page) 
       },
     ]
   })(),
-})) as IndustryPage[]
+  }
+})
 
 export const INDUSTRY_PAGE_SLUGS = INDUSTRY_PAGES.map((page) => page.slug)
 

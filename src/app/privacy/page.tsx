@@ -1,5 +1,12 @@
 import type { Metadata } from 'next'
 import { LegalPageLayout } from '@/components/LegalPageLayout'
+import {
+  getCompanyAddress,
+  getCompanyLegalName,
+  getCompanyRegistrationId,
+  getSiteName,
+  getSupportEmail,
+} from '@/lib/site-config'
 
 export const metadata: Metadata = {
   alternates: {
@@ -8,19 +15,25 @@ export const metadata: Metadata = {
 }
 
 export default function PrivacyPage() {
+  const siteName = getSiteName()
+  const companyName = getCompanyLegalName()
+  const companyAddress = getCompanyAddress()
+  const companyRegistrationId = getCompanyRegistrationId()
+  const supportEmail = getSupportEmail()
+
   return (
     <LegalPageLayout
       title="Privacy Policy"
-      description="This document explains what personal data Domain Gazer processes, why we process it, and how users can exercise their privacy rights."
+      description={`This document explains what personal data ${siteName} processes, why we process it, and how users can exercise their privacy rights.`}
     >
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Controller and contact</h2>
         <p className="mt-2">
-          Indek s.r.o. is the data controller for the product data described here.<br />
-          Address: Lichardova 26, 01001 Zilina, Slovakia, European Union.<br />
-          Company ID: 46942955.<br />
+          {companyName} is the data controller for the product data described here.<br />
+          Address: {companyAddress}.<br />
+          Company ID: {companyRegistrationId}.<br />
           For privacy requests, use the in-app
-          Privacy &amp; Data page when signed in or contact <span className="font-medium">support@domaingazer.com</span>.
+          Privacy &amp; Data page when signed in or contact <span className="font-medium">{supportEmail}</span>.
         </p>
       </section>
 
@@ -53,7 +66,7 @@ export default function PrivacyPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Processors and transfers</h2>
         <p className="mt-2">
-          Domain Gazer uses Supabase for authentication and database services, Google for OAuth login, OpenAI and/or
+          {siteName} uses Supabase for authentication and database services, Google for OAuth login, OpenAI and/or
           Groq for AI generation depending on the configured provider, AWS Route 53 Domains for domain availability
           checks, and Stripe for subscription billing. These services may process data outside your country of residence.
         </p>
@@ -63,7 +76,7 @@ export default function PrivacyPage() {
         <h2 className="text-base font-semibold text-zinc-900">Retention</h2>
         <p className="mt-2">
           Search history remains until you delete entries or delete your account. Billing linkage and per-account credit
-          usage are retained while your account exists. After account deletion, Domain Gazer may retain a minimal hashed
+          usage are retained while your account exists. After account deletion, {siteName} may retain a minimal hashed
           anti-abuse record to enforce one-time free-credit limits and protect against fraud. AI usage records are
           retained for up to 180 days. Optional browser storage remains on your device until you change your preference
           or clear browser storage.

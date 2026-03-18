@@ -3,6 +3,7 @@ import { AppIcon } from '@/components/AppIcon'
 import type { IndustryPage } from '@/lib/industry-pages'
 import { IndustryAnalyticsTracker } from '@/components/IndustryAnalyticsTracker'
 import { IndustryTrackedLink } from '@/components/IndustryTrackedLink'
+import { getSiteName } from '@/lib/site-config'
 import type { DomainStatus } from '@/lib/types'
 
 type IndustryLandingPageProps = {
@@ -11,6 +12,7 @@ type IndustryLandingPageProps = {
 }
 
 export function IndustryLandingPage({ page, relatedPages }: IndustryLandingPageProps) {
+  const siteName = getSiteName()
   const keywords = [page.primaryKeyword, ...page.secondaryKeywords]
   const getCompactRowClassName = (status: DomainStatus) =>
     status === 'AVAILABLE'
@@ -49,7 +51,7 @@ export function IndustryLandingPage({ page, relatedPages }: IndustryLandingPageP
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
             <AppIcon className="h-7 w-7" />
-            <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
+            <span className="text-lg font-bold tracking-tight">{siteName}</span>
           </Link>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
@@ -66,7 +68,7 @@ export function IndustryLandingPage({ page, relatedPages }: IndustryLandingPageP
               primaryKeyword={page.primaryKeyword}
               className="rounded-lg bg-[linear-gradient(90deg,#2563eb_0%,#06b6d4_100%)] px-4 py-2 text-center text-sm font-semibold text-white"
             >
-              Try Domain Gazer
+              Try {siteName}
             </IndustryTrackedLink>
           </div>
         </div>
@@ -188,14 +190,14 @@ export function IndustryLandingPage({ page, relatedPages }: IndustryLandingPageP
                   </div>
                 ) : (
                   <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-950/60 p-6 text-sm leading-7 text-zinc-400">
-                    No verified `.com` examples are currently published for this industry. Use the suggested project brief below to generate fresh options and check them live in Domain Gazer.
+                    No verified `.com` examples are currently published for this industry. Use the suggested project brief below to generate fresh options and check them live in {siteName}.
                   </div>
                 )}
               </section>
 
               <section className="rounded-[1.75rem] border border-zinc-800 bg-zinc-900/70 p-8 sm:p-10">
                 <h2 className="text-2xl font-semibold tracking-tight text-zinc-100 sm:text-3xl">
-                  Suggested project brief for Domain Gazer
+                  Suggested project brief for {siteName}
                 </h2>
                 <div className="mt-6 grid gap-4">
                   {page.promptRecipes.map((recipe) => (
@@ -231,19 +233,19 @@ export function IndustryLandingPage({ page, relatedPages }: IndustryLandingPageP
                   Turn this into a shortlist
                 </p>
                 <ul className="mt-5 space-y-4 text-sm leading-7 text-zinc-200">
-                  <li>Paste the suggested brief into Domain Gazer.</li>
+                  <li>Paste the suggested brief into {siteName}.</li>
                   <li>Generate a batch of names matched to this industry.</li>
                   <li>Check live availability across multiple TLDs.</li>
                 </ul>
                 <IndustryTrackedLink
                   href="/login"
-                  linkLabel="Try Domain Gazer"
+                  linkLabel={`Try ${siteName}`}
                   linkType="sidebar_cta"
                   industrySlug={page.slug}
                   primaryKeyword={page.primaryKeyword}
                   className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-[linear-gradient(90deg,#2563eb_0%,#06b6d4_100%)] px-5 py-3 text-sm font-semibold text-white"
                 >
-                  Try Domain Gazer
+                  Try {siteName}
                 </IndustryTrackedLink>
               </section>
 

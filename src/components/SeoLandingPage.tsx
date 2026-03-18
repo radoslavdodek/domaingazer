@@ -3,6 +3,7 @@ import { AppIcon } from '@/components/AppIcon'
 import { SeoAnalyticsTracker } from '@/components/SeoAnalyticsTracker'
 import { SeoTrackedLink } from '@/components/SeoTrackedLink'
 import type { SeoPage } from '@/lib/seo-pages'
+import { getSiteName } from '@/lib/site-config'
 
 type SeoLandingPageProps = {
   page: SeoPage
@@ -10,6 +11,7 @@ type SeoLandingPageProps = {
 }
 
 export function SeoLandingPage({ page, relatedPages }: SeoLandingPageProps) {
+  const siteName = getSiteName()
   const keywords = [page.primaryKeyword, ...page.secondaryKeywords]
 
   return (
@@ -25,7 +27,7 @@ export function SeoLandingPage({ page, relatedPages }: SeoLandingPageProps) {
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <Link href="/" className="flex items-center gap-2.5">
             <AppIcon className="h-7 w-7" />
-            <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
+            <span className="text-lg font-bold tracking-tight">{siteName}</span>
           </Link>
           <div className="flex flex-col gap-2 sm:flex-row">
             <SeoTrackedLink

@@ -6,6 +6,7 @@ import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 import { GitHubSignInButton } from '@/components/GitHubSignInButton'
 import { MagicLinkForm } from '@/components/MagicLinkForm'
 import { AppIcon } from '@/components/AppIcon'
+import { getSiteName } from '@/lib/site-config'
 
 interface LoginPageClientProps {
   nextPath: string
@@ -16,6 +17,7 @@ export function LoginPageClient({
   nextPath,
   initialAuthError = null,
 }: LoginPageClientProps) {
+  const siteName = getSiteName()
   const [authError, setAuthError] = useState<string | null>(initialAuthError)
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export function LoginPageClient({
         className="relative mb-10 flex items-center gap-2.5 text-zinc-200 transition-colors hover:text-blue-400"
       >
         <AppIcon className="h-7 w-7 text-blue-400" />
-        <span className="text-lg font-bold tracking-tight">Domain Gazer</span>
+        <span className="text-lg font-bold tracking-tight">{siteName}</span>
       </Link>
 
       <div className="relative w-full max-w-[420px] overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm">
