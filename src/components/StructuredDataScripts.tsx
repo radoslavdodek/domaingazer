@@ -1,3 +1,4 @@
+import { JsonLdScripts } from '@/components/JsonLdScripts'
 import {
   getFaqPageJsonLd,
   getHowToJsonLd,
@@ -15,15 +16,5 @@ export function StructuredDataScripts({
     schemas.push(getFaqPageJsonLd(), getHowToJsonLd())
   }
 
-  return (
-    <>
-      {schemas.map((schema, index) => (
-        <script
-          key={index}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
-    </>
-  )
+  return <JsonLdScripts schemas={schemas} idPrefix="structured-data" />
 }

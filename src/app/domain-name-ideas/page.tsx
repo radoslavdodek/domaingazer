@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { AppIcon } from '@/components/AppIcon'
+import { JsonLdScripts } from '@/components/JsonLdScripts'
 import {
   getAllIndustryPages,
   getIndustryPagesByCategory,
@@ -66,14 +67,7 @@ export default function IndustryIdeasHubPage() {
         <div className="absolute bottom-0 right-0 h-[28rem] w-[28rem] rounded-full bg-blue-600/10 blur-[130px]" />
       </div>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLdScripts schemas={[collectionJsonLd, breadcrumbJsonLd]} idPrefix="industry-hub" />
 
       <header className="relative z-10 border-b border-zinc-800/70 bg-zinc-950/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">

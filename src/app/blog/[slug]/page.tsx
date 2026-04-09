@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { AppIcon } from '@/components/AppIcon'
+import { JsonLdScripts } from '@/components/JsonLdScripts'
 import {
   getAllBlogPosts,
   getBlogPostBreadcrumbJsonLd,
@@ -99,17 +100,9 @@ export default async function BlogPostPage({
         <div className="absolute bottom-0 left-0 h-[24rem] w-[24rem] rounded-full bg-blue-600/10 blur-[120px]" />
       </div>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      <JsonLdScripts
+        schemas={[articleJsonLd, faqJsonLd, breadcrumbJsonLd]}
+        idPrefix="blog-post"
       />
 
       <header className="relative z-10 border-b border-zinc-800/70 bg-zinc-950/85 backdrop-blur">

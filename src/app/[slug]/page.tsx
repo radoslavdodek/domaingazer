@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { JsonLdScripts } from '@/components/JsonLdScripts'
 import { SeoLandingPage } from '@/components/SeoLandingPage'
 import { getSeoPageBySlug, SEO_PAGE_SLUGS } from '@/lib/seo-pages'
 import {
@@ -84,17 +85,9 @@ export default async function SeoPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      <JsonLdScripts
+        schemas={[softwareApplicationJsonLd, faqJsonLd, breadcrumbJsonLd]}
+        idPrefix="seo-page"
       />
       <SeoLandingPage page={page} relatedPages={relatedPages} />
     </>

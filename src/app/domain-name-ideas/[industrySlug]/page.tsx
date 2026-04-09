@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { IndustryLandingPage } from '@/components/IndustryLandingPage'
+import { JsonLdScripts } from '@/components/JsonLdScripts'
 import {
   getIndustryPageBySlug,
   getRelatedIndustryPages,
@@ -93,17 +94,9 @@ export default async function IndustryPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      <JsonLdScripts
+        schemas={[faqJsonLd, breadcrumbJsonLd, collectionJsonLd]}
+        idPrefix="industry-page"
       />
       <IndustryLandingPage page={page} relatedPages={relatedPages} />
     </>
