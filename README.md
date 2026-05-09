@@ -1,3 +1,6 @@
+![logo.svg](assets/logo.svg)
+![preview.png](assets/preview.png)
+
 # DomainGazer
 
 An AI-powered domain name finder. Describe your project, select your preferred TLDs, and get brandable domain name candidates with real-time availability checking.
