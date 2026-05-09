@@ -1,4 +1,4 @@
-![logo.svg](assets/logo.svg)
+![logo.svg](assets/logo.png)
 ![preview.png](assets/preview.png)
 
 # DomainGazer
