@@ -2,6 +2,7 @@
   "name": "domaingazer",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "generate:industry-pages": "node scripts/build-industry-pages.mjs",
