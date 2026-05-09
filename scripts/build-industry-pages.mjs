@@ -41,14 +41,6 @@ function logProgress(message) {
   console.log(`[industry-pages] ${message}`)
 }
 
-function formatProgress(current, total) {
-  if (!total) {
-    return '0/0 (0%)'
-  }
-
-  return `${current}/${total} (${Math.round((current / total) * 100)}%)`
-}
-
 async function loadLocalEnv() {
   const rawEnv = await readFile(envPath, 'utf8')
 
@@ -186,21 +178,6 @@ async function checkDomainAvailability(fullDomain) {
   }
 
   return 'ERROR'
-}
-
-function toTitleCase(value) {
-  return value
-    .split(' ')
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ')
-}
-
-function slugToLabel(slug) {
-  return slug
-    .split('-')
-    .map((part) => toTitleCase(part))
-    .join(' ')
 }
 
 function unique(values) {

@@ -78,9 +78,6 @@ export function TldLookupDialog({
   const titleClass = isMidnightTheme
     ? 'text-sm font-semibold text-zinc-100'
     : 'text-sm font-semibold text-gray-800'
-  const bodyTextClass = isMidnightTheme
-    ? 'mt-1 text-xs text-zinc-400'
-    : 'mt-1 text-xs text-gray-500'
   const closeButtonClass = isMidnightTheme
     ? 'rounded-md p-1 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-300'
     : 'rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600'
