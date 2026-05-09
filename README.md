@@ -3,6 +3,8 @@
 
 # DomainGazer
 
+[![CI](https://github.com/radoslavdodek/domaingazer/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/radoslavdodek/domaingazer/actions/workflows/ci.yml)
+
 An AI-powered domain name finder. Describe your project, select your preferred TLDs, and get brandable domain name candidates with real-time availability checking.
 
 Try it out at [https://domaingazer.com](https://domaingazer.com).
