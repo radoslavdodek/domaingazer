@@ -1,5 +1,7 @@
 /.next
 /node_modules
+/.idea
+/test-results
 
 .env.local
 tsconfig.tsbuildinfo
