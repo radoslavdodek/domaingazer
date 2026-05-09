@@ -25,8 +25,9 @@ export function ConsentBanner() {
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Privacy</p>
             <p className="mt-2 text-sm leading-6 text-zinc-700">
-              We use essential authentication cookies to keep your session secure. For EU users, optional browser
-              storage for theme preferences and saved search drafts stays off until you opt in.
+              We use essential authentication cookies to keep your session secure. Optional services include browser
+              storage for preferences and drafts, Google Analytics measurement, and Microsoft Clarity session recording
+              when configured. For EU users, these optional services stay off until you opt in.
               See our <Link href="/privacy" className="font-medium underline underline-offset-2">Privacy Policy</Link> and <Link href="/cookies" className="font-medium underline underline-offset-2">Cookie Policy</Link>.
             </p>
           </div>
@@ -40,7 +41,7 @@ export function ConsentBanner() {
               }}
               className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800"
             >
-              Accept optional storage
+              Accept optional services
             </button>
             <button
               type="button"
@@ -50,7 +51,7 @@ export function ConsentBanner() {
               }}
               className="inline-flex items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
             >
-              Decline optional storage
+              Decline optional services
             </button>
             <button
               type="button"

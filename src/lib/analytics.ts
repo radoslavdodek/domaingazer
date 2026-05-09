@@ -1,3 +1,7 @@
+'use client'
+
+import { canUseOptionalServices } from '@/lib/privacy/client-consent'
+
 export type AnalyticsEventParams = Record<string, string | number | boolean | undefined>
 
 declare global {
@@ -8,7 +12,7 @@ declare global {
 }
 
 export function trackAnalyticsEvent(eventName: string, params: AnalyticsEventParams) {
-  if (typeof window === 'undefined') {
+  if (typeof window === 'undefined' || !canUseOptionalServices()) {
     return
   }
 

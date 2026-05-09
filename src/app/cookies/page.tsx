@@ -11,7 +11,7 @@ export default function CookiesPage() {
   return (
     <LegalPageLayout
       title="Cookie Policy"
-      description="Domain Gazer currently uses essential authentication cookies and a small amount of first-party browser storage. This page documents what is used and how to control it."
+      description="Domain Gazer uses essential authentication cookies and optional browser storage or analytics services. This page documents what is used and how to control it."
     >
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Essential cookies</h2>
@@ -24,31 +24,34 @@ export default function CookiesPage() {
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Consent preference storage</h2>
         <p className="mt-2">
-          We store a first-party consent preference on your device so we can remember whether optional browser storage is
-          enabled or disabled for that browser.
+          We store a first-party consent preference on your device so we can remember whether optional browser storage
+          and analytics services are enabled or disabled for that browser.
         </p>
       </section>
 
       <section>
-        <h2 className="text-base font-semibold text-zinc-900">Optional browser storage</h2>
+        <h2 className="text-base font-semibold text-zinc-900">Optional browser storage and analytics</h2>
         <p className="mt-2">
           When enabled, Domain Gazer stores your selected theme, your current draft search description, and your most
-          recent TLD selection in first-party browser storage. For EU users, this storage is disabled until you opt in.
+          recent TLD selection in first-party browser storage. Google Analytics may also be loaded to measure aggregate
+          traffic and product usage, and Microsoft Clarity may be loaded for session recording and heatmaps when a
+          Clarity project ID is configured. For EU users, these optional services are disabled until you opt in.
         </p>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-900">What we do not use</h2>
         <p className="mt-2">
-          The current product does not use advertising cookies, third-party analytics trackers, or retargeting pixels.
+          The current product does not use advertising cookies or retargeting pixels.
         </p>
       </section>
 
       <section>
         <h2 className="text-base font-semibold text-zinc-900">Managing your preferences</h2>
         <p className="mt-2">
-          You can enable or disable optional browser storage from the consent banner or from the signed-in Privacy &amp;
-          Data page. Clearing your browser storage will also remove locally stored preferences.
+          You can enable or disable optional services from the consent banner or from the signed-in Privacy &amp; Data
+          page. Disabling optional services removes known first-party analytics cookies from the current browser. Clearing
+          your browser storage will also remove locally stored preferences.
         </p>
       </section>
     </LegalPageLayout>

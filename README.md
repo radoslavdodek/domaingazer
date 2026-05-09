@@ -57,6 +57,8 @@ NEXT_PUBLIC_SITE_URL=
 GDPR_COUNTRY_HEADER_NAME=x-country-code
 GDPR_DEFAULT_REGION=eu
 NEXT_PUBLIC_NAMECHEAP_AFFILIATE_ID=
+NEXT_PUBLIC_CLARITY_PROJECT_ID=
+NEXT_PUBLIC_GA_MEASUREMENT_ID=
 ```
 
 Notes:
@@ -71,6 +73,8 @@ Notes:
 - `GDPR_COUNTRY_HEADER_NAME` lets you trust a reverse-proxy header for country detection (useful on VPS deployments behind Nginx).
 - `GDPR_DEFAULT_REGION` controls the fallback when no country signal exists. The safest default is `eu`.
 - `NEXT_PUBLIC_NAMECHEAP_AFFILIATE_ID` is the Impact affiliate ID for Namecheap. When set, available domains show a "Buy" button linking to Namecheap via affiliate tracking. Without it, the link goes directly to Namecheap without tracking.
+- `NEXT_PUBLIC_CLARITY_PROJECT_ID` enables Microsoft Clarity session recording and heatmaps after optional-services consent allows it.
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` enables Google Analytics measurement after optional-services consent allows it.
 
 ## Supabase setup
 

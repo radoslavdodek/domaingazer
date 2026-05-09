@@ -21,18 +21,18 @@ interface PrivacyStorageControlsProps {
 
 function getStatusCopy(region: RegionKind, status: ConsentStatus) {
   if (status === 'accepted') {
-    return 'Optional browser storage is enabled for your device. Theme and draft searches can be remembered locally.'
+    return 'Optional services are enabled for your device. Theme and draft searches can be remembered locally, and analytics or session-recording tools may run when configured.'
   }
 
   if (status === 'declined') {
-    return 'Optional browser storage is disabled for your device. Theme and draft searches will not be stored locally.'
+    return 'Optional services are disabled for your device. Theme and draft searches will not be stored locally, and analytics or session-recording tools will not be loaded.'
   }
 
   if (region === 'eu') {
-    return 'Only essential authentication cookies are active by default. Theme and draft-search storage stay off until you opt in.'
+    return 'Only essential authentication cookies are active by default. Optional browser storage, analytics, and session recording stay off until you opt in.'
   }
 
-  return 'Optional browser storage is currently allowed by default on this device. You can disable it here at any time.'
+  return 'Optional browser storage, analytics, and session recording are currently allowed by default on this device. You can disable them here at any time.'
 }
 
 export function PrivacyStorageControls({
@@ -79,7 +79,7 @@ export function PrivacyStorageControls({
     <section className={containerClassName}>
       <div className="flex flex-col gap-3">
         <div>
-          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${eyebrowClassName}`}>Optional Storage</p>
+          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${eyebrowClassName}`}>Optional Services</p>
           <p className={`mt-2 text-sm leading-6 ${descriptionClassName}`}>{getStatusCopy(region, status)}</p>
         </div>
 
@@ -92,7 +92,7 @@ export function PrivacyStorageControls({
             }}
             className={primaryButtonClassName}
           >
-            Enable optional storage
+            Enable optional services
           </button>
           <button
             type="button"
@@ -102,7 +102,7 @@ export function PrivacyStorageControls({
             }}
             className={secondaryButtonClassName}
           >
-            Disable optional storage
+            Disable optional services
           </button>
         </div>
 

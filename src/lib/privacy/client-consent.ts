@@ -80,16 +80,77 @@ export function getConsentStatus(): ConsentStatus {
 export function getConsentSnapshot() {
   const region = getRegionKind()
   const status = getConsentStatus()
+  const canUseOptionalServices = status === 'accepted' || (status === 'unknown' && region !== 'eu')
 
   return {
     region,
     status,
-    canUseOptionalStorage: status === 'accepted' || (status === 'unknown' && region !== 'eu'),
+    canUseOptionalServices,
+    canUseOptionalStorage: canUseOptionalServices,
   }
+}
+
+export function canUseOptionalServices() {
+  return getConsentSnapshot().canUseOptionalServices
 }
 
 export function canUseOptionalStorage() {
   return getConsentSnapshot().canUseOptionalStorage
+}
+
+function getCookieDomains() {
+  const hostname = window.location.hostname
+  const parts = hostname.split('.').filter(Boolean)
+  const domains = new Set([''])
+
+  if (hostname && hostname !== 'localhost' && !/^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
+    domains.add(hostname)
+    domains.add(`.${hostname}`)
+    for (let index = 1; index < parts.length - 1; index += 1) {
+      domains.add(`.${parts.slice(index).join('.')}`)
+    }
+  }
+
+  return [...domains]
+}
+
+function clearCookie(name: string) {
+  const expires = 'Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+  const paths = ['/', window.location.pathname || '/']
+
+  for (const domain of getCookieDomains()) {
+    for (const path of paths) {
+      document.cookie = [
+        `${encodeURIComponent(name)}=`,
+        expires,
+        'Max-Age=0',
+        `Path=${path}`,
+        domain ? `Domain=${domain}` : '',
+        window.location.protocol === 'https:' ? 'Secure' : '',
+        'SameSite=Lax',
+      ].filter(Boolean).join('; ')
+    }
+  }
+}
+
+function clearAnalyticsCookies() {
+  if (!isBrowser()) return
+
+  const cookieNames = document.cookie
+    .split(';')
+    .map((cookie) => decodeURIComponent(cookie.split('=')[0]?.trim() ?? ''))
+    .filter((name) => (
+      name === '_ga'
+      || name.startsWith('_ga_')
+      || name === '_gid'
+      || name.startsWith('_gat')
+      || name === '_clck'
+      || name === '_clsk'
+    ))
+
+  for (const name of cookieNames) {
+    clearCookie(name)
+  }
 }
 
 export function clearOptionalStorage() {
@@ -102,6 +163,8 @@ export function clearOptionalStorage() {
       continue
     }
   }
+
+  clearAnalyticsCookies()
 }
 
 export function setConsentStatus(status: Exclude<ConsentStatus, 'unknown'>) {

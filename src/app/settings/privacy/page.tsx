@@ -113,9 +113,9 @@ export default function PrivacySettingsPage() {
             <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${mutedLabelClassName}`}>Privacy</p>
             <h1 className="mt-2 text-3xl font-bold tracking-tight">Privacy &amp; Data</h1>
             <p className={`mt-3 text-sm leading-6 ${theme.page.subtitle}`}>
-              Manage optional browser storage, download the app data stored for your account, and request permanent
-              account deletion. AI usage records are retained for up to 180 days. A minimal hashed anti-abuse marker may
-              be retained after deletion to enforce one-time free-credit limits.
+              Manage optional browser storage and analytics services, download the app data stored for your account,
+              and request permanent account deletion. AI usage records are retained for up to 180 days. A minimal hashed
+              anti-abuse marker may be retained after deletion to enforce one-time free-credit limits.
             </p>
           </section>
 

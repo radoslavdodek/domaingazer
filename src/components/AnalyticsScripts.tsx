@@ -18,8 +18,15 @@ export function AnalyticsScripts({
   const [shouldLoad, setShouldLoad] = useState(false)
 
   useEffect(() => {
+    if (!gaMeasurementId) return
+
+    const analyticsWindow = window as unknown as Record<string, boolean>
+    analyticsWindow[`ga-disable-${gaMeasurementId}`] = !shouldLoad
+  }, [gaMeasurementId, shouldLoad])
+
+  useEffect(() => {
     const updateConsent = () => {
-      setShouldLoad(getConsentSnapshot().canUseOptionalStorage)
+      setShouldLoad(getConsentSnapshot().canUseOptionalServices)
     }
 
     updateConsent()

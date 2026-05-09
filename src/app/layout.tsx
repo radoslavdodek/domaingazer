@@ -82,7 +82,7 @@ export default function RootLayout({
         </a>
         {children}
         <AnalyticsScripts
-          gaMeasurementId="G-CD28TVE1XL"
+          gaMeasurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}
           clarityProjectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID}
         />
       </body>
